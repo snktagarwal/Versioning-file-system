@@ -1,0 +1,7 @@
+README
+----
+
+* If a mountdir does not exist at this level, create one
+* To mount the system simply execute ../src/vfs rootdir/ mountdir/
+* Log file vfs.log is created from where you execute the above command( present directory for our example )
+* To unmount the system execute fusermount -u mountdir/ 
