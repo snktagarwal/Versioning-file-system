@@ -21,6 +21,7 @@
 #include <sys/types.h>
 #include <sys/xattr.h>
 
+#include "vfs.h"
 #include "log.h"
 
 // Report errors to logfile and give -errno to caller
@@ -63,9 +64,12 @@ static void vfs_fullpath(char fpath[PATH_MAX], const char *path)
  */
 int vfs_getattr(const char *path, struct stat *statbuf)
 {
+    //if(primary_rootver_exists() != 0)
+    	//create_rootver();
+    
     int retstat = 0;
     char fpath[PATH_MAX];
-   	if(strstr(path,".ver")!=NULL)
+    if(strstr(path,".ver")!=NULL)   // Check to make sure ".ver" directories are not found
 		return 0;
     log_msg("\nvfs_getattr(path=\"%s\", statbuf=0x%08x)\n",
 	  path, statbuf);
@@ -148,6 +152,49 @@ int vfs_mknod(const char *path, mode_t mode, dev_t dev)
     return retstat;
 }
 
+/** EDIT */
+
+/** Create a log file in .ver directory **/
+
+void vfs_createlog(const char *path, mode_t mode)
+{
+	char logpath[PATH_MAX];
+	
+	vfs_fullpath(logpath, path);
+	strcat(logpath,"/.ver/ver.log");
+	FILE *f;
+	f = fopen(logpath,"a");
+	 if(!f)
+	{
+		vfs_error("vfs_createlog ver.log");
+		}
+	fclose(f);
+	
+	}
+
+/** Create a .ver directory for every directory made */
+
+void vfs_mkverdir(const char *path, mode_t mode)
+{
+	int retstat = 0;
+	char verpath[PATH_MAX];
+	
+	vfs_fullpath(verpath, path);
+	
+	strcat(verpath,"/.ver");
+	
+	retstat = mkdir(verpath, mode);
+	if(retstat < 0)
+	{
+		retstat = vfs_error("vfs_mkverdir verdir");
+		}
+	
+	vfs_createlog(path,mode);
+	
+}
+
+/** Edited to add feature to create .ver inside each dir */
+
 /** Create a directory */
 int vfs_mkdir(const char *path, mode_t mode)
 {
@@ -161,6 +208,8 @@ int vfs_mkdir(const char *path, mode_t mode)
     retstat = mkdir(fpath, mode);
     if (retstat < 0)
 	retstat = vfs_error("vfs_mkdir mkdir");
+	
+	vfs_mkverdir(path,mode);
     
     return retstat;
 }
@@ -686,6 +735,9 @@ int vfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offse
     // read the whole directory; the second means the buffer is full.
     do {
 	log_msg("calling filler with name %s\n", de->d_name);
+	
+	if(strcmp(de->d_name,".ver")==0) continue;  // Check to make sure ".ver" directories are not found
+	
 	if (filler(buf, de->d_name, NULL, 0) != 0) {
 	    log_msg("    ERROR vfs_readdir filler:  buffer full");
 	    return -ENOMEM;
@@ -755,7 +807,7 @@ void *vfs_init(struct fuse_conn_info *conn)
 {
     
     log_msg("\nvfs_init()\n");
-    
+    //mkdir(strncat(BB_DATA->rootdir,"/.ver",PATH_MAX),(mode_t)0755);
     return BB_DATA;
 }
 
@@ -811,6 +863,27 @@ int vfs_access(const char *path, int mask)
  *
  * Introduced in version 2.5
  */
+ 
+ 
+ void vfs_add_newfile_ver_info(const char *path)
+{
+	char *filename, filepath[PATH_MAX];
+	FILE *fp;
+	int len, len1=0;
+
+	vfs_fullpath(filepath,path);
+
+	get_log_file_name(filepath);
+	
+	log_msg("\n%s\n",filepath);
+	
+	fp = fopen(filepath,"w");
+
+	//if((fp = fopen(logpath,"a")) != NULL)
+	fclose(fp);
+
+}
+ 
 int vfs_create(const char *path, mode_t mode, struct fuse_file_info *fi)
 {
     int retstat = 0;
@@ -828,6 +901,8 @@ int vfs_create(const char *path, mode_t mode, struct fuse_file_info *fi)
     fi->fh = fd;
     
     log_fi(fi);
+    
+    vfs_add_newfile_ver_info(path);
     
     return retstat;
 }
@@ -981,7 +1056,8 @@ int main(int argc, char *argv[])
 
     argv[i] = argv[i+1];
     argc--;
-
+    
+	 
     fprintf(stderr, "about to call fuse_main\n");
     fuse_stat = fuse_main(argc, argv, &vfs_oper, vfs_data);
     fprintf(stderr, "fuse_main returned %d\n", fuse_stat);

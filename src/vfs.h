@@ -35,3 +35,7 @@ typedef struct _ver_info{
 }VerInfo;
 
 
+/* Functions definition */
+
+char *get_log_file_name(char *filepath);
+
