@@ -2,7 +2,7 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 
-#include "../testbench.h"
+#include "testbench.h"
 
 int main(){
 	system ("rm -r root_test1");
