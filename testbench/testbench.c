@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include "string.h"
 
-#include "versioning.h"
+#include "../src/versioning.h"
 #include "testbench.h"
 
 int mkdir_ (const char *dirpath) {
