@@ -24,8 +24,8 @@ typedef struct _block_info{
 // Encapsulates the write info
 typedef struct _write_info{
 	
-	char full_path[255];
-	BlockInfo b_info[MAX_BLOCKS];
+	char full_path[100];
+	GSList *b_info;
 }WriteInfo;
 
 	
