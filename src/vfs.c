@@ -902,9 +902,17 @@ void init_ver_info()
 // (and this might as well return void, as it did in older versions of
 // FUSE).
 void *vfs_init(struct fuse_conn_info *conn)
-{
-    
+{    
     log_msg("\nvfs_init()\n");
+    char *root_ver_path = (char*)malloc(PATH_MAX*sizeof(char));
+    char *root_ver_log = (char*)malloc(PATH_MAX*sizeof(char));
+    strcpy(root_ver_path, BB_DATA->rootdir);
+    strcat(root_ver_path,"/.ver");
+    strcpy(root_ver_log, root_ver_path);
+    strcat(root_ver_log,"/ver.log");
+    mkdir(root_ver_path,(mode_t)0755);
+    FILE *f = fopen(root_ver_log,"w");
+    fclose(f);
     init_ver_info();
     return BB_DATA;
 }
