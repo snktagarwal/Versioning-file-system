@@ -8,6 +8,8 @@
 #include<fuse.h>
 #include<glib.h>
 
+#include "log.h"
+
 #define MAX_BLOCKS 100
 
 /* Define the types of data that may be stored
@@ -34,4 +36,8 @@ typedef struct _ver_info{
 	GSList *ll_wi;	/* Write info list */
 }VerInfo;
 
-
+/* Function prototypes */
+gint GCompareWI(gconstpointer a, gconstpointer b);
+void add_write_info(VerInfo ver, const char* path,size_t size,off_t offset);
+void remove_write_info(VerInfo ver, const char *path);
+void version_file(VerInfo ver, const char *path);
