@@ -9,8 +9,6 @@ log.o : log.c log.h params.h
 
 versioning.o: versioning.c versioning.h
 	gcc -g -Wall `pkg-config fuse glib-2.0 --cflags` -c versioning.c
-vfs_utils.o: vfs_utils.c vfs.h
-	gcc -g -Wall `pkg-config fuse glib-2.0 --cflags` -c vfs_utils.c
 
 vfs_utils.o: vfs_utils.c vfs.h
 	gcc -g -Wall `pkg-config fuse glib-2.0 --cflags` -c vfs_utils.c

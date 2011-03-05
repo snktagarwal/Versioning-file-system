@@ -888,9 +888,8 @@ int vfs_access(const char *path, int mask)
  
  void vfs_add_newfile_ver_info(const char *path)
 {
-	char *filename, filepath[PATH_MAX];
+	char filepath[PATH_MAX];
 	FILE *fp;
-	int len, len1=0;
 
 	vfs_fullpath(filepath,path);
 
@@ -900,7 +899,6 @@ int vfs_access(const char *path, int mask)
 	
 	fp = fopen(filepath,"w");
 
-	//if((fp = fopen(logpath,"a")) != NULL)
 	fclose(fp);
 
 }
