@@ -217,11 +217,52 @@ int vfs_mkdir(const char *path, mode_t mode)
     return retstat;
 }
 
+//Edit
+void remove_versions(const char *fpath)
+{
+     	int retstat;
+     	char *ver_file_path = (char*)malloc(PATH_MAX*sizeof(char));
+     	get_log_file_name((char*)fpath);
+     	char *ver_list_path = (char*)malloc(PATH_MAX*sizeof(char));
+     	strcpy(ver_list_path,fpath);
+     	strcat(ver_list_path,"/list");
+     	
+     	strcpy(ver_file_path,fpath);
+     	strcat(ver_file_path,"/log");
+     	FILE *f = fopen(ver_list_path,"r");
+     	log_msg("Removing version files\n");
+     	while(fscanf(f,"%s",ver_file_path) != EOF)
+     	{
+     		log_msg("Removing %s better\n",ver_file_path);
+    		retstat = unlink(ver_file_path);
+     		if(retstat<0)
+     			log_msg("vfs_unlink unlink");
+     	}
+     	fclose(f);
+     	log_msg("Removing %s\n",ver_list_path);
+	retstat = unlink(ver_list_path);
+	if(retstat<0)
+		log_msg("vfs_unlink unlink");
+	
+	/**log_msg("Removing %s\n",ver_file_path);
+	retstat = unlink(ver_file_path);
+	if(retstat<0)
+		log_msg("vfs_unlink unlink");
+	*/
+     	
+     	log_msg("Removing %s\n",fpath);
+     	retstat = rmdir(fpath);
+	if(retstat<0)
+		log_msg("vfs_rmdir rmdir");
+     	
+ }
+
 /** Remove a file */
 int vfs_unlink(const char *path)
 {
     int retstat = 0;
     char fpath[PATH_MAX];
+    
     
     log_msg("vfs_unlink(path=\"%s\")\n",
 	    path);
@@ -230,8 +271,38 @@ int vfs_unlink(const char *path)
     retstat = unlink(fpath);
     if (retstat < 0)
 	retstat = vfs_error("vfs_unlink unlink");
-    
+    remove_versions(fpath);
     return retstat;
+}
+
+//EDIT
+//Removing Version Directory
+int remove_ver_dir(const char *fpath)
+{
+     char *ver_dir_path = (char*)malloc(PATH_MAX*sizeof(char)),
+     	  *ver_log_path = (char*)malloc(PATH_MAX*sizeof(char));
+     
+     strcpy(ver_dir_path,fpath);
+     strcat(ver_dir_path,"/.ver");
+     
+     strcpy(ver_log_path,ver_dir_path);
+     strcat(ver_log_path,"/ver.log");
+     int retstat = 0;
+     retstat = unlink(ver_log_path);
+     if(retstat<0)
+     {
+     	log_msg("Error removing ver log file\n");
+     	return -1;
+     }
+     
+     retstat = rmdir(ver_dir_path);
+     if(retstat<0)
+     {
+     	log_msg("Error removing ver dir\n");
+     	return -1;
+     }
+     return 0;
+     
 }
 
 /** Remove a directory */
@@ -246,8 +317,14 @@ int vfs_rmdir(const char *path)
     
     retstat = rmdir(fpath);
     if (retstat < 0)
-	retstat = vfs_error("vfs_rmdir rmdir");
-    
+    {
+    	retstat = remove_ver_dir(fpath);
+    	if(retstat<0)
+	    return vfs_error("vfs_rmdir rmdir version dir");
+	retstat = rmdir(fpath);
+	if(retstat<0)
+	    return vfs_error("vfs_rmdir rmdir main dir");
+    }
     return retstat;
 }
 
@@ -886,20 +963,42 @@ int vfs_access(const char *path, int mask)
  */
  
  
- void vfs_add_newfile_ver_info(const char *path)
+ int vfs_add_newfile_ver_info(const char *path) 
 {
-	char filepath[PATH_MAX];
-	FILE *fp;
+    char file_ver_path[PATH_MAX], file_log_path[PATH_MAX], file_list_path[PATH_MAX];
+    int retstat = 0;
+    //FILE *fp;
+    FILE *f;
 
-	vfs_fullpath(filepath,path);
+    vfs_fullpath(file_ver_path,path); // file_ver_path indicates the absolute path of the version directory of each file
 
-	get_log_file_name(filepath);
-	
-	log_msg("\n%s\n",filepath);
-	
-	fp = fopen(filepath,"w");
-
-	fclose(fp);
+    get_log_file_name(file_ver_path);
+    
+    mkdir(file_ver_path,(mode_t)0777); // Setting the mode such that we have permissions to create files in the directory
+    
+    strcpy(file_log_path, file_ver_path);
+    strcpy(file_list_path, file_ver_path);
+    
+    strcat(file_log_path,"/log");
+    strcat(file_list_path,"/list");
+    
+    log_msg("\n%s\n",file_log_path);
+    log_msg("\n%s\n",file_log_path);
+    
+    f = fopen(file_log_path,"a");
+     if(!f)
+    {vfs_error("vfs_create log");}
+    
+    fclose(f);
+        
+    f = fopen(file_list_path,"a");
+     if(!f)
+    {vfs_error("vfs_create list");}
+    fprintf(f,"%s\n",file_log_path);
+    
+    fclose(f);
+    
+    return retstat;
 
 }
  

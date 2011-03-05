@@ -3,6 +3,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<fuse.h>
+#include<unistd.h>
 
 #include "vfs.h"
 #include "log.h"
@@ -35,7 +36,7 @@ void add_write_info(VerInfo ver_info, const char* path,size_t size,off_t offset)
     	log_msg("Starting to write\n");
     	w_tmp->b_info = g_slist_insert(w_tmp->b_info,(gpointer)b_tmp,0);
     	ver_info.ll_wi = g_slist_insert(ver_info.ll_wi,(gpointer)w_tmp,0);
-    	WriteInfo *w_tmp2 = (WriteInfo*)(g_slist_find_custom(ver_info.ll_wi, (gconstpointer)w_tmp, GCompareWI)->data);
+    	//WriteInfo *w_tmp2 = (WriteInfo*)(g_slist_find_custom(ver_info.ll_wi, (gconstpointer)w_tmp, GCompareWI)->data);
     }  
     else
     {
@@ -95,8 +96,10 @@ char *get_log_file_name(char *filepath)
 	/* Create log file name */
 	strcat(filepath,"/.ver/");
 	strcat(filepath, filename);
-	strcat(filepath,".log");
+	//strcat(filepath,".log");
 	
 	return filepath;
 	
 }
+
+    	
