@@ -1,3 +1,5 @@
+#ifndef _VERSIONING_H_
+#define _VERSIONING_H_
 
 /* Version information strct */
 typedef struct version
@@ -18,11 +20,37 @@ typedef struct version
 	int diff_lc; // line count of diff with previous version
 } version;
 
+typedef version_data version;
+
+typedef struct file_data_ {
+	const char * path;	/* full file path */
+	char * name;		/* file name */
+	
+	/* full path of the directory in which
+	 * the file is stored
+	 */
+	char * dir_path;	
+	
+	/* full path of the version directory
+	 * associated with the file
+	 */
+	char * ver_dir_path;							char * current_ver_path;				// full path of the current version copy inside the version directory
+	char * ver_log_path;						// full path of the version log of the file
+	char * current_ver_number_path;	// full path of the current version number file
+} file_data;
+
 
 /* Functions follow */
 int report_write(const char * filepath);
 int report_filedelete(const char * filepath);
 struct version * get_versionlist(const char * filepath);
-
 int changeto_version(const char * filepath, struct version v);
+int report_release(const char * filepath);
+int report_filedelete(const char * filepath);
+int handle_filerename(const char * filepath);
+struct version * get_versionlist(const char * filepath);
+int changeto_version(const char * filepath, struct version v);
+void print_file_data(file_data * file);
+void print_version_data(version_data * ver);
 
+#endif

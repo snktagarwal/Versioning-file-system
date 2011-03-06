@@ -13,6 +13,13 @@
 // setlinebuf() later in consequence.
 #define _XOPEN_SOURCE 500
 
+// the version directory name in each directory on the file system
+#define VER_DIR ".ver/"
+#define VER_LOG "log"
+#define CURR_VER "current"
+#define CURR_VER_NUMBER "current_ver_number"
+#define PATH_MAX 512
+
 // maintain vfsfs state in here
 #include <limits.h>
 #include <stdio.h>
