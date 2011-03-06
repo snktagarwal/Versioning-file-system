@@ -5,7 +5,7 @@
 #define VER_DIR ".ver/"
 #define VER_LOG "log"
 #define CURR_VER "current"
-#define CURR_VER_NUMBER "current_ver_number"
+#define CURR_VER_NUMBER "current_ver_no"
 
 /* Version information strct */
 typedef struct version

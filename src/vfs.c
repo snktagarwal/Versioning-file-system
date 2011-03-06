@@ -23,6 +23,7 @@
 
 #include "vfs.h"
 #include "log.h"
+#include "versioning.h"
 
 VerInfo ver_info;
 
@@ -671,7 +672,9 @@ int vfs_release(const char *path, struct fuse_file_info *fi)
     
     //EDIT
     //Versioning
-    version_file(ver_info, path);    
+    char fpath[PATH_MAX];
+    vfs_fullpath(fpath,path);
+    version_file(ver_info, fpath);    
     return retstat;
 }
 
@@ -1006,7 +1009,7 @@ int vfs_access(const char *path, int mask)
  
  int vfs_add_newfile_ver_info(const char *path) 
 {
-    char file_ver_path[PATH_MAX], file_log_path[PATH_MAX], file_list_path[PATH_MAX];
+    char file_ver_path[PATH_MAX], file_log_path[PATH_MAX], file_list_path[PATH_MAX],file_ver_no_path[PATH_MAX],file_current_ver_path[PATH_MAX];
     int retstat = 0;
     //FILE *fp;
     FILE *f;
@@ -1019,11 +1022,14 @@ int vfs_access(const char *path, int mask)
     
     strcpy(file_log_path, file_ver_path);
     strcpy(file_list_path, file_ver_path);
+    strcpy(file_ver_no_path, file_ver_path);
+    strcpy(file_current_ver_path, file_ver_path);
     
     strcat(file_log_path,"/log");
     strcat(file_list_path,"/list");
+    strcat(file_ver_no_path,"/current_ver_no");
+    strcat(file_current_ver_path,"/current");
     
-    log_msg("\n%s\n",file_log_path);
     log_msg("\n%s\n",file_log_path);
     
     f = fopen(file_log_path,"a");
@@ -1035,7 +1041,16 @@ int vfs_access(const char *path, int mask)
     f = fopen(file_list_path,"a");
      if(!f)
     {vfs_error("vfs_create list");}
+    fprintf(f,"%s\n",file_ver_no_path);
     fprintf(f,"%s\n",file_log_path);
+    fprintf(f,"%s\n",file_current_ver_path);
+    
+    fclose(f);
+    
+    f = fopen(file_ver_no_path,"a");
+     if(!f)
+    {vfs_error("vfs_create current_ver_no");}
+    fprintf(f,"0");
     
     fclose(f);
     

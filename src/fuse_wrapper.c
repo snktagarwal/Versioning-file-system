@@ -71,3 +71,12 @@ void diff(const char * filepath1, const char * filepath2, const char * diff_file
 	
 	system(command);
 }
+
+void rem(const char * filepath) {
+	char * command = (char *) malloc(1000*sizeof(char));
+	strcpy(command,"rm ");
+	strcat(command,filepath);
+	printf("\n\nremove: %s\n\n",command);
+	
+	system(command);
+}

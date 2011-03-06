@@ -7,7 +7,7 @@
 
 #include "vfs.h"
 #include "log.h"
-
+#include "versioning.h"
 //EDIT 
 gint GCompareWI(gconstpointer a, gconstpointer b)
 {
@@ -68,12 +68,13 @@ void remove_write_info(VerInfo ver_info, const char *path)
 
 //EDIT
 //Versioning
-void version_file(VerInfo ver_info, const char *path)
+void version_file(VerInfo ver_info, const char* path)
 {
     //TODO
     //Call the versioning function here
-    
-    remove_write_info(ver_info, path);
+    log_msg("\n Calling Report Release\n");
+    report_release(path);
+    //remove_write_info(ver_info, path);
 }
 
 char *get_log_file_name(char *filepath)

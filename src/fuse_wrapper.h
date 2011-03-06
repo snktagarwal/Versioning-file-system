@@ -11,4 +11,6 @@ int move(const char * source, const char * dest);
 
 void diff(const char * filepath1, const char * filepath2, const char * diff_filepath );
 
+void rem(const char * filepath);
+
 #endif

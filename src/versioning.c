@@ -7,10 +7,11 @@
 #include <fuse.h>
 
 #include "vfs.h"
+#include "log.h"
 #include "versioning.h"
 #include "versioning_utils.h"
 #include "fuse_wrapper.h"
-
+#define printf log_msg
 /**
 * logs version data in the following format:
 * <version_number>;<timestamp>;<diff_lc>;<tag>
@@ -60,6 +61,14 @@ void create_version(file_data * file,version_data * ver) {
 		#endif
 		
 		diff(new_current_ver,old_current_ver_dest,diff_path);
+		rem(old_current_ver_dest);
+		
+		char ver_list_path[PATH_MAX];
+		strcpy(ver_list_path,file->ver_dir_path);
+		strcat(ver_list_path,"list");
+		FILE *list = fopen(ver_list_path,"a");
+		fprintf(list,"%s\n",diff_path);
+		fclose(list);
 
 		#ifdef DEBUG
 			char *command3 = (char *) malloc(2000 * sizeof(char));
@@ -108,6 +117,8 @@ version_data * construct_version_data(file_data * file) {
 
 // initializes file_data structure
 void init_file_data(file_data * file) {
+	file->name = (char *) malloc(PATH_MAX*sizeof(char));
+	file->dir_path = (char *) malloc(PATH_MAX*sizeof(char));
 	file->ver_dir_path = (char *) malloc(PATH_MAX*sizeof(char));
 	file->ver_log_path = (char *) malloc(PATH_MAX*sizeof(char));
 	file->current_ver_path = (char *) malloc(PATH_MAX*sizeof(char));
@@ -120,11 +131,10 @@ file_data * construct_file_data(const char * filepath) {
 	init_file_data(file);
 	
 	file->path = filepath;
-	file->name = getfilename(filepath);
-	file->dir_path = getdirpath(filepath);
+	split_file_path(filepath,file->name,file->dir_path);
 	
 	// version directory path
-	strcat(file->ver_dir_path,file->dir_path);
+	strcpy(file->ver_dir_path,file->dir_path);
 	strcat(file->ver_dir_path,VER_DIR);
 	strcat(file->ver_dir_path,file->name);
 	strcat(file->ver_dir_path,"/");
@@ -133,18 +143,18 @@ file_data * construct_file_data(const char * filepath) {
 	#endif
 	
 	// version log path
-	strcat(file->ver_log_path,file->ver_dir_path);
+	strcpy(file->ver_log_path,file->ver_dir_path);
 	strcat(file->ver_log_path,VER_LOG);
 	#ifdef DEBUG
 		//printf("\n%s\n,file->ver_log_path);
 	#endif
 	
 	// current version path
-	strcat(file->current_ver_path,file->ver_dir_path);
+	strcpy(file->current_ver_path,file->ver_dir_path);
 	strcat(file->current_ver_path,CURR_VER);
 	
 	// current version number file path
-	strcat(file->current_ver_number_path,file->ver_dir_path);
+	strcpy(file->current_ver_number_path,file->ver_dir_path);
 	strcat(file->current_ver_number_path,CURR_VER_NUMBER);
 	
 	return file;

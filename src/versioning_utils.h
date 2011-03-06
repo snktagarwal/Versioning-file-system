@@ -3,8 +3,6 @@
 
 int fuse_diff (const char * filepath1, const char * filepath2, const char * difffilepath); // returns number of lines in difffile
 
-char * getdirpath (const char * filepath);
-
-char * getfilename (const char * filepath);
+void split_file_path (const char * filepath, char *filename, char *dirpath);
 
 #endif
