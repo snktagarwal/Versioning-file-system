@@ -4,11 +4,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <fuse.h>
 
+#include "vfs.h"
 #include "versioning.h"
 #include "versioning_utils.h"
 #include "fuse_wrapper.h"
-#include "params.h"
 
 /**
 * logs version data in the following format:
@@ -94,7 +95,7 @@ version_data * construct_version_data(file_data * file) {
 	}
 	
 	// tag ---- TODO
-	ver->tag = "";
+	strcpy(ver->tag, "");
 	
 	// timestamp
 	ver->timestamp = (int) time(NULL);

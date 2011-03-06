@@ -1,6 +1,12 @@
 #ifndef _VERSIONING_H_
 #define _VERSIONING_H_
 
+// the version directory name in each directory on the file system
+#define VER_DIR ".ver/"
+#define VER_LOG "log"
+#define CURR_VER "current"
+#define CURR_VER_NUMBER "current_ver_number"
+
 /* Version information strct */
 typedef struct version
 {
@@ -20,7 +26,7 @@ typedef struct version
 	int diff_lc; // line count of diff with previous version
 } version;
 
-typedef version_data version;
+typedef  version version_data;
 
 typedef struct file_data_ {
 	const char * path;	/* full file path */
