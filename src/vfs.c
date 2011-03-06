@@ -65,6 +65,34 @@ static void vfs_fullpath(char fpath[PATH_MAX], const char *path)
  * ignored.  The 'st_ino' field is ignored except if the 'use_ino'
  * mount option is given.
  */
+ //Edit 
+ char *get_actual_path(char* filepath)
+ {
+     	int len,len1=0;
+	char filename[255];
+	char act_filename[255];
+	len = strlen(filepath);
+	
+	while(filepath[len] != '/'){
+		len--;
+		filename[len1++] = filepath[len];
+	}
+	filepath[len] = '\0';
+	len1--;
+	filename[len1] = '\0';
+	
+	g_strreverse(filename);
+	len = 0;
+	while(filename[len]!='@')
+	{
+		act_filename[len] = filename[len];
+		len++;	
+	}
+	act_filename[len] = '\0';
+	strcat(filepath,"/");
+	strcat(filepath,act_filename);
+	return filepath;
+ }
 int vfs_getattr(const char *path, struct stat *statbuf)
 {
     //if(primary_rootver_exists() != 0)
@@ -72,11 +100,14 @@ int vfs_getattr(const char *path, struct stat *statbuf)
     
     int retstat = 0;
     char fpath[PATH_MAX];
-    if(strstr(path,".ver")!=NULL)   // Check to make sure ".ver" directories are not found
-		return 0;
     log_msg("\nvfs_getattr(path=\"%s\", statbuf=0x%08x)\n",
 	  path, statbuf);
+    if(strstr(path,".ver")!=NULL)   // Check to make sure ".ver" directories are not found
+		return -1;
     vfs_fullpath(fpath, path);
+    if(strstr(path,"@")!=NULL)
+    	get_actual_path(fpath);    
+    
     retstat = lstat(fpath, statbuf);
     if (retstat != 0)
 	retstat = vfs_error("vfs_getattr lstat");
@@ -948,6 +979,8 @@ int vfs_access(const char *path, int mask)
     log_msg("\nvfs_access(path=\"%s\", mask=0%o)\n",
 	    path, mask);
     vfs_fullpath(fpath, path);
+    if(strstr(path,"@")!=NULL)
+    	get_actual_path(fpath);
     
     retstat = access(fpath, mask);
     
