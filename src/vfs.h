@@ -52,6 +52,7 @@ typedef struct _tree_md{
 	int valid;	/* Tells whether this structure is valid row */
 	char obj_hash[HASH_SHA1];
 	char tag[MAX_TAG];
+	int diff_count;
 	int timestamp;
 	int file_type; /* LO/PO */
 	int parent;    /* Parent offset in the file */
