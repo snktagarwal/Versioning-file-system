@@ -1,0 +1,43 @@
+#include <QPen>
+
+#include "line.h"
+#include "point.h"
+
+Line::Line(Point *parent, Point *child, qreal width = 1.0) {
+	this->parent = parent;
+	this->child = child;
+	this->width = width;
+	
+	parent->addLine(this);
+	child->addLine(this);
+	
+	setZValue(-1);
+	setColor(Qt::darkRed);
+	setLine(QLineF(parent->getX(), parent->getY(), child->getX(), child->getY()));
+}
+
+Line::~Line() {
+	parent->removeLine(this);
+	child->removeLine(this);
+}
+
+Point *Line::getParent() const {
+	return parent;
+}
+
+Point *Line::getChild() const {
+	return child;
+}
+
+QColor Line::getColor() const {
+	return pen().color();
+}
+
+void Line::setColor(const QColor &color) {
+	setPen(QPen(color,1.0));
+}
+
+void Line::trackPoints()
+{
+    setLine(QLineF(parent->pos(), child->pos()));
+}
