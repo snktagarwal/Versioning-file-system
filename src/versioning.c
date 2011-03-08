@@ -11,11 +11,16 @@
 #include "versioning.h"
 #include "versioning_utils.h"
 #include "fuse_wrapper.h"
+#include "params.h"
 #define printf log_msg
 /**
 * logs version data in the following format:
 * <version_number>;<timestamp>;<diff_lc>;<tag>
 */
+
+void report_checkout(const char * filepath,int reqd_version_no);
+void list_all_versions(const char * filepath);
+
 void log_version_data(file_data *file, version_data *ver) {
 	FILE *log = fopen(file->ver_log_path,"a");
 	fprintf(log,"%d;%d;%d;%s\n",ver->number,ver->timestamp,ver->diff_lc,ver->tag);
@@ -214,6 +219,104 @@ void print_file_data(file_data * file) {
 	printf("\tcurrent_ver_path: %s\n",file->current_ver_path);
 	printf("\tver_log_path: %s\n",file->ver_log_path);
 	printf("\tcurrent_ver_number_path: %s\n",file->current_ver_number_path);
+}
+
+void report_checkout(const char * filepath,int reqd_version_no)
+{
+	file_data * file = construct_file_data(filepath);
+
+	char * diff_filepath;
+
+	char * patchedtmp_filepath = (char *) malloc(PATH_MAX*sizeof(char));
+	char * new_version_filepath = (char *) malloc(PATH_MAX*sizeof(char));
+
+	strcpy(patchedtmp_filepath,file->ver_dir_path);
+	strcat(patchedtmp_filepath,"patchedtmp");
+	copy(file->current_ver_path,patchedtmp_filepath);
+	int ver_no = get_current_version_no(file);
+	//new_version_filepath = get_file_verno_path(file,ver_no + 1);
+	while(ver_no>reqd_version_no)
+	{
+		#ifdef DEBUG
+		printf("Version NO : %d\n",ver_no);
+	//	printf("Original file path : %s\n",orig_filepath);
+		#endif
+		ver_no--;
+		diff_filepath = get_file_verno_path(file,ver_no);
+		patch(patchedtmp_filepath,diff_filepath);
+	//	getchar();
+	//	getchar();
+	}
+
+	printf("**********File version No : %d\n",ver_no);
+	printf("Checkout version filepath : %s\n",get_file_verno_path(file,ver_no));
+	//copy(get_file_verno_path(file,ver_no),new_version_filepath);
+	copy(patchedtmp_filepath,filepath);
+
+	report_release(filepath);
+
+	printf("Patched tmp filepath : %s\n",patchedtmp_filepath);
+	delete(patchedtmp_filepath);
+}
+void update_log_file(file_data * file,int reqd_version_no)
+{
+	FILE * f1 = fopen(file->ver_log_path,"r");
+	char * path = (char *)malloc(PATH_MAX * sizeof(char));
+	strcpy(path,file->ver_dir_path);
+	strcat(path,"tmp");
+	FILE * f2 = fopen(path,"w");
+	int ver_no;
+	char * logline = (char *)malloc(MAX_LOG_LINE_SIZE * sizeof(char));
+	fgets(logline,MAX_LOG_LINE_SIZE,f1);
+	while(logline!=NULL)
+	{
+	    ver_no = extract_version_no(logline);
+	    printf("Version no is : %d\n",ver_no);
+	    printf("Logline is %s\n",logline);
+	    if(ver_no<=reqd_version_no)
+	    fprintf(f2,"%s",logline);
+	    else
+	    break;
+	  fgets(logline,MAX_LOG_LINE_SIZE,f1);  
+	}
+	//copy(path,file->ver_log_path);
+	delete(file->ver_log_path);
+	move(path,file->ver_log_path);
+	fclose(f1);
+	fclose(f2);
+}
+void revert_to_version(const char * filepath,int reqd_version_no)
+{
+	int i;
+	char * path = (char *) malloc(PATH_MAX*sizeof(char));
+	report_checkout(filepath,reqd_version_no);
+	file_data * file = construct_file_data(filepath);
+/*	FILE * current_ver_number = fopen(file->current_ver_number_path,"w");
+	fprintf(current_ver_number,"%d",reqd_version_no);
+	fclose(current_ver_number);*/
+	for(i = reqd_version_no;i<=(get_current_version_no(file) + 1);i++)
+	{
+	 path = get_file_verno_path(file,i);
+	 printf("Going to delete : %s\n",path);
+	 if(does_exist(path))
+		delete(path);
+	}
+	FILE * current_ver_number = fopen(file->current_ver_number_path,"w");
+	fprintf(current_ver_number,"%d",reqd_version_no);
+	fclose(current_ver_number);
+	update_log_file(file,reqd_version_no);
+}
+void list_all_versions(const char * filepath)
+{
+	file_data * file = construct_file_data(filepath);
+	FILE * f = fopen(file->ver_log_path,"r");
+	char * logline = (char * )malloc(MAX_LOG_LINE_SIZE * sizeof(char));
+	while(fgets(logline,MAX_LOG_LINE_SIZE,f)!=NULL)
+	{
+	//get_data_from_logline();
+	printf("%s",logline);
+
+	}
 }
 
 void print_version_data(version_data * ver) {

@@ -8,6 +8,33 @@
 
 #include "fuse_wrapper.h"
 
+int delete (const char *filepath) {
+	printf("Entered Delete function\n");
+	char *command = (char *) malloc(1000*sizeof(char));
+	strcpy(command,"rm ");
+	strcat(command,filepath);
+  //char * command = (char *) malloc(strlen("mkdir ")+strlen(dirpath)+1);
+  //sprintf (command, "mkdir %s", dirpath);
+  printf("%s\n",command);
+  int status = system (command);
+ 
+  if(status == -1)
+  	return 0;
+	
+	return 1;
+}
+
+void patch(const char * orig_filepath, const char * diff_filepath) {
+	char * command = (char *) malloc(1000*sizeof(char));
+	strcpy(command,"patch ");
+	strcat(command,orig_filepath);
+	strcat(command," ");
+	strcat(command,diff_filepath);
+	printf("\n\nPatching command : %s\n\n",command);
+	
+	system(command);
+}
+
 int makedir (const char *dirpath) {
 	char * command = strcat("mkdir ",dirpath);
   //char * command = (char *) malloc(strlen("mkdir ")+strlen(dirpath)+1);

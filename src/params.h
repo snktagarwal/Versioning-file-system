@@ -12,6 +12,7 @@
 // need this to get pwrite().  I have to use setvbuf() instead of
 // setlinebuf() later in consequence.
 #define _XOPEN_SOURCE 500
+#define MAX_LOG_LINE_SIZE 100
 
 // maintain vfsfs state in here
 #include <limits.h>

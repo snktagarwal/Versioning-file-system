@@ -58,5 +58,8 @@ struct version * get_versionlist(const char * filepath);
 int changeto_version(const char * filepath, struct version v);
 void print_file_data(file_data * file);
 void print_version_data(version_data * ver);
+void list_all_versions(const char * filepath);
+void report_checkout(const char * filepath,int version_no);
+void revert_to_version(const char * filepath,int reqd_version_no);
 
 #endif

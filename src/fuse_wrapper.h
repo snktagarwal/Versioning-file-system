@@ -13,4 +13,8 @@ void diff(const char * filepath1, const char * filepath2, const char * diff_file
 
 void rem(const char * filepath);
 
+int delete(const char *filepath);
+
+void patch(const char * orig_filepath, const char * diff_filepath); 
+
 #endif

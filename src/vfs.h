@@ -42,3 +42,5 @@ void add_write_info(VerInfo ver, const char* path,size_t size,off_t offset);
 void remove_write_info(VerInfo ver, const char *path);
 void version_file(VerInfo ver, const char *path);
 char *get_log_file_name(char *filepath);
+void itoa(int n,char s[]);
+void reverse(char s[]);

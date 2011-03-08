@@ -14,8 +14,8 @@
 #include <fuse.h>
 #include <libgen.h>
 #include <limits.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -24,7 +24,9 @@
 #include "vfs.h"
 #include "log.h"
 #include "versioning.h"
-
+#define MAXTAG 255
+#define NORMAL 0
+#define ABNORMAL 1
 VerInfo ver_info;
 
 
@@ -93,23 +95,198 @@ static void vfs_fullpath(char fpath[PATH_MAX], const char *path)
 	strcat(filepath,"/");
 	strcat(filepath,act_filename);
 	return filepath;
+}
+int report_file_tag(char * filepath, int vno, char * tag)                 // returns -1 if file or version doesnot exist, 1 if success and 0 if no success
+{
+	get_log_file_name(filepath);                             //got the log file path of that file's log in .ver/file folder
+	strcat(filepath,"/log");
+	FILE * fp = fopen(filepath, "r+");
+	
+	if(fp==NULL)
+	{
+		log_msg("ERROR: %s file doesnot exist\n",filepath);                          // display as a error message
+		return -1;
+	}
+	if(vno==0)
+	{
+		log_msg("ERROR: cannt tag version 0. It doesnot exist");          // display as an error message
+		return -1;
+	}
+	int i, vn = 0;
+	char * v_details = (char *)malloc(255*sizeof(char));
+	char * new_log = (char *)malloc(255*sizeof(char));
+	while(vn!=vno)
+	{
+		fgets(v_details,PATH_MAX,fp);
+		if(fp==NULL || vn>vno)
+		{
+			return 0;
+		}
+		char * v_no = (char *)malloc(255*sizeof(char));
+		for(i=0; i<strlen(v_details); i++)
+		{
+			if(v_details[i]==';')
+				break;
+			v_no[i] = v_details[i];
+		}
+		vn = atoi(v_no);
+		if(vn!=vno)
+		{
+			if(strlen(new_log)==0)
+				strcpy(new_log, v_details);
+			else
+				strcat(new_log, v_details);
+		}
+	}
+	int count = 0;
+	int success = 0;
+	for(i=0; i<strlen(v_details); i++)
+	{
+		strcat(new_log, " ");
+		new_log[strlen(new_log)-1] = v_details[i];
+		if(v_details[i]==';')
+			count++;
+		if(count==3)
+		{
+			if(v_details[i+1]!='\n')
+				log_msg("TAG ALREADY DEFINED. BUT IT IS NOW RETAGED\n");                        //to be displayed as a message
+			strcat(new_log, tag);
+			strcat(new_log, "\n");
+			success = 1;
+			break;
+		}
+	}
+	
+	while(fscanf(fp, "%s", v_details) != EOF)
+	{
+		strcat(new_log, v_details);
+		strcat(new_log, "\n");
+		log_msg("%s ", v_details);
+	
+	}
+	fclose(fp);
+	log_msg("Ne Log MEssage %s \n",new_log);
+	fp = fopen(filepath, "w");
+	fprintf(fp,"%s",new_log);
+	fclose(fp);
+	return success;
+}
+
+ char *set_tags(char *fpath, int mode)
+ {
+ 	int len = strlen(fpath);
+ 	int len1 = 0,len2 = 0;
+ 	char *tag = (char*)malloc(PATH_MAX*sizeof(char));
+ 	char *ver = (char*)malloc(PATH_MAX*sizeof(char));
+ 	char *ret_file_path = (char*)malloc(PATH_MAX*sizeof(char));
+ 	len--;
+ 	while(fpath[len] != '%')
+ 	{
+ 		tag[len1] = fpath[len];
+ 		log_msg("%c\n",tag[len1]);
+ 		len1++;
+ 		len--;
+ 	}
+ 	tag[len1] = '\0';
+ 	log_msg("Entering into report tag %c\n",tag[2]);
+ 	g_strreverse(tag); 
+ 	log_msg("Entering into report tag %c\n",tag[2]);
+ 	len--;
+ 	while(fpath[len] != '%')
+ 	{
+ 		ver[len2++] = fpath[len];
+ 		len--;
+ 	}
+ 	ver[len2] = '\0';
+ 	g_strreverse(ver); 
+ 	fpath[len] = '\0';
+ 	log_msg("Entering into report tag %s\n",ver);
+ 	int ver_no = atoi(ver);
+ 	strcpy(ret_file_path,fpath);
+ 	if(mode == 0)
+ 	{
+ 		log_msg("Entering into report tag %s\n",tag);
+ 		int ret = report_file_tag(fpath,ver_no,tag);
+ 		log_msg("Return Status : %d \n",ret); 
+ 	}
+ 	return ret_file_path;
  }
+ 
+ char *checkout_to(char *fpath, int mode)
+ {
+ 	int len = strlen(fpath);
+ 	int len2 = 0;
+ 	
+ 	char *ver = (char*)malloc(PATH_MAX*sizeof(char));
+ 	char *ret_file_path = (char*)malloc(PATH_MAX*sizeof(char));
+ 	len--;
+ 	while(fpath[len] != '@')
+ 	{
+ 		ver[len2++] = fpath[len];
+ 		len--;
+ 	}
+ 	ver[len2] = '\0';
+ 	g_strreverse(ver); 
+ 	fpath[len] = '\0';
+ 	log_msg("Entering into report checkout %s\n",ver);
+ 	int ver_no = atoi(ver);
+ 	strcpy(ret_file_path,fpath);
+ 	if(mode == 0)
+ 	{
+ 		report_checkout(fpath,ver_no);
+ 	}
+ 	return ret_file_path;
+ }
+ 
+ char *revert_to(char *fpath, int mode)
+ {
+ 	int len = strlen(fpath);
+ 	int len2 = 0;
+ 	
+ 	char *ver = (char*)malloc(PATH_MAX*sizeof(char));
+ 	char *ret_file_path = (char*)malloc(PATH_MAX*sizeof(char));
+ 	len--;
+ 	while(fpath[len] != '&')
+ 	{
+ 		ver[len2++] = fpath[len];
+ 		len--;
+ 	}
+ 	ver[len2] = '\0';
+ 	g_strreverse(ver); 
+ 	fpath[len] = '\0';
+ 	log_msg("Entering into report revert %s\n",ver);
+ 	int ver_no = atoi(ver);
+ 	strcpy(ret_file_path,fpath);
+ 	if(mode == 0)
+ 	{
+ 		revert_to_version(fpath,ver_no);
+ 	}
+ 	return ret_file_path;
+ }
+ 
 int vfs_getattr(const char *path, struct stat *statbuf)
 {
     //if(primary_rootver_exists() != 0)
     	//create_rootver();
     
     int retstat = 0;
-    char fpath[PATH_MAX];
+    char fpath[PATH_MAX];	
     log_msg("\nvfs_getattr(path=\"%s\", statbuf=0x%08x)\n",
 	  path, statbuf);
     if(strstr(path,".ver")!=NULL)   // Check to make sure ".ver" directories are not found
 		return -1;
     vfs_fullpath(fpath, path);
-    if(strstr(path,"@")!=NULL)
+    /*if(strstr(path,"@")!=NULL)
     	get_actual_path(fpath);    
-    
-    retstat = lstat(fpath, statbuf);
+    */
+    if(strstr(path,"%")!=NULL)
+    	retstat = lstat(set_tags(fpath,NORMAL),statbuf);
+    else if(strstr(path,"@")!=NULL)
+    	retstat = lstat(checkout_to(fpath,NORMAL),statbuf);
+    else if(strstr(path,"&")!=NULL)
+    	retstat = lstat(revert_to(fpath,NORMAL),statbuf);
+    else
+    	retstat = lstat(fpath, statbuf);
     if (retstat != 0)
 	retstat = vfs_error("vfs_getattr lstat");
     log_stat(statbuf);
@@ -253,29 +430,61 @@ int vfs_mkdir(const char *path, mode_t mode)
 void remove_versions(const char *fpath)
 {
      	int retstat;
-     	char *ver_file_path = (char*)malloc(PATH_MAX*sizeof(char));
+     	int current_ver_no;
+     	int i = 1;
+     	char *ver_no = (char*)malloc(10*sizeof(char));;
+     	char *ver_path = (char*)malloc(PATH_MAX*sizeof(char));;
+     	char *ver_log_path = (char*)malloc(PATH_MAX*sizeof(char));
      	get_log_file_name((char*)fpath);
+     	char *ver_current_path = (char*)malloc(PATH_MAX*sizeof(char));
+     	char *ver_current_no_path = (char*)malloc(PATH_MAX*sizeof(char));
      	char *ver_list_path = (char*)malloc(PATH_MAX*sizeof(char));
+     	strcpy(ver_current_path,fpath);
+     	strcat(ver_current_path,"/current");
+     	
+     	strcpy(ver_current_no_path,fpath);
+     	strcat(ver_current_no_path,"/current_ver_no");
+     	
+     	strcpy(ver_log_path,fpath);
+     	strcat(ver_log_path,"/log");
+     	
      	strcpy(ver_list_path,fpath);
      	strcat(ver_list_path,"/list");
      	
-     	strcpy(ver_file_path,fpath);
-     	strcat(ver_file_path,"/log");
-     	FILE *f = fopen(ver_list_path,"r");
+     	FILE *f = fopen(ver_current_no_path,"r");
+     	fscanf(f,"%d",&current_ver_no);
+     	fclose(f);
      	log_msg("Removing version files\n");
-     	while(fscanf(f,"%s",ver_file_path) != EOF)
+     	while(i<current_ver_no)
      	{
-     		log_msg("Removing %s better\n",ver_file_path);
-    		retstat = unlink(ver_file_path);
+     		itoa(i,ver_no);
+     		strcpy(ver_path,fpath);
+     		strcat(ver_path,"/");
+     		strcat(ver_path,ver_no);
+     		i++;
+     		
+     		log_msg("Removing %s better\n",ver_path);
+    		retstat = unlink(ver_path);
      		if(retstat<0)
      			log_msg("vfs_unlink unlink");
      	}
-     	fclose(f);
-     	log_msg("Removing %s\n",ver_list_path);
+
+     	log_msg("Removing %s\n",ver_log_path);
+	retstat = unlink(ver_log_path);
+	if(retstat<0)
+		log_msg("vfs_unlink unlink");
+	log_msg("Removing %s\n",ver_current_path);
+	retstat = unlink(ver_current_path);
+	if(retstat<0)
+		log_msg("vfs_unlink unlink");
+	log_msg("Removing %s\n",ver_current_no_path);
+	retstat = unlink(ver_current_no_path);
+	if(retstat<0)
+		log_msg("vfs_unlink unlink");
+	log_msg("Removing %s\n",ver_list_path);
 	retstat = unlink(ver_list_path);
 	if(retstat<0)
 		log_msg("vfs_unlink unlink");
-	
 	/**log_msg("Removing %s\n",ver_file_path);
 	retstat = unlink(ver_file_path);
 	if(retstat<0)
@@ -381,25 +590,56 @@ int vfs_symlink(const char *path, const char *link)
     return retstat;
 }
 
+
+/** Manage the versions of the file/directory upon renaming */
+
+int vfs_ver_rename(const char *path,const char *newpath)
+{
+    char f_ver_path[PATH_MAX];
+    char f_ver_newpath[PATH_MAX];
+    vfs_fullpath(f_ver_path,path);
+    vfs_fullpath(f_ver_newpath,newpath);
+    get_log_file_name(f_ver_path);
+    get_log_file_name(f_ver_newpath);
+    log_msg("rename %s -> %s",f_ver_path,f_ver_newpath);
+    //strcat(fver_path,"/.ver");
+    //strcat(fnew_ver_path,"/.ver");
+    //strcat(fver_path,path);
+    //strcat(fnew_ver_path,newpath);
+    int restat=0;
+    restat=rename(f_ver_path,f_ver_newpath);
+    if(restat<0)
+        restat = vfs_error("vfs_ver_rename ver_rename");
+
+    return restat;
+}
+
 /** Rename a file */
 // both path and newpath are fs-relative
 int vfs_rename(const char *path, const char *newpath)
 {
     int retstat = 0;
+    int retstat1 = 0;
     char fpath[PATH_MAX];
     char fnewpath[PATH_MAX];
     
     log_msg("\nvfs_rename(fpath=\"%s\", newpath=\"%s\")\n",
-	    path, newpath);
+        path, newpath);
     vfs_fullpath(fpath, path);
     vfs_fullpath(fnewpath, newpath);
     
     retstat = rename(fpath, fnewpath);
     if (retstat < 0)
-	retstat = vfs_error("vfs_rename rename");
+    retstat = vfs_error("vfs_rename rename");
+    
+    retstat1 = vfs_ver_rename(path,newpath);
+    
+    if(retstat1 < 0)
+    log_msg("\nRenaming a dir, not a file. Hence ../.ver/filename will not exist\n");
     
     return retstat;
 }
+
 
 /** Create a hard link to a file */
 int vfs_link(const char *path, const char *newpath)
@@ -481,7 +721,8 @@ int vfs_utime(const char *path, struct utimbuf *ubuf)
     log_msg("\nvfs_utime(path=\"%s\", ubuf=0x%08x)\n",
 	    path, ubuf);
     vfs_fullpath(fpath, path);
-    
+    if(strstr(path,"%")!=NULL || strstr(path,"@")!=NULL || strstr(path,"&")!=NULL)
+    	set_tags(fpath,ABNORMAL);
     retstat = utime(fpath, ubuf);
     if (retstat < 0)
 	retstat = vfs_error("vfs_utime utime");
@@ -508,7 +749,11 @@ int vfs_open(const char *path, struct fuse_file_info *fi)
     log_msg("\nvfs_open(path\"%s\", fi=0x%08x)\n",
 	    path, fi);
     vfs_fullpath(fpath, path);
-    
+    if(strstr(path,"%")!=NULL || strstr(path,"@")!=NULL || strstr(path,"&")!=NULL)
+    {
+    	//set_tags(fpath,ABNORMAL);
+    	return 0;
+    }
     fd = open(fpath, fi->flags);
     if (fd < 0)
 	retstat = vfs_error("vfs_open open");
@@ -661,6 +906,8 @@ int vfs_flush(const char *path, struct fuse_file_info *fi)
 int vfs_release(const char *path, struct fuse_file_info *fi)
 {
     int retstat = 0;
+    if(strstr(path,"%")!=NULL || strstr(path,"@")!=NULL || strstr(path,"&")!=NULL)
+    	return 0;
     
     log_msg("\nvfs_release(path=\"%s\", fi=0x%08x)\n",
 	  path, fi);
@@ -674,6 +921,7 @@ int vfs_release(const char *path, struct fuse_file_info *fi)
     //Versioning
     char fpath[PATH_MAX];
     vfs_fullpath(fpath,path);
+
     version_file(ver_info, fpath);    
     return retstat;
 }
@@ -1009,7 +1257,7 @@ int vfs_access(const char *path, int mask)
  
  int vfs_add_newfile_ver_info(const char *path) 
 {
-    char file_ver_path[PATH_MAX], file_log_path[PATH_MAX], file_list_path[PATH_MAX],file_ver_no_path[PATH_MAX],file_current_ver_path[PATH_MAX];
+    char file_ver_path[PATH_MAX], file_log_path[PATH_MAX], file_ver_no_path[PATH_MAX], file_ver_list_path[PATH_MAX];
     int retstat = 0;
     //FILE *fp;
     FILE *f;
@@ -1021,14 +1269,12 @@ int vfs_access(const char *path, int mask)
     mkdir(file_ver_path,(mode_t)0777); // Setting the mode such that we have permissions to create files in the directory
     
     strcpy(file_log_path, file_ver_path);
-    strcpy(file_list_path, file_ver_path);
     strcpy(file_ver_no_path, file_ver_path);
-    strcpy(file_current_ver_path, file_ver_path);
+    strcpy(file_ver_list_path, file_ver_path);
     
     strcat(file_log_path,"/log");
-    strcat(file_list_path,"/list");
+    strcat(file_ver_list_path,"/list");
     strcat(file_ver_no_path,"/current_ver_no");
-    strcat(file_current_ver_path,"/current");
     
     log_msg("\n%s\n",file_log_path);
     
@@ -1038,15 +1284,12 @@ int vfs_access(const char *path, int mask)
     
     fclose(f);
         
-    f = fopen(file_list_path,"a");
+    f = fopen(file_ver_list_path,"a");
      if(!f)
-    {vfs_error("vfs_create list");}
-    fprintf(f,"%s\n",file_ver_no_path);
-    fprintf(f,"%s\n",file_log_path);
-    fprintf(f,"%s\n",file_current_ver_path);
+    {vfs_error("vfs_create log");}
     
-    fclose(f);
-    
+    fclose(f);    
+        
     f = fopen(file_ver_no_path,"a");
      if(!f)
     {vfs_error("vfs_create current_ver_no");}
