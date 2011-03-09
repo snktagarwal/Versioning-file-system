@@ -2,8 +2,9 @@
 
 #include "line.h"
 #include "point.h"
+#include "params.h"
 
-Line::Line(Point *parent, Point *child, qreal width = 1.0) {
+Line::Line(Point *parent, Point *child, qreal width = LINE_DEFAULT_WIDTH) {
 	this->parent = parent;
 	this->child = child;
 	this->width = width;
@@ -11,8 +12,9 @@ Line::Line(Point *parent, Point *child, qreal width = 1.0) {
 	parent->addLine(this);
 	child->addLine(this);
 	
-	setZValue(-1);
-	setColor(Qt::darkRed);
+	setZValue(LINE_DEFAULT_Z_VALUE);
+	setColor(LINE_DEFAULT_COLOR);
+	setCacheMode(QGraphicsItem::ItemCoordinateCache);
 	setLine(QLineF(parent->getX(), parent->getY(), child->getX(), child->getY()));
 }
 
@@ -34,7 +36,7 @@ QColor Line::getColor() const {
 }
 
 void Line::setColor(const QColor &color) {
-	setPen(QPen(color,1.0));
+	setPen(QPen(color, 1.0));
 }
 
 void Line::trackPoints()

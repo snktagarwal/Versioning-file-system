@@ -26,12 +26,14 @@ class Point : public QGraphicsItem {
 		
 		void setY(qreal y);
 		void setRadius(qreal r);
+		void setCurrent(bool isCurrent);
 		
 		//void setText(const QString &text);
     //QString text() const;
     //void setTextColor(const QColor &color);
     //QColor textColor() const;
-    //void setOutlineColor(const QColor &color);
+    void setOutlineColor(const QColor &color);
+    void setOutlineWidth(qreal width);
     //QColor outlineColor() const;
     void setBackgroundColor(const QColor &color);
     //QColor backgroundColor() const;
@@ -60,10 +62,12 @@ class Point : public QGraphicsItem {
 		QColor textColor;
 		QColor backgroundColor;
 		QColor outlineColor;
+		qreal outlineWidth;
 		
 		qreal x;
 		qreal y;
 		qreal r;
+		bool current;
 		
 		Point *parent;
 };

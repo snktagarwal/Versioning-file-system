@@ -5,9 +5,13 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QPair>
+class QSplitter;
+class QTextEdit;
+class QLabel;
 
 #include "line.h"
 #include "point.h"
+#include "axis.h"
 //#include "label.h"
 
 class GraphWindow : public QMainWindow {
@@ -22,17 +26,25 @@ class GraphWindow : public QMainWindow {
 	protected:
 		void mousePressEvent(QMouseEvent *event);
 	
+	private slots:
+		void showDocument();
+	
 	private:
 		typedef QPair<Point *, Point *> PointPair;
 		
 		QGraphicsScene *scene;
 		QGraphicsView *view;
+		QTextEdit *editor;
+		QLabel *label;
+		QSplitter *splitter;
 		
+		Axis *axis;
 		QList<Point *> *points;
 		Point *root;
-		//Label *label;
+		int current;
 		
 		void setupModel();
+		void setupViews();
 		void readFromFile(const QString &path);
 };
 
