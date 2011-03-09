@@ -1,15 +1,8 @@
 #ifndef AXIS_H
 #define AXIS_H
 
-#include <QGraphicsItem>
-#include <QColor>
+#include <QtGui>
 #include <QtGlobal>
-#include <QPointF>
-#include <QRectF>
-#include <QStyleOptionGraphicsItem>
-#include <QWidget>
-#include <QPainter>
-#include <QList>
 
 #include "params.h"
 #include "tick.h"

@@ -1,22 +1,15 @@
 #ifndef POINT_H
 #define	POINT_H
 
-#include <QtGlobal>
-#include <QGraphicsItem>
-#include <QGraphicsSceneMouseEvent>
-#include <QSet>
-#include <QString>
-#include <QRectF>
-#include <QPainterPath>
-#include <QWidget>
-#include <QPainter>
-#include <QStyleOptionGraphicsItem>
+#include <QtGui>
+
+#include "params.h"
 
 class Line;
 
 class Point : public QGraphicsItem {
 	public:
-		Point(qreal x, qreal y, qreal r, QString text, Point *parent = 0);
+		Point(qreal x, qreal y, qreal r = POINT_DEFAULT_RADIUS, QString text = "", Point *parent = 0);
 		~Point();
 		
 		qreal getX() const;
@@ -24,6 +17,7 @@ class Point : public QGraphicsItem {
 		qreal getRadius() const;
 		Point *getParent() const;
 		
+		void setX(qreal x);
 		void setY(qreal y);
 		void setRadius(qreal r);
 		void setCurrent(bool isCurrent);

@@ -22,11 +22,12 @@
 #define TEXT_COLOR (Qt::black)
 
 // Points
-#define POINT_DEFAULT_OUTLINE_COLOR (Qt::darkBlue)
-#define POINT_HEAD_OUTLINE_COLOR (QColor(200, 0, 0, 255))
-
+#define POINT_DEFAULT_RADIUS (5.0)
 #define POINT_DEFAULT_OUTLINE_WIDTH (1.0)
 #define POINT_HEAD_OUTLINE_WIDTH (3.0)
+
+#define POINT_DEFAULT_OUTLINE_COLOR (Qt::darkBlue)
+#define POINT_HEAD_OUTLINE_COLOR (QColor(200, 0, 0, 255))
 
 #define POINT_DEFAULT_BG_COLOR (Qt::blue)
 #define POINT_SELECTED_BG_COLOR (Qt::red)

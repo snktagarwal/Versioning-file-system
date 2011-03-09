@@ -1,8 +1,7 @@
 #ifndef LINE_H
 #define LINE_H
 
-#include <QGraphicsLineItem>
-#include <QColor>
+#include <QtGui>
 #include <QtGlobal>
 class Point;
 

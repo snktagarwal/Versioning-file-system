@@ -1,4 +1,3 @@
-#include <QtGui>
 #include <iostream>
 
 //#include "qxtspanslider.h"
@@ -10,6 +9,7 @@ GraphWindow::GraphWindow() {
 	
 	setupModel();
 	setupViews();
+	animateTree();
 	
 	QPointF *p1 = new QPointF(MARGIN, 1.5*MARGIN);
 	QPointF *p2 = new QPointF((view->width())-MARGIN, 1.5*MARGIN);
@@ -40,8 +40,35 @@ void GraphWindow::setRoot(Point *p) {
 	root = p;
 }
 
-void GraphWindow::mousePressEvent(QMouseEvent *event) {
+void GraphWindow::animateTree() {
+	QList<Point *> *pointsCopy = new QList<Point *>;
 	
+	Point *root = points->at(0);
+	for(int i=0; i<points->size(); i++) {
+		Point *p = points->at(i);
+		pointsCopy->insert(i, new Point(p->getX()-root->getX(), p->getY()-root->getY()));
+		p->setX(root->getX());
+		p->setY(root->getY());
+	}
+	
+	for(int i=0; i<points->size(); i++) {
+		Point *p = points->at(i);
+		Point *q = pointsCopy->at(i);
+		
+		QTimeLine *timer = new QTimeLine(1000);
+		timer->setFrameRange(0, 100);
+		
+		QGraphicsItemAnimation *animation = new QGraphicsItemAnimation;
+		animation->setItem(p);
+		animation->setTimeLine(timer);
+		
+		//animation->setPosAt(0.0, QPointF(p->getX(), p->getY()));
+		animation->setPosAt(1.0, QPointF(q->getX(), q->getY()));
+		
+		std::cout << i << " : " << q->getX() << "," << q->getY() << std::endl;
+		
+		timer->start();
+	}
 }
 
 void GraphWindow::setupViews() {
@@ -84,7 +111,7 @@ void GraphWindow::setupModel() {
 			Line *line = new Line(p->getParent(), p, 5.0);
 			scene->addItem(line);
 			
-			p->setParentItem(p->getParent());
+			//p->setParentItem(p->getParent());
 		}
 	}
 }

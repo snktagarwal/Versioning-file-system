@@ -1,9 +1,7 @@
 #include <iostream>
-#include <QVariant>
 
 #include "point.h"
 #include "line.h"
-#include "params.h"
 
 Point::Point(qreal x, qreal y, qreal r, QString text, Point *parent) {	
 	this->x = x;
@@ -46,6 +44,9 @@ int Point::childCount() const {
 	return children.size();
 }
 
+void Point::setX(qreal x) {
+	this->x = x;
+}
 void Point::setY(qreal y) {
 	this->y = y;
 }

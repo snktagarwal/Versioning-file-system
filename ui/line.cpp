@@ -1,5 +1,3 @@
-#include <QPen>
-
 #include "line.h"
 #include "point.h"
 #include "params.h"

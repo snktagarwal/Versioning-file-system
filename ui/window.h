@@ -1,13 +1,7 @@
 #ifndef GRAPH_WINDOW_H
 #define GRAPH_WINDOW_H
 
-#include <QMainWindow>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QPair>
-class QSplitter;
-class QTextEdit;
-class QLabel;
+#include <QtGui>
 
 #include "line.h"
 #include "point.h"
@@ -23,15 +17,10 @@ class GraphWindow : public QMainWindow {
 		Point *getRoot() const;
 		void setRoot(Point *p);
 	
-	protected:
-		void mousePressEvent(QMouseEvent *event);
-	
 	private slots:
 		void showDocument();
 	
 	private:
-		typedef QPair<Point *, Point *> PointPair;
-		
 		QGraphicsScene *scene;
 		QGraphicsView *view;
 		QTextEdit *editor;
@@ -46,6 +35,7 @@ class GraphWindow : public QMainWindow {
 		void setupModel();
 		void setupViews();
 		void readFromFile(const QString &path);
+		void animateTree();
 };
 
 #endif
