@@ -3,3 +3,4 @@ Dependencies
 
 1. Fuse Development and Run Time library
 2. GLib-2.0+ for basic abstration
+3. Qt4 Libraries for UI (libqt4-core, libqt4-gui, libqt4-dev)
