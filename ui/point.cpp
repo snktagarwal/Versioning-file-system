@@ -3,7 +3,10 @@
 #include "point.h"
 #include "line.h"
 
-Point::Point(qreal x, qreal y, qreal r, QString tagText, QString tooltipText, Point *parent) {	
+Point::Point(QGraphicsScene *scene, qreal x, qreal y, qreal r, QString tagText, QString tooltipText, Point *parent) {	
+	if(tagText.length() > TAG_MAX_LENGTH)
+		tagText = tagText.left(TAG_MAX_LENGTH).append("...");
+	
 	this->x = x;
 	this->y = y;
 	this->r = r;
@@ -19,7 +22,12 @@ Point::Point(qreal x, qreal y, qreal r, QString tagText, QString tooltipText, Po
 	outlineWidth = POINT_DEFAULT_OUTLINE_WIDTH;
 	
 	setToolTip(tooltipText);
-	//setTag(tagText);
+	
+	if(tagText.compare("") != 0) {
+		tag = new QGraphicsSimpleTextItem(tagText);
+		updateTagPosition();
+		scene->addItem(tag);
+	}
 	
 	setFlags(ItemIsSelectable);
 	setCacheMode(QGraphicsItem::ItemCoordinateCache);
@@ -38,13 +46,13 @@ Point::~Point() {
 }
 
 qreal Point::getX() const {
-	//if(timeline->state() == QTimeLine::NotRunning)
-		return x;
-	//else
-		//return animation->
+	return x;
 }
 qreal Point::getY() const {
 	return y;
+}
+qreal Point::getRadius() const {
+	return r;
 }
 Point *Point::getParent() const {
 	return parent;
@@ -66,6 +74,9 @@ QTimeLine *Point::getTimeLine() const {
 }
 QColor Point::getBackgroundColor() const {
 	return backgroundColor;
+}
+QGraphicsSimpleTextItem *Point::getTag() const {
+	return tag;
 }
 
 void Point::setX(qreal x) {
@@ -96,6 +107,16 @@ void Point::setOutlineColor(const QColor &color) {
 void Point::setOutlineWidth(qreal width) {
 	outlineWidth = width;
 	update();
+}
+
+void Point::updateTagPosition() {
+	if(tagText.compare("") != 0) {
+		QFontMetricsF metrics = qApp->font();
+		QRectF rect = metrics.boundingRect(tagText);
+		qreal tagTextX = x - (rect.width()/2);
+		qreal tagTextY = y + r + (rect.height()/2) - 5;
+		tag->setPos(tagTextX, tagTextY);
+	}
 }
 
 void Point::addLine(Line *line) {
@@ -141,6 +162,7 @@ QVariant Point::itemChange(GraphicsItemChange change, const QVariant &value)
 			line->trackPoints();
 			//std::cout << "here too" << std::endl;
 		}
+		//tag->update(tag->boundingRect());
 		//std::cout << "here" << std::endl;
 	}
 	return QGraphicsItem::itemChange(change, value);
@@ -187,10 +209,16 @@ void Point::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 	
 	painter->drawEllipse(boundingRect());
 	
+	//tag->update(tag->boundingRect());
+	
 	//std::cout << "(" << getX() << "," << getY() << ") isSelected(): " << isSelected() << std::endl;
 	
-	//painter->setPen(textColor);
-	//painter->drawText();
+	//if(tagText.compare("") != 0) {
+		//qDebug() << "tagText: " << tagText << " | " << tagTextRect();
+		//painter->setPen(TEXT_COLOR);
+		//painter->drawText(tagTextRect(), Qt::AlignCenter, "tag");
+	//}
+	
 	update();
 }
 
@@ -209,10 +237,10 @@ void Point::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
 	//qreal distanceSquared = (scenePos.x()-getX())*(scenePos.x()-getX()) - (scenePos.y()-getY())*(scenePos.y()-getY());
 	//std::cout << distanceSquared << std::endl;
 	
-	std::cout << "point: " << getX() << "," << getY() << std::endl;
+	/* std::cout << "point: " << getX() << "," << getY() << std::endl;
 	std::cout << "pos: " << (event->pos()).x() << "," << (event->pos()).y() << std::endl;
 	std::cout << "scene: " << (event->scenePos()).x() << "," << (event->scenePos()).y() << std::endl;
-	std::cout << "screen: " << (event->screenPos()).x() << "," << (event->screenPos()).y() << std::endl;
+	std::cout << "screen: " << (event->screenPos()).x() << "," << (event->screenPos()).y() << std::endl; */
 	
 	//if( distanceSquared < r*r ) {	
 		//QGraphicsOpacityEffect *opacityEffect = new QGraphicsOpacityEffect;

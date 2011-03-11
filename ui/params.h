@@ -12,14 +12,8 @@
 #define BRANCH_SEPARATION (50.0)
 #define MARGIN (20.0)
 
-// Direction of spread of the timeline tree
-#define TOP_TO_BOTTOM (1)
-#define BOTTOM_TO_TOP (2)
-
-#define TREE_WIDTH_DIRECTION TOP_TO_BOTTOM
-
 // Text
-#define TEXT_COLOR (Qt::black)
+#define TEXT_COLOR (Qt::red)
 
 // Points
 #define POINT_DEFAULT_RADIUS (5.0)
@@ -43,7 +37,7 @@
 #define ANIMATION_EASING_CURVE (QTimeLine::EaseOutCurve)
 
 // Lines
-#define LINE_DEFAULT_COLOR (Qt::black)
+#define LINE_DEFAULT_COLOR (QColor(0,0,0,255*0.4))
 #define LINE_DEFAULT_WIDTH (1.0)
 #define LINE_DEFAULT_Z_VALUE (-1)
 
@@ -58,6 +52,9 @@
 #define AXIS_DEFAULT_WIDTH (2.0)
 #define AXIS_DEFAULT_TICK_SEPARATION (100.0)
 #define AXIS_DEFAULT_Z_VALUE (-3)
+
+// Tags
+#define TAG_MAX_LENGTH (8)
 
 // Objects
 #define OBJECTS_DIR "files/"

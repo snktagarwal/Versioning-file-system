@@ -53,12 +53,12 @@ void GraphWindow::animateTree() {
 	for(int i=0; i<points->size(); i++) {
 		Point *p = points->at(i);
 		if(p->getParent() == 0) {
-			pointsCopy->insert(i, new Point(p->getX()-root->getX(), p->getY()-root->getY()));
+			pointsCopy->insert(i, new Point(scene, p->getX()-root->getX(), p->getY()-root->getY()));
 		}
 		else {
 			Point *parent;
 			parent = p->getParent();
-			pointsCopy->insert(i, new Point(p->getX()-parent->getX(), p->getY()-parent->getY()));
+			pointsCopy->insert(i, new Point(scene, p->getX()-parent->getX(), p->getY()-parent->getY()));
 		}
 	}
 	
@@ -137,6 +137,7 @@ void GraphWindow::setupModel() {
 	
 	for(int i=0; i<points->size(); i++) {
 		Point *p = points->at(i);
+		
 		scene->addItem(p);
 		
 		if(p->childCount() == 0) {
@@ -155,6 +156,7 @@ void GraphWindow::setupModel() {
 
 void GraphWindow::showDocument() {
 	QList<QGraphicsItem *> selectedPoints = scene->selectedItems();
+	std::cout << "No. of selections: " << selectedPoints.size() << std::endl;
 	
 	QList<QTextEdit::ExtraSelection> extras;
 	editor->setExtraSelections(extras);
@@ -214,14 +216,18 @@ void GraphWindow::showDocument() {
 				editor->setTextCursor(cursor);*/
 			}
 		}
-		else {
+	}
+	else if(selectedPoints.size() == 2) {
+	}
+	else {
+			scene->clearSelection();
 			editor->setText("");
-		}
 	}
 }
 
 void GraphWindow::readFromFile(const QString &path) {
 	points = new QList<Point *>;
+	qreal rootX;
 	
 	if(!path.isNull()) {
 		QFile file(path);
@@ -242,31 +248,26 @@ void GraphWindow::readFromFile(const QString &path) {
 					qreal x = pieces.value(0).toDouble();
 					qreal y;
 					qreal radius = pieces.value(1).toDouble();
-					QString tooltipText = pieces.value(2);
-					QString parentString = pieces.value(3);
+					//QString tooltipText = pieces.value(2);
+					QString parentString = pieces.value(2);
 					int parentIndex = parentString.toInt();
-					QString filename = pieces.value(4);
+					QString filename = pieces.value(3);
+					QString tagText = pieces.value(4);
+					QString tooltipText = tagText;
 					
 					if(x > (scene->width()-2*MARGIN)) {
 						scene->setSceneRect(0, 0, (x+2*MARGIN), scene->height());
 					}
 					
 					if(parentString.compare("-1") == 0) {
-						
-						if(TREE_WIDTH_DIRECTION == TOP_TO_BOTTOM) {
-							y = 3*MARGIN + radius;
-							if(y > (scene->height()-2*MARGIN)) {
-								scene->setSceneRect(0, 0, scene->width(), (y+MARGIN));
-							}
-						}
-						else if(TREE_WIDTH_DIRECTION == BOTTOM_TO_TOP) {
-							y = scene->height() - (MARGIN + radius);
-							if(y > (scene->height()-2*MARGIN)) {
-								scene->setSceneRect(0, 0, scene->width(), (y+MARGIN));
-							}
+						rootX = x;
+						x = 0;
+						y = 3*MARGIN + radius;
+						if(y > (scene->height()-2*MARGIN)) {
+							scene->setSceneRect(0, 0, scene->width(), (y+MARGIN));
 						}
 						
-						Point *p = new Point( MARGIN+x, y, radius, "tag", tooltipText );
+						Point *p = new Point( scene, MARGIN+x, y, radius, tagText, tooltipText );
 						points->append(p);
 						setRoot(p);
 						
@@ -277,21 +278,19 @@ void GraphWindow::readFromFile(const QString &path) {
 						}
 					}
 					else {
+						x -= rootX;
+						
 						Point *parent = points->at(parentIndex);
-						Point *child = new Point( x, parent->getY(), radius, "tag", tooltipText, parent );
+						Point *child = new Point( scene, MARGIN+x, parent->getY(), radius, tagText, tooltipText, parent );
 						parent->addChild(child);
 						
-						if(TREE_WIDTH_DIRECTION == TOP_TO_BOTTOM) {
-							y = parent->getY() + BRANCH_SEPARATION * (parent->childCount()-1);
-							if(y > (scene->height()-2*MARGIN)) {
-								scene->setSceneRect(0, 0, scene->width(), (y+MARGIN));
-							}
-						}
-						else if(TREE_WIDTH_DIRECTION == BOTTOM_TO_TOP) {
-							y = parent->getY() - BRANCH_SEPARATION * (parent->childCount()-1);
+						y = parent->getY() + BRANCH_SEPARATION * (parent->childCount()-1);
+						if(y > (scene->height()-2*MARGIN)) {
+							scene->setSceneRect(0, 0, scene->width(), (y+MARGIN));
 						}
 						
 						child->setY(y);
+						child->updateTagPosition();
 						
 						points->append(child);
 						

@@ -14,7 +14,7 @@ class Point : public QObject, public QGraphicsItem {
 	//Q_PROPERTY(QColor backgroundColor READ getBackgroundColor WRITE setBackgroundColor)
 	
 	public:
-		Point(qreal x, qreal y, qreal r = POINT_DEFAULT_RADIUS, QString tagText = "", QString tooltipText = "", Point *parent = 0);
+		Point(QGraphicsScene *scene, qreal x, qreal y, qreal r = POINT_DEFAULT_RADIUS, QString tagText = "", QString tooltipText = "", Point *parent = 0);
 		~Point();
 		
 		qreal getX() const;
@@ -27,6 +27,7 @@ class Point : public QObject, public QGraphicsItem {
 		QGraphicsItemAnimation *getAnimation() const;
 		QTimeLine *getTimeLine() const;
 		QColor getBackgroundColor() const;
+		QGraphicsSimpleTextItem *getTag() const;
 		
 		void setX(qreal x);
 		void setY(qreal y);
@@ -35,13 +36,11 @@ class Point : public QObject, public QGraphicsItem {
 		void setAnimation(QGraphicsItemAnimation *animation);
 		void setTimeLine(QTimeLine *timeline);
 		
-		//void setText(const QString &text);
-    //QString text() const;
-    //void setTextColor(const QColor &color);
-    //QColor textColor() const;
     void setOutlineColor(const QColor &color);
     void setOutlineWidth(qreal width);
     void setBackgroundColor(const QColor &color);
+    
+    void updateTagPosition();
     
     void addLine(Line *line);
     void removeLine(Line *line);
@@ -80,6 +79,7 @@ class Point : public QObject, public QGraphicsItem {
 		bool current;
 		QString tooltipText;
 		QString tagText;
+		QGraphicsSimpleTextItem *tag;
 		
 		Point *parent;
 		int ancestorCount;
