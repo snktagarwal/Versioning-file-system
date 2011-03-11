@@ -19,7 +19,8 @@ class GraphWindow : public QMainWindow {
 	
 	private slots:
 		void showDocument();
-	
+		void startTimeLine(Point *p);
+			
 	private:
 		QGraphicsScene *scene;
 		QGraphicsView *view;
@@ -36,6 +37,7 @@ class GraphWindow : public QMainWindow {
 		void setupViews();
 		void readFromFile(const QString &path);
 		void animateTree();
+		void setAncestorCount();
 };
 
 #endif

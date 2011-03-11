@@ -3,12 +3,14 @@
 #include "point.h"
 #include "line.h"
 
-Point::Point(qreal x, qreal y, qreal r, QString text, Point *parent) {	
+Point::Point(qreal x, qreal y, qreal r, QString tagText, QString tooltipText, Point *parent) {	
 	this->x = x;
 	this->y = y;
 	this->r = r;
-	this->setToolTip(text);
+	this->tagText = tagText;
+	this->tooltipText = tooltipText;
 	this->parent = parent;
+	this->ancestorCount = 0;
 	this->current = false;
 	
 	textColor = TEXT_COLOR;
@@ -16,9 +18,16 @@ Point::Point(qreal x, qreal y, qreal r, QString text, Point *parent) {
 	outlineColor = POINT_DEFAULT_OUTLINE_COLOR;
 	outlineWidth = POINT_DEFAULT_OUTLINE_WIDTH;
 	
+	setToolTip(tooltipText);
+	//setTag(tagText);
+	
 	setFlags(ItemIsSelectable);
 	setCacheMode(QGraphicsItem::ItemCoordinateCache);
 	setAcceptHoverEvents(true);
+	
+	timer = new QTimer(this);
+	timer->setSingleShot(true);
+	QObject::connect( timer, SIGNAL(timeout()), this, SLOT(startTimeLine()) );
 }
 
 Point::~Point() {
@@ -29,7 +38,10 @@ Point::~Point() {
 }
 
 qreal Point::getX() const {
-	return x;
+	//if(timeline->state() == QTimeLine::NotRunning)
+		return x;
+	//else
+		//return animation->
 }
 qreal Point::getY() const {
 	return y;
@@ -43,6 +55,18 @@ QSet<Point *> Point::getChildren() const {
 int Point::childCount() const {
 	return children.size();
 }
+int Point::getAncestorCount() const {
+	return ancestorCount;
+}
+QGraphicsItemAnimation *Point::getAnimation() const {
+	return animation;
+}
+QTimeLine *Point::getTimeLine() const {
+	return timeline;
+}
+QColor Point::getBackgroundColor() const {
+	return backgroundColor;
+}
 
 void Point::setX(qreal x) {
 	this->x = x;
@@ -55,6 +79,12 @@ void Point::setRadius(qreal r) {
 }
 void Point::setCurrent(bool isCurrent) {
 	this->current = isCurrent;
+}
+void Point::setAnimation(QGraphicsItemAnimation *animation) {
+	this->animation = animation;
+}
+void Point::setTimeLine(QTimeLine *timeline) {
+	this->timeline = timeline;
 }
 void Point::setBackgroundColor(const QColor &color) {
 	backgroundColor = color;
@@ -77,7 +107,19 @@ void Point::removeLine(Line *line) {
 
 void Point::addChild(Point *child) {
 	children.insert(child);
-	std::cout << "No. of children: " << children.size() << std::endl;
+	//std::cout << "No. of children: " << children.size() << std::endl;
+}
+
+void Point::incrementAncestorCount() {
+	ancestorCount++;
+}
+
+void Point::startTimer(int msec) {
+	timer->start(msec);
+}
+
+void Point::startTimeLine() {
+	timeline->start();
 }
 
 QRectF Point::boundingRect() const {
@@ -93,11 +135,15 @@ QPainterPath Point::shape() const {
 
 QVariant Point::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-    if (change == ItemPositionHasChanged) {
-        foreach (Line *line, lines)
-            line->trackPoints();
-    }
-    return QGraphicsItem::itemChange(change, value);
+	//std::cout << "here: " << getX() << "," << getY() << std::endl;
+  if (change == ItemPositionHasChanged) {
+		foreach(Line *line, lines) {
+			line->trackPoints();
+			//std::cout << "here too" << std::endl;
+		}
+		//std::cout << "here" << std::endl;
+	}
+	return QGraphicsItem::itemChange(change, value);
 }
 
 void Point::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
@@ -141,7 +187,7 @@ void Point::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 	
 	painter->drawEllipse(boundingRect());
 	
-	std::cout << "(" << getX() << "," << getY() << ") isSelected(): " << isSelected() << std::endl;
+	//std::cout << "(" << getX() << "," << getY() << ") isSelected(): " << isSelected() << std::endl;
 	
 	//painter->setPen(textColor);
 	//painter->drawText();
@@ -151,4 +197,66 @@ void Point::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 // event handlers
 void Point::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 	std::cout << "Point (" << getX() << "," << getY() << ") was clicked." << std::endl;
+}
+
+void Point::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
+	std::cout << "Point (" << getX() << "," << getY() << ") was hovered over (ENTER)." << std::endl;
+	QStyleOptionGraphicsItem *option = new QStyleOptionGraphicsItem;
+	option->state = QStyle::State_MouseOver;
+	paint(new QPainter, option, NULL);
+	
+	//QPointF scenePos = event->pos();
+	//qreal distanceSquared = (scenePos.x()-getX())*(scenePos.x()-getX()) - (scenePos.y()-getY())*(scenePos.y()-getY());
+	//std::cout << distanceSquared << std::endl;
+	
+	std::cout << "point: " << getX() << "," << getY() << std::endl;
+	std::cout << "pos: " << (event->pos()).x() << "," << (event->pos()).y() << std::endl;
+	std::cout << "scene: " << (event->scenePos()).x() << "," << (event->scenePos()).y() << std::endl;
+	std::cout << "screen: " << (event->screenPos()).x() << "," << (event->screenPos()).y() << std::endl;
+	
+	//if( distanceSquared < r*r ) {	
+		//QGraphicsOpacityEffect *opacityEffect = new QGraphicsOpacityEffect;
+		//this->setGraphicsEffect(opacityEffect);
+	
+		/*QPropertyAnimation animation(this, "backgroundColor");
+		animation.setDuration(3000);
+		QColor color = getBackgroundColor();
+		color.setAlpha(1.0);
+		animation.setStartValue(color);
+		color.setAlpha(0.6);
+		animation.setEndValue(color);
+
+		//animation.setEasingCurve(QEasingCurve::OutBounce);
+
+		animation.start();*/
+	//}
+}
+
+void Point::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
+	std::cout << "Point (" << getX() << "," << getY() << ") was hovered over (ENTER)." << std::endl;
+	QStyleOptionGraphicsItem *option = new QStyleOptionGraphicsItem;
+	option->state = QStyle::State_MouseOver;
+	paint(new QPainter, option, NULL);
+	
+	//QPointF scenePos = event->pos();
+	//qreal distanceSquared = (scenePos.x()-getX())*(scenePos.x()-getX()) - (scenePos.y()-getY())*(scenePos.y()-getY());
+	//std::cout << distanceSquared << std::endl;
+	
+	//if( distanceSquared > r*r ) {	
+		//QGraphicsOpacityEffect *opacityEffect = new QGraphicsOpacityEffect;
+		//opacityEffect->setOpacity(1.0);
+		//this->setGraphicsEffect(opacityEffect);
+	
+		/*QPropertyAnimation animation(this, "backgroundColor");
+		animation.setDuration(3000);
+		QColor color = getBackgroundColor();
+		color.setAlpha(1.0);
+		animation.setStartValue(color);
+		color.setAlpha(0.6);
+		animation.setEndValue(color);
+
+		//animation.setEasingCurve(QEasingCurve::OutBounce);
+
+		animation.start();*/
+	//}
 }

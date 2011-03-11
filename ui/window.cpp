@@ -44,30 +44,66 @@ void GraphWindow::animateTree() {
 	QList<Point *> *pointsCopy = new QList<Point *>;
 	
 	Point *root = points->at(0);
+	
+	/*for(int i=0; i<points->size(); i++) {
+		Point *p = points->at(i);
+		pointsCopy->insert(i, new Point(p->getX(), p->getY()));
+	}*/
+	
 	for(int i=0; i<points->size(); i++) {
 		Point *p = points->at(i);
-		pointsCopy->insert(i, new Point(p->getX()-root->getX(), p->getY()-root->getY()));
-		p->setX(root->getX());
-		p->setY(root->getY());
+		if(p->getParent() == 0) {
+			pointsCopy->insert(i, new Point(p->getX()-root->getX(), p->getY()-root->getY()));
+		}
+		else {
+			Point *parent;
+			parent = p->getParent();
+			pointsCopy->insert(i, new Point(p->getX()-parent->getX(), p->getY()-parent->getY()));
+		}
 	}
 	
 	for(int i=0; i<points->size(); i++) {
 		Point *p = points->at(i);
 		Point *q = pointsCopy->at(i);
 		
-		QTimeLine *timer = new QTimeLine(1000);
-		timer->setFrameRange(0, 100);
+		p->setX(root->getX());
+		p->setY(root->getY());
+		
+		QTimeLine *timeline = new QTimeLine(ANIMATION_TIME);
+		p->setTimeLine( timeline );
+		timeline->setFrameRange(0, 100);
+		timeline->setCurveShape(ANIMATION_EASING_CURVE);
 		
 		QGraphicsItemAnimation *animation = new QGraphicsItemAnimation;
+		p->setAnimation(animation);
 		animation->setItem(p);
-		animation->setTimeLine(timer);
+		animation->setTimeLine(timeline);
 		
-		//animation->setPosAt(0.0, QPointF(p->getX(), p->getY()));
-		animation->setPosAt(1.0, QPointF(q->getX(), q->getY()));
+		for(int j=0; j<ANIMATION_TIME; j++) {
+			qreal ratio = ((float)j)/ANIMATION_TIME;
+			animation->setPosAt( ratio, QPointF( ratio*(q->getX()), ratio*(q->getY()) ) );
+		}
 		
-		std::cout << i << " : " << q->getX() << "," << q->getY() << std::endl;
-		
-		timer->start();
+		p->startTimer((p->getAncestorCount()+1)*ANIMATION_TIME);
+	}
+}
+
+void GraphWindow::startTimeLine(Point *p) {
+	p->startTimeLine();
+}
+
+void GraphWindow::setAncestorCount() {
+	Point *p, *p1, *p2;
+	for(int i=0; i<points->size(); i++) {
+		p = points->at(i);
+		p1 = p;
+		p2 = p->getParent();
+		while(p2 != 0) {
+			p1 = p2;
+			p2 = p1->getParent();
+			p->incrementAncestorCount();
+		}
+		//std::cout << "Ancestors: " << p->getAncestorCount() << std::endl;
 	}
 }
 
@@ -97,6 +133,7 @@ void GraphWindow::setupViews() {
 
 void GraphWindow::setupModel() {
 	readFromFile("data");
+	setAncestorCount();
 	
 	for(int i=0; i<points->size(); i++) {
 		Point *p = points->at(i);
@@ -111,7 +148,7 @@ void GraphWindow::setupModel() {
 			Line *line = new Line(p->getParent(), p, 5.0);
 			scene->addItem(line);
 			
-			//p->setParentItem(p->getParent());
+			p->setParentItem(p->getParent());
 		}
 	}
 }
@@ -229,7 +266,7 @@ void GraphWindow::readFromFile(const QString &path) {
 							}
 						}
 						
-						Point *p = new Point( MARGIN+x, y, radius, tooltipText );
+						Point *p = new Point( MARGIN+x, y, radius, "tag", tooltipText );
 						points->append(p);
 						setRoot(p);
 						
@@ -241,7 +278,7 @@ void GraphWindow::readFromFile(const QString &path) {
 					}
 					else {
 						Point *parent = points->at(parentIndex);
-						Point *child = new Point( x, parent->getY(), radius, tooltipText, parent );
+						Point *child = new Point( x, parent->getY(), radius, "tag", tooltipText, parent );
 						parent->addChild(child);
 						
 						if(TREE_WIDTH_DIRECTION == TOP_TO_BOTTOM) {

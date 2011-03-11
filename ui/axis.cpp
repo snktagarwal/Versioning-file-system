@@ -7,7 +7,6 @@
 Axis::Axis(QPointF *p1, QPointF *p2, qreal width, qreal tickSeparation) {
 	qreal length = p2->x() - p1->x();
 	int segmentCount = ((int)(length/tickSeparation)) + 1;
-	std::cout << segmentCount << "," << (segmentCount*tickSeparation) << std::endl;
 	p2->setX(p1->x()+segmentCount*tickSeparation);
 	
 	this->p1 = p1;
