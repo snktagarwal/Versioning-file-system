@@ -20,17 +20,31 @@ class GraphWindow : public QMainWindow {
 	private slots:
 		void showDocument();
 		void startTimeLine(Point *p);
+		void updateRange(int min, int max);
 			
 	private:
 		QGraphicsScene *scene;
 		QGraphicsView *view;
-		QTextEdit *editor;
-		QLabel *label;
+		
+		QWidget *singleEditorWidget;
+		QLabel *singleEditorLabel;
+		QTextEdit *singleEditor;
+		
+		QWidget *doubleEditorWidget;
+		QLabel *doubleEditorLeftLabel;
+		QLabel *doubleEditorRightLabel;
+		QTextEdit *doubleEditorLeft;
+		QTextEdit *doubleEditorRight;
+		QScrollBar *doubleEditorScrollBar;
+		//QSplitter *doubleEditorSplitter;
+		
 		QSplitter *splitter;
+		//QWidget *mainWidget;
 		
 		Axis *axis;
 		QList<Point *> *points;
 		Point *root;
+		qreal rootX;
 		int current;
 		
 		void setupModel();
@@ -38,6 +52,7 @@ class GraphWindow : public QMainWindow {
 		void readFromFile(const QString &path);
 		void animateTree();
 		void setAncestorCount();
+		void highlightDifferences(QFile *file1, QFile *file2);
 };
 
 #endif

@@ -1,9 +1,10 @@
 #include "tick.h"
 
-Tick::Tick(QPointF *center, qreal width, qreal height) {
+Tick::Tick(QPointF *center, QString labelText, qreal width, qreal height) {
 	this->center = center;
 	this->width = width;
 	this->height = height;
+	this->labelText = labelText;
 	
 	setZValue(TICK_DEFAULT_Z_VALUE);
 	setPen(QPen(TICK_DEFAULT_COLOR));
@@ -13,4 +14,14 @@ Tick::Tick(QPointF *center, qreal width, qreal height) {
 		center->x(),
 		center->y()+(height/2)
 	));
+}
+
+void Tick::drawLabel(QGraphicsScene *scene) {
+	label = new QGraphicsSimpleTextItem(labelText);
+	QFontMetricsF metrics = qApp->font();
+	QRectF rect = metrics.boundingRect(labelText);
+	qreal labelTextX = center->x() - (rect.width()/2);
+	qreal labelTextY = center->y() - height - (rect.height()/2) - 5;
+	label->setPos(labelTextX, labelTextY);
+	scene->addItem(label);
 }

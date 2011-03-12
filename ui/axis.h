@@ -14,7 +14,7 @@ class Axis : public QGraphicsItem {
 		
 		QPointF *getPoint(int i) const;
 		
-		void drawTicks(QGraphicsScene *scene);
+		void drawTicks(QGraphicsScene *scene, qreal rootX);
 		
 		QRectF boundingRect() const;
 		QPainterPath shape() const;

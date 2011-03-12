@@ -56,8 +56,8 @@ class Point : public QObject, public QGraphicsItem {
   
   protected:
   	void mousePressEvent(QGraphicsSceneMouseEvent *event);
-  	void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-  	void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+  	//void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+  	//void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
   	QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 	
 	public slots:

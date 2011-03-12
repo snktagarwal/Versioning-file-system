@@ -63,11 +63,19 @@ void Axis::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 	update();
 }
 
-void Axis::drawTicks(QGraphicsScene *scene) {
+void Axis::drawTicks(QGraphicsScene *scene, qreal rootX) {
 	for( qreal x=p1->x(); x<=p2->x(); x+=tickSeparation ) {
-		Tick *tick = new Tick( new QPointF(x,p1->y()) );
+		QString labelText;
+		#if defined(__arm__)
+			labelText = QString::number(float(x - MARGIN + rootX)/SCALING_FACTOR);
+		#else
+			labelText = QString::number(double(x - MARGIN + rootX)/SCALING_FACTOR);
+		#endif
+		
+		Tick *tick = new Tick( new QPointF(x,p1->y()), labelText );
 		ticks.insert(tick);
 		tick->setParentItem(this);
+		tick->drawLabel(scene);
 		scene->addItem(tick);
 	}
 }

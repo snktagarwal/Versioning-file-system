@@ -6,6 +6,7 @@
 Point::Point(QGraphicsScene *scene, qreal x, qreal y, qreal r, QString tagText, QString tooltipText, Point *parent) {	
 	if(tagText.length() > TAG_MAX_LENGTH)
 		tagText = tagText.left(TAG_MAX_LENGTH).append("...");
+	tagText.prepend("[").append("]");
 	
 	this->x = x;
 	this->y = y;
@@ -23,7 +24,7 @@ Point::Point(QGraphicsScene *scene, qreal x, qreal y, qreal r, QString tagText, 
 	
 	setToolTip(tooltipText);
 	
-	if(tagText.compare("") != 0) {
+	if(tagText.compare("[]") != 0) {
 		tag = new QGraphicsSimpleTextItem(tagText);
 		updateTagPosition();
 		scene->addItem(tag);
@@ -110,7 +111,7 @@ void Point::setOutlineWidth(qreal width) {
 }
 
 void Point::updateTagPosition() {
-	if(tagText.compare("") != 0) {
+	if(tagText.compare("[]") != 0) {
 		QFontMetricsF metrics = qApp->font();
 		QRectF rect = metrics.boundingRect(tagText);
 		qreal tagTextX = x - (rect.width()/2);
@@ -204,6 +205,7 @@ void Point::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 		//setBackgroundColor(POINT_CURRENT_BG_COLOR);
 	}
 	
+	painter->setRenderHint(QPainter::Antialiasing,true);
 	painter->setPen(pen);
 	painter->setBrush(backgroundColor);
 	
@@ -225,13 +227,14 @@ void Point::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 // event handlers
 void Point::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 	std::cout << "Point (" << getX() << "," << getY() << ") was clicked." << std::endl;
+	event->accept();
 }
 
-void Point::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
+/* void Point::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
 	std::cout << "Point (" << getX() << "," << getY() << ") was hovered over (ENTER)." << std::endl;
 	QStyleOptionGraphicsItem *option = new QStyleOptionGraphicsItem;
 	option->state = QStyle::State_MouseOver;
-	paint(new QPainter, option, NULL);
+	paint(new QPainter, option, NULL); */
 	
 	//QPointF scenePos = event->pos();
 	//qreal distanceSquared = (scenePos.x()-getX())*(scenePos.x()-getX()) - (scenePos.y()-getY())*(scenePos.y()-getY());
@@ -258,13 +261,13 @@ void Point::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
 
 		animation.start();*/
 	//}
-}
+/* }
 
 void Point::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
 	std::cout << "Point (" << getX() << "," << getY() << ") was hovered over (ENTER)." << std::endl;
 	QStyleOptionGraphicsItem *option = new QStyleOptionGraphicsItem;
 	option->state = QStyle::State_MouseOver;
-	paint(new QPainter, option, NULL);
+	paint(new QPainter, option, NULL); */
 	
 	//QPointF scenePos = event->pos();
 	//qreal distanceSquared = (scenePos.x()-getX())*(scenePos.x()-getX()) - (scenePos.y()-getY())*(scenePos.y()-getY());
@@ -287,4 +290,4 @@ void Point::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
 
 		animation.start();*/
 	//}
-}
+//}

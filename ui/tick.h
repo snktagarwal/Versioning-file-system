@@ -7,13 +7,16 @@
 
 class Tick : public QGraphicsLineItem {
 	public:
-		Tick(QPointF *center, qreal width = TICK_DEFAULT_WIDTH, qreal height = TICK_DEFAULT_HEIGHT);
+		Tick(QPointF *center, QString labelText, qreal width = TICK_DEFAULT_WIDTH, qreal height = TICK_DEFAULT_HEIGHT);
+		
+		void drawLabel(QGraphicsScene *scene);
 	
 	private:
 		QPointF *center;
 		qreal height;
 		qreal width;
-		QString *text;
+		QString labelText;
+		QGraphicsSimpleTextItem *label;
 };
 
 #endif
