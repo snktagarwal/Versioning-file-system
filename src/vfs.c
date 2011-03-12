@@ -229,11 +229,12 @@ int report_file_tag(char * filepath, int vno, char * tag)                 // ret
  	g_strreverse(ver); 
  	fpath[len] = '\0';
  	log_msg("Entering into report checkout %s\n",ver);
- 	int ver_no = atoi(ver);
+ 	int tp = atoi(ver);
  	strcpy(ret_file_path,fpath);
  	if(mode == 0)
  	{
- 		report_checkout(fpath,ver_no);
+ 		log_msg("Entering into report checkout %s\n",ver);
+ 		report_checkout(fpath,tp);
  	}
  	return ret_file_path;
  }
@@ -255,11 +256,11 @@ int report_file_tag(char * filepath, int vno, char * tag)                 // ret
  	g_strreverse(ver); 
  	fpath[len] = '\0';
  	log_msg("Entering into report revert %s\n",ver);
- 	int ver_no = atoi(ver);
+ 	int tp = atoi(ver);
  	strcpy(ret_file_path,fpath);
  	if(mode == 0)
  	{
- 		revert_to_version(fpath,ver_no);
+ 		revert_to_version(fpath,tp);
  	}
  	return ret_file_path;
  }
@@ -368,7 +369,7 @@ int vfs_mknod(const char *path, mode_t mode, dev_t dev)
 
 /** Create a log file in .ver directory **/
 
-void vfs_createlog(const char *path, mode_t mode)
+/*void vfs_createlog(const char *path, mode_t mode)
 {
 	char logpath[PATH_MAX];
 	
@@ -382,27 +383,62 @@ void vfs_createlog(const char *path, mode_t mode)
 		}
 	fclose(f);
 	
-	}
+	}*/
 
-/** Create a .ver directory for every directory made */
+/** Create a .ver directory and inside it create objects,trees,heads directory and also a file called OBJ_MD for every directory made */
 
 void vfs_mkverdir(const char *path, mode_t mode)
 {
 	int retstat = 0;
 	char verpath[PATH_MAX];
-	
+	char verpath_object[PATH_MAX];
+
+
+	char verpath_tree[PATH_MAX];
+
+	char verpath_head[PATH_MAX];
+
 	vfs_fullpath(verpath, path);
-	
+	vfs_fullpath(verpath_object, path);
+	vfs_fullpath(verpath_tree, path);
+	vfs_fullpath(verpath_head, path);
+
 	strcat(verpath,"/.ver");
+    strcat(verpath_object,"/.ver/objects");
+	strcat(verpath_tree,"/.ver/trees");
+	strcat(verpath_head,"/.ver/heads");
 	
 	retstat = mkdir(verpath, mode);
+        
 	if(retstat < 0)
 	{
 		retstat = vfs_error("vfs_mkverdir verdir");
-		}
+	}
+        
+	retstat = mkdir(verpath_object, mode);
+    if(retstat < 0)
+	{
+		retstat = vfs_error("vfs_mkverdir verdir");
+	}
+
+	retstat = mkdir(verpath_tree, mode);
+    if(retstat < 0)
+	{
+		retstat = vfs_error("vfs_mkverdir verdir");
+	}
 	
-	vfs_createlog(path,mode);
-	
+	retstat = mkdir(verpath_head, mode);
+    if(retstat < 0)
+	{
+		retstat = vfs_error("vfs_mkverdir verdir");
+	}
+    
+    strcat(verpath,"/OBJ_MD");
+    FILE *f= fopen(verpath,"w");
+    if(f==NULL)
+	log_msg("\nError opening file \n ");   
+	fclose(f);
+    log_msg("\nvfs_mkdir(path=\"%s\", mode=0%3o)\n",verpath,mode);
 }
 
 /** Edited to add feature to create .ver inside each dir */
@@ -426,77 +462,130 @@ int vfs_mkdir(const char *path, mode_t mode)
     return retstat;
 }
 
+char *get_file_name(char *filepath, char filename[PATH_MAX])
+{
+	int len,len1=0;
+	log_msg("file naem ---------------------------- \n");
+	len = strlen(filepath);
+	
+	while(filepath[len-1] != '/'){
+		len--;
+		filename[len1++] = filepath[len];
+	}
+	log_msg("file naem ---------------------------- \n");
+	filepath[len] = '\0';
+	len1--;
+	filename[len1] = '\0';
+	
+	g_strreverse(filename);
+	log_msg("file naem ---------------------------- \n");	
+	strcat(filepath,"/.ver");
+	
+	log_msg("filename = %s\n",filename);
+	
+	return filename;
+	
+}
+
+void *get_file_name_new(char *dirpath, char* filename, const char *path)
+{
+
+	vfs_fullpath(dirpath, path);	
+	log_msg("----------------------------------------------------\n");
+	
+	int len,len1=0;
+	len = strlen(dirpath);
+	char *filen = (char*)malloc(PATH_MAX*sizeof(char));
+	while(dirpath[len] != '/'){
+		
+		len--;
+		filen[len1++] = dirpath[len];
+		log_msg("----------------------------------------------------\n");
+	}
+	
+	dirpath[len] = '\0';
+	len1--;
+	filen[len1] = '\0';
+	
+	g_strreverse(filen);
+	
+	strcat(dirpath,"/.ver");
+	
+	log_msg("filename = %s\n",filen);
+	strcpy(filename, filen);
+	log_msg("filename = %s   ------------------   \n%s \n",filename,dirpath);
+}
+
+void iterator(gpointer key,gpointer val,gpointer f)
+{
+	char *keystr = (char*)key;
+	int *keyval = (int*)val;
+	fprintf((FILE*)f,"%s %d\n",keystr,*keyval);
+} 
 //Edit
 void remove_versions(const char *fpath)
 {
-     	int retstat;
-     	int current_ver_no;
-     	int i = 1;
-     	char *ver_no = (char*)malloc(10*sizeof(char));;
-     	char *ver_path = (char*)malloc(PATH_MAX*sizeof(char));;
-     	char *ver_log_path = (char*)malloc(PATH_MAX*sizeof(char));
-     	get_log_file_name((char*)fpath);
-     	char *ver_current_path = (char*)malloc(PATH_MAX*sizeof(char));
-     	char *ver_current_no_path = (char*)malloc(PATH_MAX*sizeof(char));
-     	char *ver_list_path = (char*)malloc(PATH_MAX*sizeof(char));
-     	strcpy(ver_current_path,fpath);
-     	strcat(ver_current_path,"/current");
-     	
-     	strcpy(ver_current_no_path,fpath);
-     	strcat(ver_current_no_path,"/current_ver_no");
-     	
-     	strcpy(ver_log_path,fpath);
-     	strcat(ver_log_path,"/log");
-     	
-     	strcpy(ver_list_path,fpath);
-     	strcat(ver_list_path,"/list");
-     	
-     	FILE *f = fopen(ver_current_no_path,"r");
-     	fscanf(f,"%d",&current_ver_no);
-     	fclose(f);
-     	log_msg("Removing version files\n");
-     	while(i<current_ver_no)
-     	{
-     		itoa(i,ver_no);
-     		strcpy(ver_path,fpath);
-     		strcat(ver_path,"/");
-     		strcat(ver_path,ver_no);
-     		i++;
-     		
-     		log_msg("Removing %s better\n",ver_path);
-    		retstat = unlink(ver_path);
-     		if(retstat<0)
-     			log_msg("vfs_unlink unlink");
-     	}
-
-     	log_msg("Removing %s\n",ver_log_path);
-	retstat = unlink(ver_log_path);
-	if(retstat<0)
-		log_msg("vfs_unlink unlink");
-	log_msg("Removing %s\n",ver_current_path);
-	retstat = unlink(ver_current_path);
-	if(retstat<0)
-		log_msg("vfs_unlink unlink");
-	log_msg("Removing %s\n",ver_current_no_path);
-	retstat = unlink(ver_current_no_path);
-	if(retstat<0)
-		log_msg("vfs_unlink unlink");
-	log_msg("Removing %s\n",ver_list_path);
-	retstat = unlink(ver_list_path);
-	if(retstat<0)
-		log_msg("vfs_unlink unlink");
-	/**log_msg("Removing %s\n",ver_file_path);
-	retstat = unlink(ver_file_path);
-	if(retstat<0)
-		log_msg("vfs_unlink unlink");
-	*/
-     	
-     	log_msg("Removing %s\n",fpath);
-     	retstat = rmdir(fpath);
-	if(retstat<0)
-		log_msg("vfs_rmdir rmdir");
-     	
- }
+	char *file_heads_path,*file_objects_path,*file_trees_path,*file_objmd_path;
+	file_heads_path = (char*)malloc(PATH_MAX*sizeof(char));
+	file_trees_path = (char*)malloc(PATH_MAX*sizeof(char));
+	file_objects_path = (char*)malloc(PATH_MAX*sizeof(char));
+	file_objmd_path = (char*)malloc(PATH_MAX*sizeof(char));
+	char filename[PATH_MAX]; 
+	get_file_name(fpath,filename);
+	strcpy(file_heads_path,fpath);	
+	strcpy(file_trees_path,fpath);	
+	strcpy(file_objects_path,fpath);	
+	strcpy(file_objmd_path,fpath);
+	
+	strcat(file_heads_path,"/heads/");
+	strcat(file_trees_path,"/trees/");
+	strcat(file_objects_path,"/objects/");
+	strcat(file_objmd_path,"/OBJ_MD");
+	
+	FILE *f = fopen(file_objmd_path,"r");	
+	GHashTable *gHashTable = g_hash_table_new(g_str_hash,g_str_equal);
+	char *file_hash=(char*)malloc(41*sizeof(char));
+	int ref_count;
+	while(fscanf(f,"%s",file_hash) != EOF)
+	{
+		fscanf(f,"%d",&ref_count);
+		g_hash_table_insert(gHashTable,file_hash,&ref_count);
+	}
+	fclose(f);
+	strcat(file_heads_path,filename);
+	strcat(file_heads_path,".head");
+	strcat(file_trees_path,filename);
+	strcat(file_trees_path,".tree");
+	char *str = (char*)malloc(PATH_MAX*sizeof(char));
+	
+	char *file_obj_path = (char*)malloc(PATH_MAX*sizeof(char));
+	f = fopen(file_trees_path,"r");
+	while(fscanf(f,"%s",str) != EOF)
+	{
+		fscanf(f,"%s",str);
+		fscanf(f,"%s",str);
+		fscanf(f,"%s",str);
+		strcpy(file_obj_path,file_objects_path);
+		strcat(file_obj_path,"/");
+		strcat(file_obj_path,str);
+		unlink(file_obj_path);
+		ref_count = *((int*)g_hash_table_lookup(gHashTable,str));
+		ref_count = ref_count - 1;
+		if(ref_count == 0)
+			g_hash_table_remove(gHashTable,str);
+		else
+			g_hash_table_replace(gHashTable,str,&ref_count);
+		fscanf(f,"%s",str);
+		fscanf(f,"%s",str);
+		fscanf(f,"%s",str);		
+	}
+	fclose(f);
+	unlink(file_heads_path);
+	unlink(file_trees_path);
+	f = fopen(file_objmd_path,"w");
+	g_hash_table_foreach(gHashTable,(GHFunc)iterator,f);
+	fclose(f);
+}
 
 /** Remove a file */
 int vfs_unlink(const char *path)
@@ -521,18 +610,50 @@ int vfs_unlink(const char *path)
 int remove_ver_dir(const char *fpath)
 {
      char *ver_dir_path = (char*)malloc(PATH_MAX*sizeof(char)),
-     	  *ver_log_path = (char*)malloc(PATH_MAX*sizeof(char));
-     
+     	  *heads_path = (char*)malloc(PATH_MAX*sizeof(char)),
+     	  *trees_path = (char*)malloc(PATH_MAX*sizeof(char)),
+     	  *objects_path = (char*)malloc(PATH_MAX*sizeof(char)),
+     	  *objmd_path = (char*)malloc(PATH_MAX*sizeof(char));
      strcpy(ver_dir_path,fpath);
      strcat(ver_dir_path,"/.ver");
      
-     strcpy(ver_log_path,ver_dir_path);
-     strcat(ver_log_path,"/ver.log");
+     strcpy(heads_path,ver_dir_path);
+     strcat(heads_path,"/heads");
      int retstat = 0;
-     retstat = unlink(ver_log_path);
+     retstat = rmdir(heads_path);
      if(retstat<0)
      {
-     	log_msg("Error removing ver log file\n");
+     	log_msg("Error removing heads folder\n");
+     	return -1;
+     }
+     
+     strcpy(trees_path,ver_dir_path);
+     strcat(trees_path,"/trees");
+     retstat = 0;
+     retstat = rmdir(trees_path);
+     if(retstat<0)
+     {
+     	log_msg("Error removing trees folder\n");
+     	return -1;
+     }
+     
+     strcpy(objects_path,ver_dir_path);
+     strcat(objects_path,"/heads");
+     retstat = 0;
+     retstat = rmdir(objects_path);
+     if(retstat<0)
+     {
+     	log_msg("Error removing objects folder\n");
+     	return -1;
+     }
+     
+     strcpy(objmd_path,ver_dir_path);
+     strcat(objmd_path,"/heads");
+     retstat = 0;
+     retstat = unlink(objmd_path);
+     if(retstat<0)
+     {
+     	log_msg("Error removing objmd folder\n");
      	return -1;
      }
      
@@ -593,7 +714,7 @@ int vfs_symlink(const char *path, const char *link)
 
 /** Manage the versions of the file/directory upon renaming */
 
-int vfs_ver_rename(const char *path,const char *newpath)
+/*int vfs_ver_rename(const char *path,const char *newpath)
 {
     char f_ver_path[PATH_MAX];
     char f_ver_newpath[PATH_MAX];
@@ -613,7 +734,68 @@ int vfs_ver_rename(const char *path,const char *newpath)
 
     return restat;
 }
+*/
+/* Rename all the versioning data of the file.
+ *Takes as params the relative original and new path.
+ *Renames oldpath.tree -> newpath.tree and oldpath.head -> newpath.head 
+ */ 
 
+int vfs_version_rename(const char *path, const char *newpath)
+{
+	char *filename = (char*)malloc(PATH_MAX*sizeof(char)),
+             *newfilename = (char*)malloc(PATH_MAX*sizeof(char));
+	char fpath[PATH_MAX];
+	char fnewpath[PATH_MAX];
+	char treepath[PATH_MAX],headpath[PATH_MAX], newtreepath[PATH_MAX], newheadpath[PATH_MAX], dirpath[PATH_MAX], newdirpath[PATH_MAX];
+	
+	log_msg("Rea---------------------------------------------------\n");
+	
+	get_file_name_new(dirpath,filename, path);
+	
+	log_msg("%s %s %s",dirpath,filename,path);
+	
+	strcpy(fpath,dirpath);
+	get_file_name_new(dirpath,newfilename, newpath);
+	strcpy(fnewpath, dirpath);
+	
+	log_msg("\nfpath = %s\nnew f path = %s\nfname = %s\nnew fname = %s\n",fpath,fnewpath,filename,newfilename);
+
+	strcpy(treepath,fpath);
+	strcpy(newtreepath,fnewpath);
+	strcpy(headpath,fpath);
+	strcpy(newheadpath,fnewpath);
+	
+	log_msg("\ntreepath = %s\nnew tree path = %s\nhead path = %s\nnew head path = %s\n",treepath,newtreepath,headpath,newheadpath);
+	
+	strcat(treepath,"/trees/");
+	strcat(newtreepath,"/trees/");
+	strcat(headpath,"/heads/");
+	strcat(newheadpath,"/heads/");
+	
+	log_msg("\ntreepath = %s\nnew tree path = %s\nhead path = %s\nnew head path = %s\n",treepath,newtreepath,headpath,newheadpath);
+	
+	strcat(treepath,filename);
+	strcat(newtreepath,newfilename);
+	strcat(headpath,filename);
+	strcat(newheadpath,newfilename);
+	
+	log_msg("\ntreepath = %s\nnew tree path = %s\nhead path = %s\nnew head path = %s\n",treepath,newtreepath,headpath,newheadpath);
+	
+	strcat(treepath,".tree");
+	strcat(newtreepath,".tree");
+	strcat(headpath,".head");
+	strcat(newheadpath,".head");
+	
+	log_msg("\ntreepath = %s\nnew tree path = %s\nhead path = %s\nnew head path = %s\n",treepath,newtreepath,headpath,newheadpath);
+	
+	rename(treepath,newtreepath);
+	rename(headpath,newheadpath);
+		
+	log_msg("\ntreepath = %s\nnew tree path = %s\nhead path = %s\nnew head path = %s\n",treepath,newtreepath,headpath,newheadpath);
+	
+	return 0;
+	
+}
 /** Rename a file */
 // both path and newpath are fs-relative
 int vfs_rename(const char *path, const char *newpath)
@@ -632,7 +814,7 @@ int vfs_rename(const char *path, const char *newpath)
     if (retstat < 0)
     retstat = vfs_error("vfs_rename rename");
     
-    retstat1 = vfs_ver_rename(path,newpath);
+    retstat1 = vfs_version_rename(path,newpath);
     
     if(retstat1 < 0)
     log_msg("\nRenaming a dir, not a file. Hence ../.ver/filename will not exist\n");
@@ -1186,15 +1368,7 @@ void init_ver_info()
 void *vfs_init(struct fuse_conn_info *conn)
 {    
     log_msg("\nvfs_init()\n");
-    char *root_ver_path = (char*)malloc(PATH_MAX*sizeof(char));
-    char *root_ver_log = (char*)malloc(PATH_MAX*sizeof(char));
-    strcpy(root_ver_path, BB_DATA->rootdir);
-    strcat(root_ver_path,"/.ver");
-    strcpy(root_ver_log, root_ver_path);
-    strcat(root_ver_log,"/ver.log");
-    mkdir(root_ver_path,(mode_t)0755);
-    FILE *f = fopen(root_ver_log,"w");
-    fclose(f);
+    vfs_mkverdir("",(mode_t)0755);
     init_ver_info();
     return BB_DATA;
 }
@@ -1253,50 +1427,151 @@ int vfs_access(const char *path, int mask)
  *
  * Introduced in version 2.5
  */
+int add_file_to_objects(const char* path){
+
+	char fpath[PATH_MAX];
+	char *file_objects_path = (char*)malloc(PATH_MAX*sizeof(char));
+
+	vfs_fullpath(fpath,path);
+
+	guchar data[1024*1024]; 
+	gsize size = 0; 
+	FILE *input,*f; 
+	gchar *sum; 
+	log_msg("REACHED HRE\n");
+	
+	input = fopen( fpath, "rb" ); 
+	size = fread( (void *)data, sizeof( guchar ), 1024*1024, input ); 
+	fclose( input ); 
+
+	sum = g_compute_checksum_for_data( G_CHECKSUM_SHA1, data, size ); 
+	log_msg( "SHA1 Checksum for >> %s <<: %s\n", fpath, sum ); 
+
+
+	get_log_file_name_new(fpath);
+	strcpy(file_objects_path,fpath);
+	strcat(file_objects_path,"/objects/");
+	strcat(file_objects_path,sum);
+
+	log_msg("Create file with filename as %s",file_objects_path);
+
+	
+	f = fopen(file_objects_path,"a");
+	if(!f)
+	{vfs_error("add file to objects ERROR\n");}
+
+	fclose(f);
+	
+	char *file_objmd_path = (char*)malloc(PATH_MAX*sizeof(char));
+	strcpy(file_objmd_path,fpath);
+	strcat(file_objmd_path,"/OBJ_MD");
+	f = fopen(file_objmd_path,"r");
+	
+	/*GHashTable *gHashTable = g_hash_table_new(g_str_hash,g_str_equal);
+	char *file_hash=(char*)malloc(255*sizeof(char));
+	int ref_count;
+	int flag =0;
+	
+	while(fscanf(f,"%s",file_hash) != EOF)
+	{
+		fscanf(f,"%d",&ref_count);
+		log_msg("I M HERE \n");
+		if(strcmp(file_hash,sum) == 0)
+		{
+			flag = 1;
+			ref_count++;
+		}
+		log_msg("%s %d \n",file_hash,ref_count);
+		g_hash_table_insert(gHashTable,file_hash,&ref_count);
+	}
+	log_msg("reached_here\n");
+	int z = 1;
+	if(!flag)
+	{
+		g_hash_table_insert(gHashTable,sum,&z);
+	}
+	fclose(f);
+	f = fopen(file_objmd_path,"w");
+	g_hash_table_foreach(gHashTable,(GHFunc)iterator,f);
+	*/
+	fclose(f);
+	g_free( sum ); 
+	log_msg("Entered Out of add file to object\n");
+	return 0;
+}
  
- 
- int vfs_add_newfile_ver_info(const char *path) 
+int vfs_add_newfile_ver_info(const char *path) 
 {
-    char file_ver_path[PATH_MAX], file_log_path[PATH_MAX], file_ver_no_path[PATH_MAX], file_ver_list_path[PATH_MAX];
+    char file_ver_path[PATH_MAX], file_ver_head[PATH_MAX], file_ver_tree[PATH_MAX], file_ver_object[PATH_MAX];
     int retstat = 0;
-    //FILE *fp;
-    FILE *f;
-
+    FILE *f;char filen[PATH_MAX];
+    log_msg("new file ver info\n");
     vfs_fullpath(file_ver_path,path); // file_ver_path indicates the absolute path of the version directory of each file
+    
+    get_file_name(file_ver_path,filen);
+	//strip only the filename
+    /*log_msg("new file ver info\n");
+    int len,len1=0;
+    char filen[255]; //filen stores the file name
 
-    get_log_file_name(file_ver_path);
+    len = strlen(filename);
+
+    while(filename[len] != '/'){
+            len--;
+            filen[len1++] = filename[len];
+    }
+   	// filename[len] = '\0';
+   	// len1--;
+  	//  filename[len1] = '\0';
+
+    g_strreverse(filen);
+    */
+
+
+    //mkdir(file_ver_path,(mode_t)0777); // Setting the mode such that we have permissions to create files in the directory
     
-    mkdir(file_ver_path,(mode_t)0777); // Setting the mode such that we have permissions to create files in the directory
+    strcpy(file_ver_head, file_ver_path);
+    strcpy(file_ver_tree, file_ver_path);
+    strcpy(file_ver_object, file_ver_path);
     
-    strcpy(file_log_path, file_ver_path);
-    strcpy(file_ver_no_path, file_ver_path);
-    strcpy(file_ver_list_path, file_ver_path);
+    strcat(file_ver_head,"/heads/");
+    strcat(file_ver_tree,"/trees/");
+    strcat(file_ver_object,"/objects/");
     
-    strcat(file_log_path,"/log");
-    strcat(file_ver_list_path,"/list");
-    strcat(file_ver_no_path,"/current_ver_no");
+    strcat(file_ver_head,filen);
+    strcat(file_ver_tree,filen);
+    strcat(file_ver_object,filen);
+    strcat(file_ver_head,".head");
+    strcat(file_ver_tree,".tree");
+
+ 
+   	// log_msg("\n%s\n",file_log_path);
     
-    log_msg("\n%s\n",file_log_path);
-    
-    f = fopen(file_log_path,"a");
-     if(!f)
-    {vfs_error("vfs_create log");}
+    f = fopen(file_ver_head,"w");
+    if(!f)
+    {
+    	log_msg("%s",file_ver_head);
+    	vfs_error("vfs_create log");
+    }
     
     fclose(f);
         
-    f = fopen(file_ver_list_path,"a");
-     if(!f)
-    {vfs_error("vfs_create log");}
+    f = fopen(file_ver_tree,"w");
+    if(!f)
+    {
+	log_msg("%s",file_ver_tree);    
+    	vfs_error("vfs_create log");
+    }
     
     fclose(f);    
         
-    f = fopen(file_ver_no_path,"a");
-     if(!f)
-    {vfs_error("vfs_create current_ver_no");}
-    fprintf(f,"0");
+  	//  f = fopen(file_ver_object,"w");
+  	//   if(!f)
+  	//  {vfs_error("vfs_create current_ver_no");}
+ 	//   fprintf(f,"0");
     
-    fclose(f);
-    
+ 	//   fclose(f);
+    add_file_to_objects(path);	    
     return retstat;
 
 }
@@ -1431,6 +1706,7 @@ void vfs_usage()
 
 int main(int argc, char *argv[])
 {
+    
     int i;
     int fuse_stat;
     struct vfs_state *vfs_data;
@@ -1480,4 +1756,5 @@ int main(int argc, char *argv[])
     fprintf(stderr, "fuse_main returned %d\n", fuse_stat);
     
     return fuse_stat;
+    
 }

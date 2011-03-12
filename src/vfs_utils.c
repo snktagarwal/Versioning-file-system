@@ -102,7 +102,31 @@ char *get_log_file_name(char *filepath)
 	return filepath;
 	
 }
-
+char *get_log_file_name_new(char *filepath)
+{
+	int len,len1=0;
+	char filename[255];
+	
+	len = strlen(filepath);
+	
+	while(filepath[len] != '/'){
+		len--;
+		filename[len1++] = filepath[len];
+	}
+	filepath[len] = '\0';
+	len1--;
+	filename[len1] = '\0';
+	
+	g_strreverse(filename);
+	
+	/* Create log file name */
+	strcat(filepath,"/.ver");
+//	strcat(filepath, filename);
+	//strcat(filepath,".log");
+	
+	return filename;
+	
+}
 /* reverse:  reverse string s in place */
  void reverse(char s[])
  {

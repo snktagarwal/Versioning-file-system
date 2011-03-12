@@ -13,6 +13,9 @@
 // setlinebuf() later in consequence.
 #define _XOPEN_SOURCE 500
 #define MAX_LOG_LINE_SIZE 100
+#define TREE_LINE_SIZE 334
+#define MAX_HEAD_LINE_SIZE 25
+
 
 // maintain vfsfs state in here
 #include <limits.h>
