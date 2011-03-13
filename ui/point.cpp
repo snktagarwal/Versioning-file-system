@@ -33,6 +33,7 @@ Point::Point(QGraphicsScene *scene, qreal x, qreal y, qreal r, QString tagText, 
 	setFlags(ItemIsSelectable);
 	setCacheMode(QGraphicsItem::ItemCoordinateCache);
 	setAcceptHoverEvents(true);
+	//setFiltersChildEvents(true);
 	
 	timer = new QTimer(this);
 	timer->setSingleShot(true);
@@ -46,69 +47,27 @@ Point::~Point() {
 		delete p;
 }
 
-qreal Point::getX() const {
-	return x;
-}
-qreal Point::getY() const {
-	return y;
-}
-qreal Point::getRadius() const {
-	return r;
-}
-Point *Point::getParent() const {
-	return parent;
-}
-QSet<Point *> Point::getChildren() const {
-	return children;
-}
-int Point::childCount() const {
-	return children.size();
-}
-int Point::getAncestorCount() const {
-	return ancestorCount;
-}
-QGraphicsItemAnimation *Point::getAnimation() const {
-	return animation;
-}
-QTimeLine *Point::getTimeLine() const {
-	return timeline;
-}
-QColor Point::getBackgroundColor() const {
-	return backgroundColor;
-}
-QGraphicsSimpleTextItem *Point::getTag() const {
-	return tag;
-}
+qreal Point::getX() const { return x; }
+qreal Point::getY() const { return y; }
+qreal Point::getRadius() const { return r; }
+Point *Point::getParent() const { return parent; }
+QSet<Point *> Point::getChildren() const { return children; }
+int Point::childCount() const { return children.size(); }
+int Point::getAncestorCount() const { return ancestorCount; }
+QGraphicsItemAnimation *Point::getAnimation() const { return animation; }
+QTimeLine *Point::getTimeLine() const { return timeline; }
+QColor Point::getBackgroundColor() const { return backgroundColor; }
+QGraphicsSimpleTextItem *Point::getTag() const { return tag; }
 
-void Point::setX(qreal x) {
-	this->x = x;
-}
-void Point::setY(qreal y) {
-	this->y = y;
-}
-void Point::setRadius(qreal r) {
-	this->r = r; 
-}
-void Point::setCurrent(bool isCurrent) {
-	this->current = isCurrent;
-}
-void Point::setAnimation(QGraphicsItemAnimation *animation) {
-	this->animation = animation;
-}
-void Point::setTimeLine(QTimeLine *timeline) {
-	this->timeline = timeline;
-}
-void Point::setBackgroundColor(const QColor &color) {
-	backgroundColor = color;
-}
-void Point::setOutlineColor(const QColor &color) {
-	outlineColor = color;
-	update();
-}
-void Point::setOutlineWidth(qreal width) {
-	outlineWidth = width;
-	update();
-}
+void Point::setX(qreal x) { this->x = x; }
+void Point::setY(qreal y) { this->y = y; }
+void Point::setRadius(qreal r) { this->r = r; }
+void Point::setCurrent(bool isCurrent) { this->current = isCurrent; }
+void Point::setAnimation(QGraphicsItemAnimation *animation) { this->animation = animation; }
+void Point::setTimeLine(QTimeLine *timeline) { this->timeline = timeline; }
+void Point::setBackgroundColor(const QColor &color) { backgroundColor = color; }
+void Point::setOutlineColor(const QColor &color) { outlineColor = color; }
+void Point::setOutlineWidth(qreal width) { outlineWidth = width; }
 
 void Point::updateTagPosition() {
 	if(tagText.compare("[]") != 0) {
@@ -120,29 +79,13 @@ void Point::updateTagPosition() {
 	}
 }
 
-void Point::addLine(Line *line) {
-	lines.insert(line);
-}
-void Point::removeLine(Line *line) {
-	lines.remove(line);
-}
+void Point::addLine(Line *line) { lines.insert(line); }
+void Point::removeLine(Line *line) { lines.remove(line); }
+void Point::addChild(Point *child) { children.insert(child); }
+void Point::incrementAncestorCount() { ancestorCount++; }
 
-void Point::addChild(Point *child) {
-	children.insert(child);
-	//std::cout << "No. of children: " << children.size() << std::endl;
-}
-
-void Point::incrementAncestorCount() {
-	ancestorCount++;
-}
-
-void Point::startTimer(int msec) {
-	timer->start(msec);
-}
-
-void Point::startTimeLine() {
-	timeline->start();
-}
+void Point::startTimer(int msec) { timer->start(msec); }
+void Point::startTimeLine() { timeline->start(); }
 
 QRectF Point::boundingRect() const {
     QRectF rect(getX()-r, getY()-r, 2*r, 2*r);
@@ -230,53 +173,28 @@ void Point::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 	event->accept();
 }
 
-/* void Point::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
+/*void Point::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
 	std::cout << "Point (" << getX() << "," << getY() << ") was hovered over (ENTER)." << std::endl;
 	QStyleOptionGraphicsItem *option = new QStyleOptionGraphicsItem;
 	option->state = QStyle::State_MouseOver;
-	paint(new QPainter, option, NULL); */
+	paint(new QPainter, option, NULL);*/
 	
-	//QPointF scenePos = event->pos();
-	//qreal distanceSquared = (scenePos.x()-getX())*(scenePos.x()-getX()) - (scenePos.y()-getY())*(scenePos.y()-getY());
-	//std::cout << distanceSquared << std::endl;
+	/* QPointF scenePos = event->pos();
+	qreal distanceSquared = (scenePos.x()-getX())*(scenePos.x()-getX()) - (scenePos.y()-getY())*(scenePos.y()-getY());
+	std::cout << distanceSquared << std::endl;
 	
-	/* std::cout << "point: " << getX() << "," << getY() << std::endl;
+	std::cout << "point: " << getX() << "," << getY() << std::endl;
 	std::cout << "pos: " << (event->pos()).x() << "," << (event->pos()).y() << std::endl;
 	std::cout << "scene: " << (event->scenePos()).x() << "," << (event->scenePos()).y() << std::endl;
 	std::cout << "screen: " << (event->screenPos()).x() << "," << (event->screenPos()).y() << std::endl; */
 	
-	//if( distanceSquared < r*r ) {	
+	//if(this->contains(this->mapFromScene(event->scenePos()))) {
+	//if( distanceSquared < r*r ) {
 		//QGraphicsOpacityEffect *opacityEffect = new QGraphicsOpacityEffect;
 		//this->setGraphicsEffect(opacityEffect);
-	
-		/*QPropertyAnimation animation(this, "backgroundColor");
-		animation.setDuration(3000);
-		QColor color = getBackgroundColor();
-		color.setAlpha(1.0);
-		animation.setStartValue(color);
-		color.setAlpha(0.6);
-		animation.setEndValue(color);
-
-		//animation.setEasingCurve(QEasingCurve::OutBounce);
-
-		animation.start();*/
-	//}
-/* }
-
-void Point::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
-	std::cout << "Point (" << getX() << "," << getY() << ") was hovered over (ENTER)." << std::endl;
-	QStyleOptionGraphicsItem *option = new QStyleOptionGraphicsItem;
-	option->state = QStyle::State_MouseOver;
-	paint(new QPainter, option, NULL); */
-	
-	//QPointF scenePos = event->pos();
-	//qreal distanceSquared = (scenePos.x()-getX())*(scenePos.x()-getX()) - (scenePos.y()-getY())*(scenePos.y()-getY());
-	//std::cout << distanceSquared << std::endl;
-	
-	//if( distanceSquared > r*r ) {	
-		//QGraphicsOpacityEffect *opacityEffect = new QGraphicsOpacityEffect;
-		//opacityEffect->setOpacity(1.0);
-		//this->setGraphicsEffect(opacityEffect);
+		
+		//QGraphicsBlurEffect *blurEffect = new QGraphicsBlurEffect;
+		//this->setGraphicsEffect(blurEffect);
 	
 		/*QPropertyAnimation animation(this, "backgroundColor");
 		animation.setDuration(3000);
@@ -291,3 +209,49 @@ void Point::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
 		animation.start();*/
 	//}
 //}
+
+/*void Point::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
+	std::cout << "Point (" << getX() << "," << getY() << ") was hovered over (ENTER)." << std::endl;
+	QStyleOptionGraphicsItem *option = new QStyleOptionGraphicsItem;
+	option->state = QStyle::State_MouseOver;
+	paint(new QPainter, option, NULL); */
+	
+	//QPointF scenePos = event->pos();
+	//qreal distanceSquared = (scenePos.x()-getX())*(scenePos.x()-getX()) - (scenePos.y()-getY())*(scenePos.y()-getY());
+	//std::cout << distanceSquared << std::endl;
+	
+	//if( distanceSquared > r*r ) {	
+		//QGraphicsOpacityEffect *opacityEffect = new QGraphicsOpacityEffect;
+		//opacityEffect->setOpacity(1.0);
+		//this->setGraphicsEffect(opacityEffect);
+		
+		//this->setGraphicsEffect(NULL);
+	
+		/*QPropertyAnimation animation(this, "backgroundColor");
+		animation.setDuration(3000);
+		QColor color = getBackgroundColor();
+		color.setAlpha(1.0);
+		animation.setStartValue(color);
+		color.setAlpha(0.6);
+		animation.setEndValue(color);
+
+		//animation.setEasingCurve(QEasingCurve::OutBounce);
+
+		animation.start();*/
+	//}
+//}
+
+/*bool Point::sceneEventFilter(QGraphicsItem *watched, QEvent *event) {
+	Point *p = dynamic_cast<Point *>(watched);
+	if(event->type() == QEvent::GraphicsSceneHoverEnter) {
+		QGraphicsBlurEffect *blurEffect = new QGraphicsBlurEffect;
+		qDebug() << "(" << x << "," << y << ") | (" << p->getX() << "," << p->getY() << ")";
+		watched->setGraphicsEffect(blurEffect);
+		return true;
+	}
+	else if(event->type() == QEvent::GraphicsSceneHoverLeave) {
+		watched->setGraphicsEffect(NULL);
+		return true;
+	}
+	return false;
+}*/

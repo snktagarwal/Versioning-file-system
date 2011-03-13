@@ -66,11 +66,16 @@ void Axis::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 void Axis::drawTicks(QGraphicsScene *scene, qreal rootX) {
 	for( qreal x=p1->x(); x<=p2->x(); x+=tickSeparation ) {
 		QString labelText;
-		#if defined(__arm__)
-			labelText = QString::number(float(x - MARGIN + rootX)/SCALING_FACTOR);
+		//if( int((x-p1->x())/tickSeparation)%2 == 0)
+		//qDebug() << qint64(x) << "," << qint64(LEFT_MARGIN) << "," << qint64(rootX) << "," << SCALING_FACTOR;
+		labelText = QDateTime::fromMSecsSinceEpoch(1000*(qint64(x) - qint64(LEFT_MARGIN) + qint64(rootX))/SCALING_FACTOR).toString("   h:m AP\nd MMM, yyyy");
+		//else
+//			labelText = "";
+		/*#if defined(__arm__)
+			labelText = QString::number( (qint64(x) - qint64(LEFT_MARGIN) + qint64(rootX)) / qint64(SCALING_FACTOR) );
 		#else
-			labelText = QString::number(double(x - MARGIN + rootX)/SCALING_FACTOR);
-		#endif
+			labelText = QString::number( (qint64(x) - qint64(LEFT_MARGIN) + qint64(rootX)) / qint64(SCALING_FACTOR) );
+		#endif*/
 		
 		Tick *tick = new Tick( new QPointF(x,p1->y()), labelText );
 		ticks.insert(tick);

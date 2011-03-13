@@ -59,9 +59,11 @@ class Point : public QObject, public QGraphicsItem {
   	//void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
   	//void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
   	QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+  	//bool sceneEventFilter(QGraphicsItem *watched, QEvent *event);
 	
 	public slots:
 		void startTimeLine();
+		//void animationEnded();
 	
 	private:
 		QRectF outlineRect() const;

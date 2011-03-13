@@ -45,7 +45,9 @@ class GraphWindow : public QMainWindow {
 		QList<Point *> *points;
 		Point *root;
 		qreal rootX;
+		qreal maxX;
 		int current;
+		//int maxAncestorCount;
 		
 		void setupModel();
 		void setupViews();

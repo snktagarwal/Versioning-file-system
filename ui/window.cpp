@@ -12,11 +12,15 @@ GraphWindow::GraphWindow() {
 	setupViews();
 	animateTree();
 	
-	QPointF *p1 = new QPointF(MARGIN, 1.5*MARGIN);
-	QPointF *p2 = new QPointF((view->width())-MARGIN, 1.5*MARGIN);
+	QPointF *p1 = new QPointF(LEFT_MARGIN, TOP_MARGIN);
+	QPointF *p2 = new QPointF(maxX, TOP_MARGIN);
 	axis = new Axis(p1, p2);
 	axis->drawTicks(scene, rootX);
 	scene->addItem(axis);
+	
+	QScrollBar *horizontalScrollBar = view->horizontalScrollBar();
+	horizontalScrollBar->setValue(horizontalScrollBar->maximum());
+	horizontalScrollBar->setValue(horizontalScrollBar->minimum());
 	
 	QList<int> sizes;
 	sizes.append(scene->height());
@@ -31,15 +35,11 @@ GraphWindow::GraphWindow() {
 		showMaximized();
 	setWindowTitle("Timeline");
 	setAnimated(true);
+	setMaximumSize(QApplication::desktop()->screenGeometry().width(), QApplication::desktop()->screenGeometry().height());
 }
 
-Point *GraphWindow::getRoot() const {
-	return root;
-}
-
-void GraphWindow::setRoot(Point *p) {
-	root = p;
-}
+Point *GraphWindow::getRoot() const { return root; }
+void GraphWindow::setRoot(Point *p) { root = p; }
 
 void GraphWindow::animateTree() {
 	QList<Point *> *pointsCopy = new QList<Point *>;
@@ -63,6 +63,7 @@ void GraphWindow::animateTree() {
 		}
 	}
 	
+	//maxAncestorCount = points->at(0)->getAncestorCount();
 	for(int i=0; i<points->size(); i++) {
 		Point *p = points->at(i);
 		Point *q = pointsCopy->at(i);
@@ -86,12 +87,23 @@ void GraphWindow::animateTree() {
 		}
 		
 		p->startTimer((p->getAncestorCount()+1)*ANIMATION_TIME);
+		
+		/* if(p->getAncestorCount() > maxAncestorCount) {
+			maxAncestorCount = p->getAncestorCount();
+		} */
 	}
+	
+	/* qDebug() << "maxAncestorCount: " << maxAncestorCount;
+	for(int i=0; i<points->size(); i++) {
+		Point *p = points->at(i);
+		QTimer *animationEndedTimer = new QTimer;
+		animationEndedTimer->setSingleShot(true);
+		connect( animationEndedTimer , SIGNAL(timeout()) , p , SLOT(animationEnded()) );
+		animationEndedTimer->start((maxAncestorCount+10)*ANIMATION_TIME);
+	} */
 }
 
-void GraphWindow::startTimeLine(Point *p) {
-	p->startTimeLine();
-}
+void GraphWindow::startTimeLine(Point *p) { p->startTimeLine(); }
 
 void GraphWindow::setAncestorCount() {
 	Point *p, *p1, *p2;
@@ -113,7 +125,8 @@ void GraphWindow::setupViews() {
 	view->setScene(scene);
 	view->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
 	view->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-	view->setMinimumSize(scene->width(), scene->height()+2);
+	view->setMinimumSize(QApplication::desktop()->screenGeometry().width(), scene->height()+20);
+	view->setBaseSize(scene->width(), scene->height()+20);
 	
 	// single editor for when a single point is clicked
 	singleEditorLabel = new QLabel("Document");
@@ -213,6 +226,7 @@ void GraphWindow::setupModel() {
 			scene->addItem(line);
 			
 			p->setParentItem(p->getParent());
+			p->installSceneEventFilter(p->getParent());
 		}
 	}
 }
@@ -227,6 +241,7 @@ void GraphWindow::showDocument() {
 	
 	// 1 point selected
 	if(selectedPoints.size() == 1) {
+		singleEditor->setText("");
 		doubleEditorLeft->setText("");
 		doubleEditorRight->setText("");
 		doubleEditorWidget->hide();
@@ -242,58 +257,14 @@ void GraphWindow::showDocument() {
 			if(file.open(QFile::ReadOnly | QFile::Text)) {
 				QTextStream stream(&file);
 				singleEditor->setText(stream.readAll());
-				
-				/*QTextCursor cursor = singleEditor->textCursor();
-				cursor.movePosition(QTextCursor::Down);
-				cursor.movePosition(QTextCursor::Down);
-				
-				QList<QTextEdit::ExtraSelection> extraSelections;
-				QTextEdit::ExtraSelection selection;
-				
-				QColor lineColor = QColor(Qt::red).lighter(160);
-				selection.cursor = singleEditor->textCursor();
-				selection.cursor.movePosition(QTextCursor::Down);
-				
-				selection.format.setBackground(lineColor);
-				selection.format.setProperty(QTextFormat::FullWidthSelection, true);
-				selection.cursor.clearSelection();
-				extraSelections.append(selection); */
-				
-				/*QTextEdit::ExtraSelection highlight, highlight1;
-				highlight.cursor = singleEditor->textCursor();
-				highlight.cursor.movePosition(QTextCursor::Down);
-				highlight.cursor.movePosition(QTextCursor::Down);
-				highlight.format.setBackground(QColor(0, 255, 0, 100));
-				highlight.format.setProperty(QTextFormat::FullWidthSelection, true);
-				
-				QList<QTextEdit::ExtraSelection> extras;
-				extras << highlight; */
-				//singleEditor->setExtraSelections(extraSelections);
-				
-				/*QPalette palette;
-				palette.setColor(QPalette::Highlight, QColor(255, 0, 0, 100));
-				singleEditor->setPalette(palette);
-				
-				QTextCursor cursor = editor->textCursor();
-				cursor.movePosition(QTextCursor::Down);
-				cursor.movePosition(QTextCursor::Down);
-				cursor.select(QTextCursor::LineUnderCursor);
-				singleEditor->setTextCursor(cursor);
-				
-				palette.setColor(QPalette::Highlight, QColor(0, 255, 0, 100));
-				singleEditor->setPalette(palette);
-				
-				cursor = singleEditor->textCursor();
-				cursor.movePosition(QTextCursor::Down);
-				cursor.movePosition(QTextCursor::Down);
-				cursor.select(QTextCursor::LineUnderCursor);
-				singleEditor->setTextCursor(cursor);*/
 			}
 		}
 	}
 	// 2 points selected
 	else if(selectedPoints.size() == 2) {
 		singleEditor->setText("");
+		doubleEditorLeft->setText("");
+		doubleEditorRight->setText("");
 		singleEditorWidget->hide();
 		doubleEditorWidget->show();
 		
@@ -322,9 +293,8 @@ void GraphWindow::showDocument() {
 			}
 		}
 		
-		if(file1->exists() && file2->exists()) {
-			highlightDifferences(file1, file2);
-		}
+		highlightDifferences(file1, file2);
+		
 		file1->close();
 		file2->close();
 	}
@@ -390,7 +360,6 @@ void GraphWindow::highlightDifferences(QFile *file1, QFile *file2) {
 						
 						selection1.cursor.movePosition(QTextCursor::Start);
 						selection1.cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, i);
-						//selection1.cursor.movePosition(QTextCursor::Down, QTextCursor::KeepAnchor, file1LinesChangedTo-file1LinesChangedFrom);
 						selection1.format.setProperty(QTextFormat::FullWidthSelection, true);
 						selection1.cursor.clearSelection();
 						extraSelections1.append(selection1);
@@ -424,7 +393,6 @@ void GraphWindow::highlightDifferences(QFile *file1, QFile *file2) {
 						
 						selection2.cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
 						selection2.cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, i);
-						//selection1.cursor.movePosition(QTextCursor::Down, QTextCursor::KeepAnchor, file1LinesChangedTo-file1LinesChangedFrom);
 						selection2.format.setProperty(QTextFormat::FullWidthSelection, true);
 						selection2.cursor.clearSelection();
 						extraSelections2.append(selection2);
@@ -472,9 +440,8 @@ void GraphWindow::highlightDifferences(QFile *file1, QFile *file2) {
 						
 						selection2->cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
 						selection2->cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, i);
-						//selection2.cursor.movePosition(QTextCursor::Down, QTextCursor::KeepAnchor, file1LinesChangedTo-file1LinesChangedFrom);
 						selection2->format.setProperty(QTextFormat::FullWidthSelection, true);
-						//selection2.cursor.clearSelection();
+						selection2->cursor.clearSelection();
 						extraSelections2.append(*selection2);
 					}
 				}
@@ -520,9 +487,8 @@ void GraphWindow::highlightDifferences(QFile *file1, QFile *file2) {
 						
 						selection1->cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
 						selection1->cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, i);
-						//selection1.cursor.movePosition(QTextCursor::Down, QTextCursor::KeepAnchor, file1LinesChangedTo-file1LinesChangedFrom);
 						selection1->format.setProperty(QTextFormat::FullWidthSelection, true);
-						//selection1.cursor.clearSelection();
+						selection1->cursor.clearSelection();
 						extraSelections1.append(*selection1);
 					}
 				}
@@ -535,10 +501,6 @@ void GraphWindow::highlightDifferences(QFile *file1, QFile *file2) {
 		}
 	}
 	diff_file->close();
-	
-	//selection.format.setProperty(QTextFormat::FullWidthSelection, true);
-	//selection.cursor.clearSelection();
-	//extraSelections.append(selection);
 	
 	doubleEditorLeft->setExtraSelections(extraSelections1);
 	doubleEditorRight->setExtraSelections(extraSelections2);
@@ -569,6 +531,8 @@ void GraphWindow::updateRange(int min, int max) {
 
 void GraphWindow::readFromFile(const QString &path) {
 	points = new QList<Point *>;
+	maxX = 0;
+	int branchCount = 1;
 	
 	if(!path.isNull()) {
 		QFile file(path);
@@ -596,21 +560,23 @@ void GraphWindow::readFromFile(const QString &path) {
 					QString tagText = pieces.value(4);
 					QString tooltipText = tagText;
 					
-					/*if(x > (scene->width()-2*MARGIN)) {
-						scene->setSceneRect(0, 0, (x+2*MARGIN), scene->height());
-					}*/
-					
 					if(parentString.compare("-1") == 0) {
 						rootX = x;
 						x = 0;
-						y = 3*MARGIN + radius;
-						if(y > (scene->height()-2*MARGIN)) {
-							scene->setSceneRect(0, 0, scene->width(), (y+MARGIN));
-						}
+						y = TOP_MARGIN + BOTTOM_MARGIN + AXIS_BOTTOM_MARGIN + radius;
 						
-						Point *p = new Point( scene, MARGIN+x, y, radius, tagText, tooltipText );
+						// resize the scene as required
+						if(x > (scene->width() - rootX - RIGHT_MARGIN))
+							scene->setSceneRect(0, 0, x+RIGHT_MARGIN, scene->height());
+						if(y > (scene->height() - BOTTOM_MARGIN))
+							scene->setSceneRect(0, 0, scene->width(), y+BOTTOM_MARGIN);
+						
+						Point *p = new Point( scene, LEFT_MARGIN+x, y, radius, tagText, tooltipText );
 						points->append(p);
 						setRoot(p);
+						
+						if(LEFT_MARGIN+x > maxX)
+							maxX = LEFT_MARGIN+x;
 						
 						p->setData(0, filename);
 						
@@ -622,13 +588,26 @@ void GraphWindow::readFromFile(const QString &path) {
 						x -= rootX;
 						
 						Point *parent = points->at(parentIndex);
-						Point *child = new Point( scene, MARGIN+x, parent->getY(), radius, tagText, tooltipText, parent );
+						Point *child = new Point( scene, LEFT_MARGIN+x, parent->getY(), radius, tagText, tooltipText, parent );
 						parent->addChild(child);
 						
-						y = parent->getY() + BRANCH_SEPARATION * (parent->childCount()-1);
-						if(y > (scene->height()-2*MARGIN)) {
-							scene->setSceneRect(0, 0, scene->width(), (y+MARGIN));
+						if(LEFT_MARGIN+x > maxX) {
+							maxX = LEFT_MARGIN+x;
 						}
+						
+						if(parent->childCount() > 1) {
+							branchCount++;
+							y = root->getY() + BRANCH_SEPARATION * (branchCount-1);
+						}
+						else {
+							y = parent->getY();
+						}
+						
+						// resize the scene as required
+						if(x > (scene->width() - rootX - RIGHT_MARGIN))
+							scene->setSceneRect(0, 0, x+RIGHT_MARGIN, scene->height());
+						if(y > (scene->height() - BOTTOM_MARGIN))
+							scene->setSceneRect(0, 0, scene->width(), y+BOTTOM_MARGIN);
 						
 						child->setY(y);
 						child->updateTagPosition();
@@ -645,6 +624,11 @@ void GraphWindow::readFromFile(const QString &path) {
 				
 				counter++;
 			} while(!line.isEmpty());
+			
+			qreal length = maxX - LEFT_MARGIN;
+			int segmentCount = ((int)(length/AXIS_DEFAULT_TICK_SEPARATION)) + 1;
+			qreal axisMaxX = LEFT_MARGIN + segmentCount * AXIS_DEFAULT_TICK_SEPARATION;
+			scene->setSceneRect( 0, 0, axisMaxX + RIGHT_MARGIN, scene->height() );
 			
 			file.close();
 		}
