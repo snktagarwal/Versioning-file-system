@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
+#include "log.h"
+
+#define printf log_msg
 
 #include "fuse_wrapper.h"
 
@@ -64,10 +67,19 @@ int copy(const char * source, const char * dest) {
 	
 	int status = system(command);
 	
-	if(status == -1)
+	if(status == -1) {
+		printf("\nstatus--------------- %d\n\n", status);
 		return 0;
+	}
 	
 	return 1;
+}
+
+int cat(const char *filepath){
+	char *command = (char*)malloc(1000*sizeof(char));
+	strcpy(command,"cp ");
+	strcat(command,filepath);
+	return system(command);
 }
 
 int move(const char * source, const char * dest) {

@@ -6,7 +6,14 @@
 #include "window.h"
 #include "params.h"
 
-GraphWindow::GraphWindow() {
+GraphWindow::GraphWindow(char *filepath) {
+	this->filepath = filepath;
+	QString *filepathString = new QString(filepath);
+	QStringList filePieces = filepathString->split("/");
+	int size = filePieces.size();
+	this->filename = filePieces.value(size-1);
+	loadFileData(this->filepath);
+	
 	scene = new QGraphicsScene(0, 0, TIMELINE_DEFAULT_WIDTH, TIMELINE_DEFAULT_HEIGHT);
 	
 	setupModel();
@@ -94,6 +101,12 @@ void GraphWindow::animateTree() {
 }
 
 void GraphWindow::startTimeLine(Point *p) { p->startTimeLine(); }
+
+void GraphWindow::loadFileData(QString filepath) {
+	QString command = "__guidata "+filepath;
+	system(command.toLatin1().data());
+	sleep(1);
+}
 
 void GraphWindow::setAncestorCount() {
 	Point *p, *p1, *p2;
@@ -234,7 +247,7 @@ void GraphWindow::setupViews() {
 }
 
 void GraphWindow::setupModel() {
-	readFromFile("files/l");
+	readFromFile(TEMP_PREFIX+filename);
 	setAncestorCount();
 	
 	for(int i=0; i<points->size(); i++) {
@@ -597,7 +610,13 @@ void GraphWindow::readFromFile(const QString &path) {
 		100.0/(15*60),
 		100.0/(10*60),
 		100.0/(5*60),
-		100.0/(3*60)
+		100.0/(3*60),
+		100.0/(60),
+		100.0/(30),
+		100.0/(10),
+		100.0/(5),
+		100.0/(2),
+		100.0/(1),
 	};
 	
 	if(!path.isNull()) {

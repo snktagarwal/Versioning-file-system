@@ -7,7 +7,7 @@
 
 #include "vfs.h"
 #include "log.h"
-#include "versioning.h"
+
 //EDIT 
 gint GCompareWI(gconstpointer a, gconstpointer b)
 {
@@ -105,7 +105,7 @@ char *get_log_file_name(char *filepath)
 char *get_log_file_name_new(char *filepath)
 {
 	int len,len1=0;
-	char filename[255];
+	char *filename = (char *)malloc(255*sizeof(char));
 	
 	len = strlen(filepath);
 	

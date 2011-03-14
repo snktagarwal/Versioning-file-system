@@ -1,4 +1,5 @@
 #define DEBUG
+#define DELAY_TIME (10)
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,10 +8,8 @@
 #include <fuse.h>
 
 #include "vfs.h"
-#include "log.h"
-#include "versioning.h"
-#include "versioning_utils.h"
 #include "fuse_wrapper.h"
+	
 #include "params.h"
 #define printf log_msg
 /**
@@ -18,54 +17,17 @@
 * <version_number>;<timestamp>;<diff_lc>;<tag>
 */
 
+/* Deprecated */
+
+
+/* ------- Deprecated -------- */
+
 int report_checkout(char * filepath, int req_tp);
-
-void update_objmd_file(char * s1,file_data * file)
-{
-	char * s = (char *)malloc(HASH_SHA1 * sizeof(char));
-	int tmp = 0;
-	int reference_count = 0;
-	int is_present = 0;
-	int pos  = 0;
-	FILE * f = fopen(file->OBJ_MD_file_path,"r+");
-	
-	while(fscanf(f,"%s",s)!=-1)
-	{
-		printf("Reading a hash\n");
-		
-//		if(!strcmp(s,ver->obj_hash))
-		if(!strcmp(s,s1))
-		{
-			printf("Same string found\n");
-			is_present = 1;
-			pos = ftell(f);
-			fscanf(f,"%d",&reference_count);
-			fseek(f,pos,SEEK_SET);
-			fprintf(f," %d\n",reference_count+1);
-			fclose(f);
-			return;
-		}
-		fscanf(f,"%d",&tmp);
-		is_present = 0;
-	}
-		fprintf(f,"%s %d\n",s1,reference_count+1);
-		fclose(f);
-		return;		
-}
-
-void iterate1(gpointer key,gpointer val,gpointer f)
-{
-	char *keystr = (char*)key;
-	int *keyval = (int*)val;
-	printf("\n---------------------------------in iterator-----------------------------------------------\n");
-	printf("hikjkknkjfnek\n");
-	//printf("sdsa\t%s\t%s", (gchar*)key, (gchar*)val);
-} 
 
 int remove_from_everything(file_data * file, char * hash)
 {
-	FILE * fp = fopen(file->OBJ_MD_file_path, "r");
-	GHashTable * ht = readHTfromFile(fp, 1);
+	FILE * fp = fopen(file->OBJ_MD_file_path, "r+");
+	/*GHashTable * ht = readHTfromFile(fp, 1);
 	fclose(fp);
 	int i =1;
 	g_hash_table_foreach(ht,iterate1, &i);
@@ -82,9 +44,87 @@ int remove_from_everything(file_data * file, char * hash)
 	} 
 	printf("\n============== %s\t%d===============\n", hash1, ref);
 	//printf("=========ref pointer= %d", *pointer_ref_ct);
-	/*
-	int ref_ct = *pointer_ref_ct;
-	if(ref_ct==1)
+	*/
+	//int ref_ct = *pointer_ref_ct;
+	
+	char * hash1 = (char *)malloc(50*sizeof(char));
+	char * new_str = (char *)malloc(10000*sizeof(char));
+	char * temp = (char *)malloc(60*sizeof(char));
+	int ref;
+	int flag = 0;
+	int pos = ftell(fp);
+	fscanf(fp, "%s %s", hash1, temp);
+	
+	while(strcmp(hash, hash1)!=0)
+	{
+		pos = ftell(fp);
+		if(flag==0)
+			strcpy(new_str, hash1);
+		else
+	 	strcat(new_str, hash1);
+		strcat(new_str, " ");
+		strcat(new_str, temp);
+		strcat(new_str, "\n");
+		flag++;
+		if(fscanf(fp, "%s %d", hash1, &ref)==EOF)
+		{
+			printf("IMPOSSIBLE\n");
+			return 0;
+		}	
+	}
+	printf("===============done%d\n", ref);
+	if(ref==1)
+	{
+		printf("==========CAME HERE\n");
+		//if()
+		while(fscanf(fp, "%s %s", hash1, temp)!=EOF);
+		{
+			printf("%s %s\n", hash1, temp);
+			if(strcmp(hash, hash1)!=0)
+			{
+				if(flag==0)
+					strcpy(new_str, hash1);
+				else
+				 	strcat(new_str, hash1);
+				strcat(new_str, " ");
+				strcat(new_str, temp);
+				strcat(new_str, "\n");
+				printf("%s\n", new_str);
+				flag++;
+			}
+			printf("=============================aaaaaaaaaaiiilaaaaaaaaaaaaaaaaaaaaaaaa============\n");
+		}
+		printf("=============================aaaaaaaaaaiiilaaaaaaaaaaaaaaaaaaaaaaaa============\n");
+		fclose(fp);
+		printf("========%s\n", file->OBJ_MD_file_path);
+		fp = fopen(file->OBJ_MD_file_path, "w");
+		fprintf(fp, "%s", new_str);
+		printf("%s", new_str);
+		fclose(fp);
+		printf("=============================aaaaaaaaaaiiilaaaaaaaaaaaaaaaaaaaaaaaa============\n");
+		char * obj_path = (char *)malloc(PATH_MAX*sizeof(char));
+		strcpy(obj_path, file->objects_dir_path);
+		strcat(obj_path, hash);
+		printf("============removing:: %s\n", obj_path);
+		remove(obj_path);
+		printf("=============================aaaaaaaaaaiiilaaaaaaaaaaaaaaaaaaaaaaaa============\n");
+		return 1;
+	}
+	fseek(fp, pos, SEEK_SET);
+	ref--;
+	fscanf(fp, "%s", hash1);
+	fprintf(fp, " %d\n", ref);
+	//fseek()
+	/*char * hash1 = (char *)malloc(50*sizeof(char));
+	int ref;
+	GHashTable * ht = g_hash_table_new(g_str_hash, g_str_equal);
+	while(fscanf(fp, "%s %d", hash1, &ref)!=EOF)
+		g_hash_table_insert(hash, hash1, "1");
+	fclose(fp);
+	printf("There are %d keys in the hash\n", g_hash_table_size(hash));
+	printf("The capital of Texas is %d\n", g_hash_table_lookup(hash, hash));
+	*/
+	/*if(ref_ct==1)
 	{
 		g_hash_table_remove(ht, (gconstpointer)hash);		
 		char * obj_path = (char *)malloc(PATH_MAX*sizeof(char));
@@ -97,56 +137,11 @@ int remove_from_everything(file_data * file, char * hash)
 	g_hash_table_replace(ht, (gpointer)hash, &ref_ct);
 	fp = fopen(file->OBJ_MD_file_path, "w");
 	writeHTtoFile(ht, fp);
-	fclose(fp);
-	*/return 0;
+	*/fclose(fp);
+	printf("\n=================EXITING FROM REMOVE FROM EVERYTHING==========\n");
+	return 1;
 }
 
-int isJunction(file_data *file,int offset) //prevent this data structure from being edited.
-{
-   int counter=1;//because we are in it's branch.
-   FILE *fp_tree, *fp_head;
-   fp_tree=fopen(file->tree_file_path,"r");
-   fp_head=fopen(file->tree_file_path,"r");
-
-   if(fp_tree==NULL || fp_head==NULL) //do check if file exists.
-   {
-   	printf("ERROR: tree or head file does not exist");
-	return -1;// return -1 if file is not opened.
-   }
-
-   //else continue.
-   char *current_timestamp=(char *)malloc(15*sizeof(char));
-   int current_offset;
-   fscanf(fp_head,"%s %d",current_timestamp, &current_offset);
-   int tmp_int;
-   int parent_offset;
-   char *tmp_char=(char *)malloc(255*sizeof(char));
-          
-	while (fscanf(fp_head,"%s %d",current_timestamp, &current_offset) != EOF )
-	{
-        	//move into the tree file
-		do{
-			fseek(fp_tree,current_offset,SEEK_SET);
-		
-			fscanf(fp_tree,"%d", &tmp_int);
-			fscanf(fp_tree,"%d", &tmp_int);
-			fscanf(fp_tree,"%d", &tmp_int);
-			fscanf(fp_tree,"%s", tmp_char);
-			fscanf(fp_tree,"%s", tmp_char);
-			fscanf(fp_tree,"%d", &tmp_int);
-			fscanf(fp_tree,"%d", &parent_offset);
-			if(parent_offset==offset) // if we find it even once then it means it is a junction.
-	  			return 1;
-		
-			current_offset = parent_offset;  // move to the parent
-		
-		}while(parent_offset != -1);
-
-   	}
-   	fclose(fp_tree);
-   	fclose(fp_head);
-	return 0;	
-}
 
 int search_tp_tree(file_data * file, int off, int req_tp)
 {
@@ -156,7 +151,7 @@ int search_tp_tree(file_data * file, int off, int req_tp)
 	if(fp==NULL)
 	{
 		printf("ERROR: TREE FILE DOESNOT EXIST\n");                                   //display as a error message
-		return 0;
+		return -1;
 	}
 	fseek(fp, off, SEEK_SET);
 	int valid;
@@ -165,7 +160,7 @@ int search_tp_tree(file_data * file, int off, int req_tp)
 	if(valid==0)
 	{
 		printf("ERROR: no record of latest head in tree.");
-		return 0;
+		return -1;
 	}
 	char * temp_object = (char *)malloc(PATH_MAX*sizeof(char));
 	strcpy(temp_object, file->objects_dir_path);
@@ -189,13 +184,13 @@ int search_tp_tree(file_data * file, int off, int req_tp)
 		fscanf(fp, "%s %d %d", tag, &diff_ct, &p_off);
 		printf("\n %s | %d | %d ||||||||||||||\n", tag, diff_ct, p_off);
 		if(p_off==-1)
-			return 0;
+			return -1;
 		fseek(fp, p_off, SEEK_SET);
 		fscanf(fp, "%d", &valid);
 		if(valid==0)
 		{
 			printf("ERROR: no record of latest head in tree.");
-			return 0;
+			return -1;
 		}
 		
 		fscanf(fp, "%d %d %s", &ctp, &lp, hash);
@@ -304,116 +299,59 @@ int get_tp_from_head(char * filepath, int tp)          //returns the offset if v
 	return ret;
 }
 
-void list_all_versions(const char * filepath);
-
-/*void log_version_data(file_data *file, version_data *ver) {
-	FILE *log = fopen(file->ver_log_path,"a");
-	fprintf(log,"%d;%d;%d;%s\n",ver->number,ver->timestamp,ver->diff_lc,ver->tag);
-	fclose(log);
-}*/
-void update_heads_file(file_data  * file,TreeMd * ver,int is_first_version,int is_creating_branch)
+/* Updates the metadata size in <file>.md
+ */
+void update_sizemd_file(file_data *file, int timestamp)
 {
-	int current_offset = find_present_file_offset(file->tree_file_path);
-	printf("Current offset : %d\n",current_offset);
-	
-	if(is_first_version)
-	{
-		char *b_epoch = (char*)malloc(20*sizeof(char));
-		strcpy(b_epoch,"B_");
-		char *tmp = (char*)malloc(20*sizeof(char));
-		itoa(ver->timestamp,tmp);
-		strcat(b_epoch,tmp);
-		char * offs = (char *)malloc(15*sizeof(char));
-		itoa(current_offset, offs);
-		FILE *f = fopen(file->heads_file_path,"w");
-		fprintf(f,"%s %s\n",b_epoch, addspaces(offs, 10));
-		fprintf(f,"%s %s\n",b_epoch, offs);
-		fclose(f);
-	}
-	else if(is_creating_branch)
-	{
-		char *b_epoch = (char*)malloc(20*sizeof(char));
-		strcpy(b_epoch,"B_");
-		char *tmp = (char*)malloc(20*sizeof(char));
-		itoa(ver->timestamp,tmp);
-		strcat(b_epoch,tmp);
-		replaceTop(file->heads_file_path,b_epoch,current_offset);
-		
-	}
-	else
-	{
-		char *b_epoch = (char*)malloc(20*sizeof(char));
-		strcpy(b_epoch,"B_");
-		char *tmp = (char*)malloc(20*sizeof(char));
-		itoa(ver->timestamp,tmp);
-		strcat(b_epoch,tmp);
-		deleteTop(file->heads_file_path);
-		insertAtTop(file->heads_file_path,b_epoch,current_offset);
-		
-	}
-}
-void update_tree_data(file_data *file,TreeMd *ver,int is_creating_branch,int is_first_version) 
-{
-	//*************Add spaces to TreeMd fields
-	
-	char * diff_lc = (char * )malloc(15 * sizeof(char));
-	char * parent = (char * )malloc(10 * sizeof(char));
-	printf("Adding Spaces\n");
-//	addspaces(ver->obj_hash,41);
-//	printf("obj_hash : %s\n",ver->obj_hash);
-	sprintf(diff_lc,"%d",ver->diff_count);
-	addspaces(diff_lc,10);
-//	ver->obj_hash = addspaces(ver->obj_hash,40);
-	addspaces(ver->tag,255);
-	itoa(ver->parent,parent);
-//	sprintf(parent,"%d",ver->parent);
-	addspaces(parent,10);
-	printf("Tag : %s\n",ver->tag);
-	printf("Parent : %s\n",parent);
-	printf("Diif Line Count : %s\n",diff_lc);
-	printf("obj_hash : %s\n",ver->obj_hash);
-	
-	//******************************************
-	if(!is_creating_branch)
-	{
-	//	if(!is_first_version)
-		{	
-			int a;
-			printf(" Making lo tp po\n");
-			FILE * f = fopen(file->tree_file_path,"r+");
-			fseek(f,ver->parent,SEEK_SET);
-			fscanf(f,"%d",&a);
-			printf("First scanned : %d\n",a);
-			fscanf(f,"%d",&a);
-			printf("First scanned : %d\n",a);
-			fprintf(f," 1");
-			fclose(f);
-		}
-		
-	}
-	FILE * file_tree = fopen(file->tree_file_path,"a");
-	fprintf(file_tree,"%d %d %d %s %s %s %s\n",ver->valid,ver->timestamp,ver->file_type,ver->obj_hash,ver->tag,diff_lc,parent);
-//	fprintf(file_tree,"%d %d %d %s %s %d %d\n",ver->valid,ver->timestamp,ver->file_type,ver->obj_hash,ver->tag,ver->diff_count,ver->parent);
-	fclose(file_tree);
+	int md_size = calc_md_size(file);
+	int file_size = calc_file_size(file->path);
+	float ratio = file_size/(float)md_size;
+	log_msg("file size: %d ----- metadata size: %d \n",file_size,md_size);
+	FILE *fp;
+	fp = fopen(file->md_data_file_path,"w");
+	fprintf(fp,"%d %d %d %f",timestamp,file_size,md_size,ratio);
+	fclose(fp);
 }
 
 
-// creates a new version of a file
+/* Creates a version on report file release
+ * It calls to update the TREE, HEADS and OBJ_MD
+ */
 void create_version(file_data * file,TreeMd * ver,int is_first_version) 
 {
+	int off;
 	//Constructing new version path
 	char * new_current_ver = (char *) malloc((strlen(file->objects_dir_path)+50)*sizeof(char));
 	sprintf(new_current_ver,"%s%s",file->objects_dir_path,ver->obj_hash);
-	int is_creating_branch = 0;
-	char *epoch = (char*)malloc(20*sizeof(char));
+	int is_creating_branch =  1;
+	char * epoch = (char*)malloc(20*sizeof(char));
+	char * tmp_epoch = (char*)malloc(20*sizeof(char));
 	FILE * f = fopen(file->heads_file_path,"r");
 	fscanf(f,"%s",epoch);
-	fclose(f);
-	f = fopen(file->heads_file_path,"r");
+	fscanf(f,"%d",&off);
+	//	fclose(f);
+//	-------------------------------------------------------------------------------------------------------------------------
+	
+	while(fscanf(f,"%s %d",tmp_epoch,&off) != EOF)
+	{
+		if(strcmp(tmp_epoch,epoch) == 0)
+		{
+			is_creating_branch = 0;	
+		}
+	}
+	
+	
+	
+//	--------------------------------------------------------------------------------------------------------------------------------------------
+/*	f = fopen(file->heads_file_path,"r");
 	GHashTable *ght = g_hash_table_new(g_str_hash,g_str_equal);
-	ght = readHTfromFile(f,2);
+	ght = readHTfromFile(f,2);*/
 	fclose(f);
-	if(g_hash_table_lookup(ght,epoch) != NULL)
+	if(is_creating_branch)
+		printf("=====================CREATING A NEW BRANCH========================================\n");
+	else
+		printf("=====================NOT Creating a new branch====================================\n");
+	/*if(g_hash_table_lookup(ght,epoch) != NULL)
 	{
 		is_creating_branch = 0;
 		printf("\n000000000000000000000000000 NOT CREATING A NEW BRANCH0000000000000000000000\n");
@@ -422,7 +360,7 @@ void create_version(file_data * file,TreeMd * ver,int is_first_version)
 	{
 		printf("\n000000000000000000000000000 CREATING A NEW BRANCH0000000000000000000000\n");
 		is_creating_branch = 1;
-	}
+	}*/
 	if((is_first_version)||(is_creating_branch))
 	{
 		copy(file->path,new_current_ver);	
@@ -454,7 +392,7 @@ void create_version(file_data * file,TreeMd * ver,int is_first_version)
 			move(diff_path,old_current_ver_dest);
 		
 	
-		copy(file->path,new_current_ver);
+			copy(file->path,new_current_ver);
 	
 			#ifdef DEBUG
 				char *command1 = (char *) malloc(2000 * sizeof(char));
@@ -502,43 +440,11 @@ void create_version(file_data * file,TreeMd * ver,int is_first_version)
 	update_heads_file(file,ver,is_first_version,is_creating_branch);
 	update_tree_data(file,ver,is_creating_branch,is_first_version);
 	update_objmd_file(ver->obj_hash,file);
+	update_sizemd_file(file,ver->timestamp);	
 }
 // constructs version data
 
-TreeMd * construct_version_data(file_data * file,int is_first_version) 
-{
-	TreeMd *ver = (TreeMd *) malloc(sizeof(version_data));
-	
-	// version number
-//	if(!does_exist( file->ver_dir_path )) {
-//	return NULL;
-//	}
-	printf("Is first version in construct version data : %d\n",is_first_version);
-	if(!is_first_version) 
-	{
-		printf("****************This is not the first version******************\n");
-		ver->parent = get_present_head_offset(file->heads_file_path);
-	}
-	else
-	{
-		printf("****************This is the first version******************\n");
-		ver->parent = -1;
-	}
-	
-	ver->valid = 1;
-	find_SHA(file->path,ver->obj_hash);
-	
-	// tag ---- TODO
-	strcpy(ver->tag, "_");
-	
-	// timestamp
-	ver->timestamp = (int) time(NULL);
-	
-	// diff_lc ----- TODO
-	ver->diff_count = 0;
-	ver->file_type = 0;
-	return ver;
-}
+
 // initializes file_data structure
 void init_file_data(file_data * file) {
 	file->name = (char *) malloc(PATH_MAX*sizeof(char));
@@ -548,8 +454,16 @@ void init_file_data(file_data * file) {
 	file->tree_file_path = (char *) malloc(PATH_MAX*sizeof(char));
 	file->heads_file_path = (char *) malloc(PATH_MAX*sizeof(char));
 	file->OBJ_MD_file_path = (char *) malloc(PATH_MAX*sizeof(char));
+	file->md_data_file_path = (char *) malloc(PATH_MAX*sizeof(char));
 }
 
+/* Constructs the paths of:
+ * tree
+ * heads
+ * OBJ_MD
+ * returns the data structure
+ */
+ 
 file_data * construct_file_data(const char * filepath) {
 	file_data *file = (file_data *) malloc(sizeof(file_data));
 	init_file_data(file);
@@ -589,10 +503,22 @@ file_data * construct_file_data(const char * filepath) {
 	strcpy(file->OBJ_MD_file_path,file->ver_dir_path);
 	strcat(file->OBJ_MD_file_path,"OBJ_MD");
 	
+	// md_data file path
+	strcpy(file->md_data_file_path,file->ver_dir_path);
+	strcat(file->md_data_file_path,MD_DATA_FOLDER);
+	strcat(file->md_data_file_path,file->name);
+	strcat(file->md_data_file_path,".md");
+	
 	return file;
 }
 
+/* Called from FUSE over writing */
+
 int report_release(const char * filepath) {
+	
+	char * last_epoch = (char *)malloc(20 * sizeof(char));
+	int last_offset;
+	int prev_epoch;
 	#ifdef DEBUG
 		printf ("\n[versioning] received 'report_release for %s'\n", filepath);
 	#endif
@@ -604,6 +530,7 @@ int report_release(const char * filepath) {
 	file_data *file = construct_file_data(filepath);
 	#ifdef DEBUG
 		print_file_data(file);
+		
 	#endif
 	FILE * f = fopen(file->heads_file_path,"a");
 	
@@ -611,25 +538,43 @@ int report_release(const char * filepath) {
 	{
 		printf("Checking if first version\n");
 		is_first_version = 1;
+		prev_epoch = 0 ;
 		#ifdef DEBUG
 		printf("First Version Created\n");
 		#endif
 	}
+	
 	fclose(f);
+	if(!is_first_version)
+	{
+	//**************Create version only if difference of timestamp is greater than DELAY_TIME****************************//
+		int a;
+		FILE * f1 = fopen(file->heads_file_path,"r");
+		fscanf(f1,"%s%d",last_epoch,&last_offset);
+		fclose(f1);
+		f1 = fopen(file->tree_file_path,"r");
+		fseek(f1,last_offset,SEEK_SET);
+		fscanf(f1,"%d%d",&a,&prev_epoch);
+		fclose(f1);
+	//***********************************************************************************************************
+	
+	}
 	// construct latest version structure
 	#ifdef DEBUG
 		printf ("\n[versioning] constructing latest version data for %s...\n", filepath);
 	#endif
 	TreeMd *latest_version = construct_version_data(file,is_first_version);
 	#ifdef DEBUG
-		print_version_data(latest_version);
+		//print_version_data(latest_version);
 	#endif
 	
 	// create the new version itself
 	#ifdef DEBUG
 	printf ("\n[versioning] creating new version for %s...\n", filepath);
 	#endif
-	
+	printf("Latest EPoch : %d\n",latest_version->timestamp);
+	printf("Prev EPoch : %d\n",prev_epoch);
+	if((latest_version->timestamp - prev_epoch) > DELAY_TIME)
 	create_version(file,latest_version,is_first_version);
 	
 	#ifdef DEBUG
@@ -638,15 +583,6 @@ int report_release(const char * filepath) {
 	return 0;
 }
 
-int report_filedelete(const char * filepath) {
-	#ifdef DEBUG
-		printf ("[versioning] received 'report_filedelete for %s'\n", filepath);
-	#endif
-
-	// TODO : delete all files with names 'filepath*'
-
-	return 0;
-}
 
 // debugging functions
 void print_file_data(file_data * file) 
@@ -660,6 +596,8 @@ void print_file_data(file_data * file)
 	printf("\tHeads file path: %s\n",file->heads_file_path);
 	printf("\tOBJ_MD file path: %s\n",file->OBJ_MD_file_path);
 }
+
+/* Logic of checking out */
 
 int report_checkout(char * filepath, int req_tp)
 {
@@ -693,61 +631,92 @@ int report_checkout(char * filepath, int req_tp)
 	{
 		off = search_tp_tree(file, -1*off, req_tp);
 		printf("---------------%d----------", off);
-		if(off==0)
+		if(off==-1)
 			return 0;
 		write_to_head(file->heads_file_path, req_tp, off);
 		return 1;	
 	}
 }
-/*
-void update_log_file(file_data * file,int reqd_version_no)
+
+/* Revert Logic */
+
+int make_write(file_data * file, char * write)
 {
-	FILE * f1 = fopen(file->ver_log_path,"r");
-	char * path = (char *)malloc(PATH_MAX * sizeof(char));
-	strcpy(path,file->ver_dir_path);
-	strcat(path,"tmp");
-	FILE * f2 = fopen(path,"w");
-	int ver_no;
-	char * logline = (char *)malloc(MAX_LOG_LINE_SIZE * sizeof(char));
-	fgets(logline,MAX_LOG_LINE_SIZE,f1);
-	while(logline!=NULL)
-	{
-	    ver_no = extract_version_no(logline);
-	    printf("Version no is : %d\n",ver_no);
-	    printf("Logline is %s\n",logline);
-	    if(ver_no<=reqd_version_no)
-	    fprintf(f2,"%s",logline);
-	    else
-	    break;
-	  fgets(logline,MAX_LOG_LINE_SIZE,f1);  
-	}
-	//copy(path,file->ver_log_path);
-	delete(file->ver_log_path);
-	move(path,file->ver_log_path);
-	fclose(f1);
-	fclose(f2);
-}*/
-int revert_to_version(char * filepath, int req_tp)                     // returns 1 for success and 0 for failure
-{
-	file_data * file = construct_file_data(filepath);
-	
 	FILE * fph = fopen(file->heads_file_path, "r");
 	char * b_name = (char *)malloc(15*sizeof(char));
 	int off;
 	fscanf(fph, "%s %d", b_name, &off);
-	fclose(fph);	
-	
-	fph = fopen(file->heads_file_path, "r");
-	GHashTable * ht = readHTfromFile(fph, 2);
-	fclose(fph);
-
-	if((int *)g_hash_table_lookup(ht, b_name)==NULL)
+	char * t = (char *)malloc(15*sizeof(char));
+	char * t1 = (char *)malloc(15*sizeof(char));
+	int flg = 0;
+	while(fscanf(fph, "%s %s", t, t1)!=EOF)
 	{
-		printf("ERROR: you cannot revert from the current version.");
-		return 0;
-	}	
+		if(strcmp(t, b_name)!=0)
+		{
+			if(flg==0)
+				strcpy(write, t);
+			else
+				strcat(write, t);
+			strcat(write, " ");
+			strcat(write, addspaces(t1, 10));
+			strcat(write, "\n");
+			flg++;
+		}
+	}
+	fclose(fph);
+	return off;	
+}
+
+int check_feasibilty(file_data * file, int req_tp, char * curr_bname)
+{
+	strcpy(curr_bname, "B_");
+	char * rtp = (char *)malloc(15*sizeof(char));
+	itoa(req_tp, rtp);
+	strcat(curr_bname, rtp);
+	FILE * fph = fopen(file->heads_file_path, "r");
+	char * c_bname = (char *)malloc(15*sizeof(char));
+	int c_tp;
+	fscanf(fph, "%s %d", c_bname, &c_tp);
+	int flag1 = 0;
+	while(strcmp(c_bname, curr_bname)!=0)
+	{
+		if(fscanf(fph, "%s %d", c_bname, &c_tp)==EOF)
+		{
+			flag1=1;
+			break;
+		}
+	}
+	fclose(fph);
+	if(flag1==0)
+	{
+		printf("ERROR: YOU CANNOT REVERT TO THIS POSITION.\n");
+		return 0;	
+	}
+	return 1;
+}
+
+int revert_to_version(char * filepath, int req_tp)                     // returns 1 for success and 0 for failure
+{
+	file_data * file = construct_file_data(filepath);
+	char * write = (char *)malloc(10000*sizeof(char));
+	FILE * fph = fopen(file->heads_file_path, "r");
+	int off = make_write(file, write);
 	
-	printf("-======================YAHAN TAK PAHUCH GYA===========================-\n");
+	char * curr_bname = (char *)malloc(15*sizeof(char));
+	if(check_feasibilty(file, req_tp, curr_bname)==0)
+		return 0;
+		
+	char * c_tp = (char *)malloc(15*sizeof(char));
+	fscanf(fph, "%s", c_tp);
+	c_tp = c_tp + 2;
+	
+	if(report_checkout(filepath, req_tp)==0)
+	{
+		printf("ERROR: YOU CANNOT REVERT TO THIS VERSION\n");
+		return 0;
+	}
+	else
+		report_checkout(filepath, atoi(c_tp));
 	
 	char * temp_object = (char *)malloc(PATH_MAX*sizeof(char));
 	strcpy(temp_object, file->objects_dir_path);
@@ -765,7 +734,7 @@ int revert_to_version(char * filepath, int req_tp)                     // return
 		printf("ERROR: no record of latest head in tree.");
 		return 0;
 	}
-	//fclose(fpt);
+	
 	fscanf(fpt, "%d %d %s %s %d %d", &tp, &lp, hash, tag, &diff_ct, &p_off);
 	if(tp==req_tp)
 	{
@@ -776,25 +745,13 @@ int revert_to_version(char * filepath, int req_tp)                     // return
 	strcat(curr_object, hash);
 	strcat(temp_object, "copy");
 	copy(curr_object, temp_object);
-	printf("\n ===copy  %s ------> %s", curr_object, temp_object);
-	printf("-======================YAHAN TAK PAHUCH GYA===========================-\n");
-	
-	
+			
 	while(tp!=req_tp)
 	{
 		fseek(fpt, off, SEEK_SET);
 		fprintf(fpt, "0");
-		char * bname = (char *)malloc(15*sizeof(char));
-		strcpy(bname, "B_");
-		char *str_tp= (char*)malloc(20*sizeof(char));
-		itoa(tp,str_tp);
-		strcat(bname, str_tp);
-		printf("\npogasjgdkasgdlkgaskjdbajsgdhkjas\n%s", bname);
-		g_hash_table_remove(ht, (gconstpointer)bname);
-		printf("\n====%s===\n", hash);
-		remove_from_everything(file, hash);                                // removes the current version objects folder if ref_count=1 
-		break;
-		/*off = p_off;
+		remove_from_everything(file, hash);                                // removes the current version objects file if ref_count=1 
+		off = p_off;
 		fseek(fpt, off, SEEK_SET);
 		fscanf(fpt, "%d", &valid);
 		if(valid==0)
@@ -803,67 +760,40 @@ int revert_to_version(char * filepath, int req_tp)                     // return
 			return 0;
 		}
 		fscanf(fpt, "%d %d %s %s %d %d", &tp, &lp, hash, tag, &diff_ct, &p_off);
-		
 		fclose(fpt);
-		if(isJunction(file, off)==1)
+		if(isJunction(file, off)==1 && off!=0)
 		{
 			char * offs = (char *)malloc(15*sizeof(char));
 			itoa(off, offs);
 			fph = fopen(file->heads_file_path, "w");
 			fprintf(fph, "B_%d %s\n", tp, addspaces(offs, 10));
-			writeHTtoFile(ht, fph);
+			fprintf(fph, "%s", write);
 			fclose(fph);
 			report_checkout(filepath, req_tp);
 			return 1;
 		}
 		fpt = fopen(file->tree_file_path, "r+");
-		int i = strlen(curr_object) - 1;
+		int i = strlen(curr_object);
 		while(curr_object[i]!='/')
 			i--;
-		curr_object[i] = '\0';
+		curr_object[i+1] = '\0';
 		strcat(curr_object, hash);
 		if(lp==0)
 			copy(curr_object, temp_object);
 		else
-			patch(temp_object, curr_object);*/
+			patch(temp_object, curr_object);
 	}
+	
 	copy(temp_object, filepath);
 	copy(temp_object, curr_object);
 	delete(temp_object);
 	fclose(fpt);
+	fph = fopen(file->heads_file_path, "w");
+	char * offs = (char *)malloc(15*sizeof(char));
+	itoa(off, offs);
+	fprintf(fph, "%s %s\n", curr_bname, addspaces(offs, 10));
+	fprintf(fph, "%s %s\n", curr_bname, offs);
+	fprintf(fph, "%s", write);
+	fclose(fph);
 	return 1;
-}
-/*
-void list_all_versions(const char * filepath)
-{
-	file_data * file = construct_file_data(filepath);
-	FILE * f = fopen(file->ver_log_path,"r");
-	char * logline = (char * )malloc(MAX_LOG_LINE_SIZE * sizeof(char));
-	while(fgets(logline,MAX_LOG_LINE_SIZE,f)!=NULL)
-	{
-	//get_data_from_logline();
-	printf("%s",logline);
-
-	}
-}*/
-void add_spaces_to_version_data(TreeMd * ver)
-{
-	
-//	printf("obj_hash : %s\n",ver->obj_hash);
-//	printf("timestamp: %d\n",ver->timestamp);
-//	printf("diff_count: %d\n",ver->diff_count);
-//	printf("file_type: %d\n",ver->file_type);
-//	printf("parent : %d\n",ver->parent);
-//	printf("tag : %s\n",ver->tag);
-}
-void print_version_data(TreeMd * ver) 
-{
-	printf("Version Information\n");
-	printf("Version valid : %d\n",ver->valid);
-	printf("obj_hash : %s\n",ver->obj_hash);
-	printf("timestamp: %d\n",ver->timestamp);
-	printf("diff_count: %d\n",ver->diff_count);
-	printf("file_type: %d\n",ver->file_type);
-	printf("parent : %d\n",ver->parent);
-	printf("tag : %s\n",ver->tag);
 }

@@ -1,6 +1,8 @@
 #ifndef TIMELINE_PARAMS_H
 #define TIMELINE_PARAMS_H
 
+#define TEMP_PREFIX "/tmp/rvfs/"
+
 // LO/PO
 #define LO 0
 #define PO 1
@@ -33,7 +35,7 @@
 #define EDITOR_EXCLUSIVE_HIGHLIGHT_COLOR (QColor(Qt::red).lighter(180))
 
 // Points
-#define POINT_MINIMUM_DISTANCE (5.0)
+#define POINT_MINIMUM_DISTANCE (2.0)
 
 #define POINT_DEFAULT_RADIUS (5.0)
 #define POINT_DEFAULT_OUTLINE_WIDTH (1.0)

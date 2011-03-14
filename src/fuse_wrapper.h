@@ -17,4 +17,6 @@ int delete(const char *filepath);
 
 void patch(const char * orig_filepath, const char * diff_filepath); 
 
+int cat(const char *filepath);
+
 #endif

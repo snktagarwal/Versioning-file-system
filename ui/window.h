@@ -12,7 +12,7 @@ class GraphWindow : public QMainWindow {
 	Q_OBJECT
 	
 	public:
-		GraphWindow();
+		GraphWindow(char *filepath);
 		
 		Point *getRoot() const;
 		Point *getCurrent() const;
@@ -57,6 +57,10 @@ class GraphWindow : public QMainWindow {
 		float scalingFactor;
 		//int maxAncestorCount;
 		
+		QString filepath;
+		QString filename;
+		
+		void loadFileData(QString filepath);
 		void setupModel();
 		void setupViews();
 		void readFromFile(const QString &path);
