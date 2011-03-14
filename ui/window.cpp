@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>
+#include <cmath>
 
 //#include "qxtspanslider.h"
 #include "window.h"
@@ -11,12 +12,6 @@ GraphWindow::GraphWindow() {
 	setupModel();
 	setupViews();
 	animateTree();
-	
-	QPointF *p1 = new QPointF(LEFT_MARGIN, TOP_MARGIN);
-	QPointF *p2 = new QPointF(maxX, TOP_MARGIN);
-	axis = new Axis(p1, p2);
-	axis->drawTicks(scene, rootX);
-	scene->addItem(axis);
 	
 	QScrollBar *horizontalScrollBar = view->horizontalScrollBar();
 	horizontalScrollBar->setValue(horizontalScrollBar->maximum());
@@ -39,12 +34,11 @@ GraphWindow::GraphWindow() {
 }
 
 Point *GraphWindow::getRoot() const { return root; }
+Point *GraphWindow::getCurrent() const { return points->at(current); }
 void GraphWindow::setRoot(Point *p) { root = p; }
 
 void GraphWindow::animateTree() {
 	QList<Point *> *pointsCopy = new QList<Point *>;
-	
-	Point *root = points->at(0);
 	
 	/*for(int i=0; i<points->size(); i++) {
 		Point *p = points->at(i);
@@ -53,14 +47,10 @@ void GraphWindow::animateTree() {
 	
 	for(int i=0; i<points->size(); i++) {
 		Point *p = points->at(i);
-		if(p->getParent() == 0) {
-			pointsCopy->insert(i, new Point(scene, p->getX()-root->getX(), p->getY()-root->getY()));
-		}
-		else {
-			Point *parent;
-			parent = p->getParent();
-			pointsCopy->insert(i, new Point(scene, p->getX()-parent->getX(), p->getY()-parent->getY()));
-		}
+		if(p->getParent() == 0)
+			pointsCopy->insert(i, new Point(scene, 0, 0));
+		else
+			pointsCopy->insert(i, new Point(scene, p->getX()-p->getParent()->getX(), p->getY()-p->getParent()->getY()));
 	}
 	
 	//maxAncestorCount = points->at(0)->getAncestorCount();
@@ -81,12 +71,12 @@ void GraphWindow::animateTree() {
 		animation->setItem(p);
 		animation->setTimeLine(timeline);
 		
-		for(int j=0; j<ANIMATION_TIME; j++) {
+		for(int j=0; j<=ANIMATION_TIME; j++) {
 			qreal ratio = ((float)j)/ANIMATION_TIME;
 			animation->setPosAt( ratio, QPointF( ratio*(q->getX()), ratio*(q->getY()) ) );
 		}
 		
-		p->startTimer((p->getAncestorCount()+1)*ANIMATION_TIME);
+		p->startTimer((p->getAncestorCount()+1)*ANIMATION_TIME + 300);
 		
 		/* if(p->getAncestorCount() > maxAncestorCount) {
 			maxAncestorCount = p->getAncestorCount();
@@ -121,12 +111,48 @@ void GraphWindow::setAncestorCount() {
 }
 
 void GraphWindow::setupViews() {
+	// file chooser + zoom slider
+	/*fileLineEdit = new QLineEdit;
+	fileLineEdit->setReadOnly(true);
+	
+	fileButton = new QPushButton("Browse...");
+	connect( fileButton , SIGNAL(clicked()) , this , SLOT(loadFile()) );
+	
+	zoomSlider = new QSlider(Qt::Horizontal);
+	zoomSlider->setRange(5, 24*60);
+	zoomSlider->setTickInterval(5);
+	zoomSlider->setSingleStep(5);
+	zoomSlider->setPageStep(60);
+	zoomSlider->setFixedWidth(200);
+	zoomSlider->setValue(int(100.0/scalingFactor));
+	connect( zoomSlider , SIGNAL(valueChanged(int)) , this , SLOT(setScale(int)) );
+	
+	QHBoxLayout *toolbarLayout = new QHBoxLayout;
+	toolbarLayout->addWidget(fileLineEdit);
+	toolbarLayout->addWidget(fileButton);
+	toolbarLayout->addWidget(zoomSlider);*/
+	
+	// timeline view
 	view = new QGraphicsView;
 	view->setScene(scene);
 	view->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
 	view->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-	view->setMinimumSize(QApplication::desktop()->screenGeometry().width(), scene->height()+20);
+	view->setMinimumSize(0, scene->height()+20);
 	view->setBaseSize(scene->width(), scene->height()+20);
+	
+	QPointF *p1 = new QPointF(LEFT_MARGIN, TOP_MARGIN);
+	QPointF *p2 = new QPointF(maxX, TOP_MARGIN);
+	axis = new Axis(p1, p2);
+	axis->drawTicks(scene, rootX, scalingFactor);
+	scene->addItem(axis);
+	
+	// widget for timeline + toolbarLayout
+	QVBoxLayout *topLayout = new QVBoxLayout;
+	//topLayout->addLayout(toolbarLayout);
+	topLayout->addWidget(view);
+	
+	QWidget *topWidget = new QWidget(this);
+	topWidget->setLayout(topLayout);
 	
 	// single editor for when a single point is clicked
 	singleEditorLabel = new QLabel("Document");
@@ -200,7 +226,7 @@ void GraphWindow::setupViews() {
 	doubleEditorWidget->hide();
 	
 	splitter = new QSplitter(Qt::Vertical);
-	splitter->addWidget(view);
+	splitter->addWidget(topWidget);
 	splitter->addWidget(singleEditorWidget);
 	splitter->addWidget(doubleEditorWidget);
 	
@@ -208,7 +234,7 @@ void GraphWindow::setupViews() {
 }
 
 void GraphWindow::setupModel() {
-	readFromFile(DATA_FILE);
+	readFromFile("files/l");
 	setAncestorCount();
 	
 	for(int i=0; i<points->size(); i++) {
@@ -230,6 +256,29 @@ void GraphWindow::setupModel() {
 		}
 	}
 }
+
+/*void GraphWindow::setScale(int scale) {
+	scalingFactor = 100.0/(scale*60);
+	
+	for(int i=0; i<points->size(); i++) {
+		Point *p = points->at(i);
+		qreal unscaledX = p->getX() - LEFT_MARGIN;
+		p->setX(unscaledX*scalingFactor + LEFT_MARGIN);
+	}
+	rootX *= scalingFactor;
+	maxX = (maxX - LEFT_MARGIN)*scalingFactor + LEFT_MARGIN;
+	
+	// set the size of the scene based on the right end of the axis
+	qreal length = maxX - LEFT_MARGIN;
+	int segmentCount = ((int)(length/AXIS_DEFAULT_TICK_SEPARATION)) + 1;
+	qreal axisMaxX = LEFT_MARGIN + segmentCount * AXIS_DEFAULT_TICK_SEPARATION;
+	scene->setSceneRect( 0, 0, axisMaxX + RIGHT_MARGIN, scene->height() );
+	
+	// scale the axis
+	axis->setP2X(maxX);
+	//axis->deleteAllTicks();
+	axis->drawTicks(scene, rootX, scalingFactor);
+}*/
 
 void GraphWindow::showDocument() {
 	QList<QGraphicsItem *> selectedPoints = scene->selectedItems();
@@ -272,7 +321,7 @@ void GraphWindow::showDocument() {
 		QString filename1 = p1->data(0).toString();
 		QString path1 = OBJECTS_DIR+filename1;
 		
-		QFile *file1, *file2;
+		QFile *file1 = NULL, *file2 = NULL;
 		if(path1.compare(OBJECTS_DIR) != 0) {
 			file1 = new QFile(path1);
 			if(file1->open(QFile::ReadOnly | QFile::Text)) {
@@ -310,203 +359,204 @@ void GraphWindow::showDocument() {
 }
 
 void GraphWindow::highlightDifferences(QFile *file1, QFile *file2) {
-	// declare extra selections
 	QList<QTextEdit::ExtraSelection> extraSelections1, extraSelections2;
 	
 	QString command = "diff "+file1->fileName()+" "+file2->fileName()+">"+DIFF_FILE;
-	system(command.toLatin1().data());
+	int status = system(command.toLatin1().data());
 	
-	QFile *diff_file = new QFile(DIFF_FILE);
-	QString thunkHead, line;
-	if(diff_file->open(QFile::ReadOnly | QFile::Text)) {
-		QTextStream stream(diff_file);
+	if(status != -1) {
+		QFile *diff_file = new QFile(DIFF_FILE);
+		QString thunkHead, line;
+		if(diff_file->open(QFile::ReadOnly | QFile::Text)) {
+			QTextStream stream(diff_file);
 		
-		thunkHead = stream.readLine();
+			thunkHead = stream.readLine();
 		
-		while(!thunkHead.isNull()) {
-			qDebug() << "Thunk Head: " << thunkHead;
-			if(thunkHead.contains('c')) {
-				line = stream.readLine();
+			while(!thunkHead.isNull()) {
+				qDebug() << "Thunk Head: " << thunkHead;
+				if(thunkHead.contains('c')) {
+					line = stream.readLine();
 				
-				QStringList changePieces = thunkHead.split("c", QString::SkipEmptyParts);
-				QString file1Changes = changePieces.value(0);
-				QString file2Changes = changePieces.value(1);
-				qDebug() << file1Changes << "|" << file2Changes;
+					QStringList changePieces = thunkHead.split("c", QString::SkipEmptyParts);
+					QString file1Changes = changePieces.value(0);
+					QString file2Changes = changePieces.value(1);
+					qDebug() << file1Changes << "|" << file2Changes;
 				
-				if(!file1Changes.contains(",")) {
-					QTextEdit::ExtraSelection selection1;
-					selection1.cursor = doubleEditorLeft->textCursor();
-					selection1.format.setBackground(EDITOR_COMMON_HIGHLIGHT_COLOR);
-					
-					int file1LineChanged = file1Changes.toInt();
-					std::cout << "File 1 Changed: " << file1LineChanged << std::endl;
-					
-					selection1.cursor.movePosition(QTextCursor::Start);
-					selection1.cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, file1LineChanged-1);
-					selection1.format.setProperty(QTextFormat::FullWidthSelection, true);
-					selection1.cursor.clearSelection();
-					extraSelections1.append(selection1);
-				}
-				else {
-					QStringList file1LinesChanged = file1Changes.split(",");
-					int file1LinesChangedFrom = file1LinesChanged.value(0).toInt();
-					int file1LinesChangedTo = file1LinesChanged.value(1).toInt();
-					std::cout << "File 1 Changed [R]: From Line #" << file1LinesChangedFrom << " to Line #" << file1LinesChangedTo << std::endl; 
-					
-					for(int i=(file1LinesChangedFrom-1) ; i<=(file1LinesChangedTo-1) ; i++) {
+					if(!file1Changes.contains(",")) {
 						QTextEdit::ExtraSelection selection1;
 						selection1.cursor = doubleEditorLeft->textCursor();
 						selection1.format.setBackground(EDITOR_COMMON_HIGHLIGHT_COLOR);
-						
+					
+						int file1LineChanged = file1Changes.toInt();
+						std::cout << "File 1 Changed: " << file1LineChanged << std::endl;
+					
 						selection1.cursor.movePosition(QTextCursor::Start);
-						selection1.cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, i);
+						selection1.cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, file1LineChanged-1);
 						selection1.format.setProperty(QTextFormat::FullWidthSelection, true);
 						selection1.cursor.clearSelection();
 						extraSelections1.append(selection1);
 					}
-				}
+					else {
+						QStringList file1LinesChanged = file1Changes.split(",");
+						int file1LinesChangedFrom = file1LinesChanged.value(0).toInt();
+						int file1LinesChangedTo = file1LinesChanged.value(1).toInt();
+						std::cout << "File 1 Changed [R]: From Line #" << file1LinesChangedFrom << " to Line #" << file1LinesChangedTo << std::endl; 
+					
+						for(int i=(file1LinesChangedFrom-1) ; i<=(file1LinesChangedTo-1) ; i++) {
+							QTextEdit::ExtraSelection selection1;
+							selection1.cursor = doubleEditorLeft->textCursor();
+							selection1.format.setBackground(EDITOR_COMMON_HIGHLIGHT_COLOR);
+						
+							selection1.cursor.movePosition(QTextCursor::Start);
+							selection1.cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, i);
+							selection1.format.setProperty(QTextFormat::FullWidthSelection, true);
+							selection1.cursor.clearSelection();
+							extraSelections1.append(selection1);
+						}
+					}
 				
-				if(!file2Changes.contains(",")) {
-					QTextEdit::ExtraSelection selection2;
-					selection2.cursor = doubleEditorRight->textCursor();
-					selection2.format.setBackground(EDITOR_COMMON_HIGHLIGHT_COLOR);
-					
-					int file2LineChanged = file2Changes.toInt();
-					std::cout << "File 2 Changed: " << file2LineChanged << std::endl;
-					
-					selection2.cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
-					selection2.cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, file2LineChanged-1);
-					selection2.format.setProperty(QTextFormat::FullWidthSelection, true);
-					selection2.cursor.clearSelection();
-					extraSelections2.append(selection2);
-				}
-				else {
-					QStringList file2LinesChanged = file2Changes.split(",");
-					int file2LinesChangedFrom = file2LinesChanged.value(0).toInt();
-					int file2LinesChangedTo = file2LinesChanged.value(1).toInt();
-					std::cout << "File 2 Changed [R]: From Line #" << file2LinesChangedFrom << " to Line #" << file2LinesChangedTo << std::endl; 
-					
-					for(int i=(file2LinesChangedFrom-1) ; i<=(file2LinesChangedTo-1) ; i++) {
+					if(!file2Changes.contains(",")) {
 						QTextEdit::ExtraSelection selection2;
 						selection2.cursor = doubleEditorRight->textCursor();
 						selection2.format.setBackground(EDITOR_COMMON_HIGHLIGHT_COLOR);
-						
+					
+						int file2LineChanged = file2Changes.toInt();
+						std::cout << "File 2 Changed: " << file2LineChanged << std::endl;
+					
 						selection2.cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
-						selection2.cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, i);
+						selection2.cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, file2LineChanged-1);
 						selection2.format.setProperty(QTextFormat::FullWidthSelection, true);
 						selection2.cursor.clearSelection();
 						extraSelections2.append(selection2);
 					}
-				}
-				
-				while(line.startsWith("<") || line.startsWith(">") || line.startsWith("-")) {
-					line = stream.readLine();
-				}
-			}
-			else if(thunkHead.contains('a')) {
-				line = stream.readLine();
-				
-				QStringList changePieces = thunkHead.split("a", QString::SkipEmptyParts);
-				
-				QString file1Changes = changePieces.value(0);
-				QString file2Changes = changePieces.value(1);
-				
-				qDebug() << file1Changes << "|" << file2Changes;
-				
-				if(!file2Changes.contains(",")) {
-					QTextEdit::ExtraSelection selection2;
-					selection2.cursor = doubleEditorRight->textCursor();
-					selection2.format.setBackground(EDITOR_EXCLUSIVE_HIGHLIGHT_COLOR);
+					else {
+						QStringList file2LinesChanged = file2Changes.split(",");
+						int file2LinesChangedFrom = file2LinesChanged.value(0).toInt();
+						int file2LinesChangedTo = file2LinesChanged.value(1).toInt();
+						std::cout << "File 2 Changed [R]: From Line #" << file2LinesChangedFrom << " to Line #" << file2LinesChangedTo << std::endl; 
 					
-					int file2LineChanged = file2Changes.toInt();
-					std::cout << "File 2 Exclusive: " << file2LineChanged << std::endl;
-					
-					selection2.cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
-					selection2.cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, file2LineChanged-1);
-					selection2.format.setProperty(QTextFormat::FullWidthSelection, true);
-					selection2.cursor.clearSelection();
-					extraSelections2.append(selection2);
-				}
-				else {
-					QStringList file2LinesChanged = file2Changes.split(",");
-					int file2LinesChangedFrom = file2LinesChanged.value(0).toInt();
-					int file2LinesChangedTo = file2LinesChanged.value(1).toInt();
-					std::cout << "File 2 Exclusive [R]: From Line #" << file2LinesChangedFrom << " to Line #" << file2LinesChangedTo << std::endl; 
-					
-					for(int i=(file2LinesChangedFrom-1) ; i<=(file2LinesChangedTo-1) ; i++) {
-						QTextEdit::ExtraSelection *selection2 = new QTextEdit::ExtraSelection;
-						selection2->cursor = doubleEditorRight->textCursor();
-						selection2->format.setBackground(EDITOR_EXCLUSIVE_HIGHLIGHT_COLOR);
+						for(int i=(file2LinesChangedFrom-1) ; i<=(file2LinesChangedTo-1) ; i++) {
+							QTextEdit::ExtraSelection selection2;
+							selection2.cursor = doubleEditorRight->textCursor();
+							selection2.format.setBackground(EDITOR_COMMON_HIGHLIGHT_COLOR);
 						
-						selection2->cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
-						selection2->cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, i);
-						selection2->format.setProperty(QTextFormat::FullWidthSelection, true);
-						selection2->cursor.clearSelection();
-						extraSelections2.append(*selection2);
+							selection2.cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
+							selection2.cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, i);
+							selection2.format.setProperty(QTextFormat::FullWidthSelection, true);
+							selection2.cursor.clearSelection();
+							extraSelections2.append(selection2);
+						}
+					}
+				
+					while(line.startsWith("<") || line.startsWith(">") || line.startsWith("-")) {
+						line = stream.readLine();
 					}
 				}
-				
-				while(line.startsWith("<") || line.startsWith(">") || line.startsWith("-")) {
+				else if(thunkHead.contains('a')) {
 					line = stream.readLine();
-				}
-			}
-			else if(thunkHead.contains('d')) {
-				line = stream.readLine();
 				
-				QStringList changePieces = thunkHead.split("d", QString::SkipEmptyParts);
+					QStringList changePieces = thunkHead.split("a", QString::SkipEmptyParts);
 				
-				QString file1Changes = changePieces.value(0);
-				QString file2Changes = changePieces.value(1);
+					QString file1Changes = changePieces.value(0);
+					QString file2Changes = changePieces.value(1);
 				
-				qDebug() << file1Changes << "|" << file2Changes;
+					qDebug() << file1Changes << "|" << file2Changes;
 				
-				if(!file1Changes.contains(",")) {
-					QTextEdit::ExtraSelection selection1;
-					selection1.cursor = doubleEditorLeft->textCursor();
-					selection1.format.setBackground(EDITOR_EXCLUSIVE_HIGHLIGHT_COLOR);
+					if(!file2Changes.contains(",")) {
+						QTextEdit::ExtraSelection selection2;
+						selection2.cursor = doubleEditorRight->textCursor();
+						selection2.format.setBackground(EDITOR_EXCLUSIVE_HIGHLIGHT_COLOR);
 					
-					int file1LineChanged = file1Changes.toInt();
-					std::cout << "File 1 Exclusive: " << file1LineChanged << std::endl;
+						int file2LineChanged = file2Changes.toInt();
+						std::cout << "File 2 Exclusive: " << file2LineChanged << std::endl;
 					
-					selection1.cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
-					selection1.cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, file1LineChanged-1);
-					selection1.format.setProperty(QTextFormat::FullWidthSelection, true);
-					selection1.cursor.clearSelection();
-					extraSelections1.append(selection1);
-				}
-				else {
-					QStringList file1LinesChanged = file1Changes.split(",");
-					int file1LinesChangedFrom = file1LinesChanged.value(0).toInt();
-					int file1LinesChangedTo = file1LinesChanged.value(1).toInt();
-					std::cout << "File 1 Exclusive [R]: From Line #" << file1LinesChangedFrom << " to Line #" << file1LinesChangedTo << std::endl; 
+						selection2.cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
+						selection2.cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, file2LineChanged-1);
+						selection2.format.setProperty(QTextFormat::FullWidthSelection, true);
+						selection2.cursor.clearSelection();
+						extraSelections2.append(selection2);
+					}
+					else {
+						QStringList file2LinesChanged = file2Changes.split(",");
+						int file2LinesChangedFrom = file2LinesChanged.value(0).toInt();
+						int file2LinesChangedTo = file2LinesChanged.value(1).toInt();
+						std::cout << "File 2 Exclusive [R]: From Line #" << file2LinesChangedFrom << " to Line #" << file2LinesChangedTo << std::endl; 
 					
-					for(int i=(file1LinesChangedFrom-1) ; i<=(file1LinesChangedTo-1) ; i++) {
-						QTextEdit::ExtraSelection *selection1 = new QTextEdit::ExtraSelection;
-						selection1->cursor = doubleEditorLeft->textCursor();
-						selection1->format.setBackground(EDITOR_EXCLUSIVE_HIGHLIGHT_COLOR);
+						for(int i=(file2LinesChangedFrom-1) ; i<=(file2LinesChangedTo-1) ; i++) {
+							QTextEdit::ExtraSelection *selection2 = new QTextEdit::ExtraSelection;
+							selection2->cursor = doubleEditorRight->textCursor();
+							selection2->format.setBackground(EDITOR_EXCLUSIVE_HIGHLIGHT_COLOR);
 						
-						selection1->cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
-						selection1->cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, i);
-						selection1->format.setProperty(QTextFormat::FullWidthSelection, true);
-						selection1->cursor.clearSelection();
-						extraSelections1.append(*selection1);
+							selection2->cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
+							selection2->cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, i);
+							selection2->format.setProperty(QTextFormat::FullWidthSelection, true);
+							selection2->cursor.clearSelection();
+							extraSelections2.append(*selection2);
+						}
+					}
+				
+					while(line.startsWith("<") || line.startsWith(">") || line.startsWith("-")) {
+						line = stream.readLine();
 					}
 				}
-				
-				while(line.startsWith("<") || line.startsWith(">") || line.startsWith("-")) {
+				else if(thunkHead.contains('d')) {
 					line = stream.readLine();
+				
+					QStringList changePieces = thunkHead.split("d", QString::SkipEmptyParts);
+				
+					QString file1Changes = changePieces.value(0);
+					QString file2Changes = changePieces.value(1);
+				
+					qDebug() << file1Changes << "|" << file2Changes;
+				
+					if(!file1Changes.contains(",")) {
+						QTextEdit::ExtraSelection selection1;
+						selection1.cursor = doubleEditorLeft->textCursor();
+						selection1.format.setBackground(EDITOR_EXCLUSIVE_HIGHLIGHT_COLOR);
+					
+						int file1LineChanged = file1Changes.toInt();
+						std::cout << "File 1 Exclusive: " << file1LineChanged << std::endl;
+					
+						selection1.cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
+						selection1.cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, file1LineChanged-1);
+						selection1.format.setProperty(QTextFormat::FullWidthSelection, true);
+						selection1.cursor.clearSelection();
+						extraSelections1.append(selection1);
+					}
+					else {
+						QStringList file1LinesChanged = file1Changes.split(",");
+						int file1LinesChangedFrom = file1LinesChanged.value(0).toInt();
+						int file1LinesChangedTo = file1LinesChanged.value(1).toInt();
+						std::cout << "File 1 Exclusive [R]: From Line #" << file1LinesChangedFrom << " to Line #" << file1LinesChangedTo << std::endl; 
+					
+						for(int i=(file1LinesChangedFrom-1) ; i<=(file1LinesChangedTo-1) ; i++) {
+							QTextEdit::ExtraSelection *selection1 = new QTextEdit::ExtraSelection;
+							selection1->cursor = doubleEditorLeft->textCursor();
+							selection1->format.setBackground(EDITOR_EXCLUSIVE_HIGHLIGHT_COLOR);
+						
+							selection1->cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
+							selection1->cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, i);
+							selection1->format.setProperty(QTextFormat::FullWidthSelection, true);
+							selection1->cursor.clearSelection();
+							extraSelections1.append(*selection1);
+						}
+					}
+				
+					while(line.startsWith("<") || line.startsWith(">") || line.startsWith("-")) {
+						line = stream.readLine();
+					}
 				}
+				thunkHead = line;
 			}
-			thunkHead = line;
 		}
+		diff_file->close();
 	}
-	diff_file->close();
 	
 	doubleEditorLeft->setExtraSelections(extraSelections1);
 	doubleEditorRight->setExtraSelections(extraSelections2);
 }
 
-void GraphWindow::updateRange(int min, int max) {
+void GraphWindow::updateRange(int, int) {
 	QScrollBar *leftScrollBar = doubleEditorLeft->verticalScrollBar();
 	QScrollBar *rightScrollBar = doubleEditorRight->verticalScrollBar();
 	int leftScrollBarRange = leftScrollBar->maximum() - leftScrollBar->minimum();
@@ -530,25 +580,49 @@ void GraphWindow::updateRange(int min, int max) {
 }
 
 void GraphWindow::readFromFile(const QString &path) {
+	// storage format: <valid> <timestamp> <lo=0/po> <hash> <tag> <diff_lc> <parent_offset>
 	points = new QList<Point *>;
 	maxX = 0;
 	int branchCount = 1;
+	const float scalingFactors[] = {
+		100.0/(24*60*60),
+		100.0/(18*60*60),
+		100.0/(12*60*60),
+		100.0/(6*60*60),
+		100.0/(3*60*60),
+		100.0/(2*60*60),
+		100.0/(60*60),
+		100.0/(45*60),
+		100.0/(30*60),
+		100.0/(15*60),
+		100.0/(10*60),
+		100.0/(5*60),
+		100.0/(3*60)
+	};
 	
 	if(!path.isNull()) {
-		QFile file(path);
+		// QFile file(path);
+		QString treePath = path;
+		QString headPath = path;
+		QFile treeFile( treePath.append(".tree") );
+		QFile headFile( headPath.append(".head") );
 		
-		if(file.open(QFile::ReadOnly | QFile::Text)) {
-			QTextStream stream(&file);
+		if( treeFile.open(QFile::ReadOnly | QFile::Text) && headFile.open(QFile::ReadOnly | QFile::Text) ) {
+			// QTextStream stream(&file);
+			QTextStream treeStream(&treeFile);
+			QTextStream headStream(&headFile);
 			QString line;
 			
-			current = stream.readLine().toInt();
+			QString currentString = headStream.readLine();
+			current = currentString.split(" ").value(0).right(10).toInt();
+			
 			int counter = 0;
 			
 			do {
-				line = stream.readLine();
+				line = treeStream.readLine();
 				
 				if(!line.isEmpty()) {
-					QStringList pieces = line.split(",", QString::KeepEmptyParts);
+					/*QStringList pieces = line.split(",", QString::KeepEmptyParts);
 					
 					qreal x = pieces.value(0).toDouble() * SCALING_FACTOR;
 					qreal y;
@@ -558,37 +632,55 @@ void GraphWindow::readFromFile(const QString &path) {
 					int parentIndex = parentString.toInt();
 					QString filename = pieces.value(3);
 					QString tagText = pieces.value(4);
+					QString tooltipText = tagText; */
+					
+					QStringList pieces = line.split(" ", QString::SkipEmptyParts);
+					
+					qreal x = pieces.value(1).toDouble();
+					int timestamp = pieces.value(1).toInt();
+					qreal y;
+					qreal radius = 8; // + 10 * (1 - exp( -1*(pieces.value(5).toDouble()-130)/500 ));
+					QString parentString = pieces.value(6);
+					int parentIndex = ( parentString.toInt() )/326;
+					QString tagText = (pieces.value(4)=="_")?(""):(pieces.value(4));
 					QString tooltipText = tagText;
+					int lopo = pieces.value(2).toInt();
 					
 					if(parentString.compare("-1") == 0) {
 						rootX = x;
 						x = 0;
 						y = TOP_MARGIN + BOTTOM_MARGIN + AXIS_BOTTOM_MARGIN + radius;
 						
-						// resize the scene as required
-						if(x > (scene->width() - rootX - RIGHT_MARGIN))
-							scene->setSceneRect(0, 0, x+RIGHT_MARGIN, scene->height());
+						// resize the height of the scene as required
+						/* if(x > (scene->width() - rootX - RIGHT_MARGIN))
+							scene->setSceneRect(0, 0, x+RIGHT_MARGIN, scene->height()); */
 						if(y > (scene->height() - BOTTOM_MARGIN))
 							scene->setSceneRect(0, 0, scene->width(), y+BOTTOM_MARGIN);
 						
-						Point *p = new Point( scene, LEFT_MARGIN+x, y, radius, tagText, tooltipText );
+						Point *p = new Point( scene, LEFT_MARGIN+x, y, radius, tagText, tooltipText, NULL, this );
 						points->append(p);
 						setRoot(p);
 						
 						if(LEFT_MARGIN+x > maxX)
 							maxX = LEFT_MARGIN+x;
 						
-						p->setData(0, filename);
+						//p->setData(0, filename);
+						p->setData(0, 326*counter);
 						
-						if(counter == current) {
+						if(timestamp == current) {
 							p->setCurrent(true);
+							current = counter;
+						}
+						
+						if(lopo == LO) {
+							p->setData(1, 0);
 						}
 					}
 					else {
 						x -= rootX;
 						
 						Point *parent = points->at(parentIndex);
-						Point *child = new Point( scene, LEFT_MARGIN+x, parent->getY(), radius, tagText, tooltipText, parent );
+						Point *child = new Point( scene, LEFT_MARGIN+x, parent->getY(), radius, tagText, tooltipText, parent, this );
 						parent->addChild(child);
 						
 						if(LEFT_MARGIN+x > maxX) {
@@ -603,9 +695,9 @@ void GraphWindow::readFromFile(const QString &path) {
 							y = parent->getY();
 						}
 						
-						// resize the scene as required
-						if(x > (scene->width() - rootX - RIGHT_MARGIN))
-							scene->setSceneRect(0, 0, x+RIGHT_MARGIN, scene->height());
+						// resize the height of the scene as required
+						/* if(x > (scene->width() - rootX - RIGHT_MARGIN))
+							scene->setSceneRect(0, 0, x+RIGHT_MARGIN, scene->height()); */
 						if(y > (scene->height() - BOTTOM_MARGIN))
 							scene->setSceneRect(0, 0, scene->width(), y+BOTTOM_MARGIN);
 						
@@ -614,10 +706,23 @@ void GraphWindow::readFromFile(const QString &path) {
 						
 						points->append(child);
 						
-						child->setData(0, filename);
+						//child->setData(0, filename);
+						child->setData(0, 326*counter);
 						
-						if(counter == current) {
+						if(timestamp == current) {
 							child->setCurrent(true);
+							current = counter;
+						}
+						
+						if(lopo == LO) {
+							Point *q = child;
+							//qDebug() << child->getX();
+							do {
+								q->setData(1, child->data(0).toInt());
+								//qDebug() << "[] x: " << q->getX() << ", nearest lo: " << (q->data(1).toInt())/326;
+								q = q->getParent();
+								//qDebug() << " parent: " << q->getX() << "nearest lo: " << q->data(1).toString();
+							} while( q!=NULL && q->data(1).toString().isEmpty() );
 						}
 					}
 				}
@@ -625,12 +730,55 @@ void GraphWindow::readFromFile(const QString &path) {
 				counter++;
 			} while(!line.isEmpty());
 			
+			/* for(int i=0; i<points->size(); i++) {
+				Point *p = points->at(i);
+				qDebug() << "x: " << p->getX() << ", nearest lo: " << (p->data(1).toInt())/326;
+			} */
+			
+			bool collisionExists;
+			
+			// Calculate optimum scaling factor
+			for(unsigned int i=0; i<(sizeof(scalingFactors)/sizeof(float)); i++) {
+				scalingFactor = scalingFactors[i];
+				//qDebug() << "scale: " << scalingFactor;
+				collisionExists = false;
+				
+				for(int j=0; j<points->size(); j++) {
+					Point *p = points->at(j);
+					if(p!=root) {
+						Point *q = points->at(j)->getParent();
+						if( (p->getXAtScale(scalingFactor) - q->getXAtScale(scalingFactor)) < (p->getRadius()+q->getRadius()+2*POINT_HEAD_OUTLINE_WIDTH+POINT_MINIMUM_DISTANCE) ) {
+							collisionExists = true;
+							//qDebug() << "here";
+							break;
+						}
+					}
+				}
+				
+				//qDebug() << collisionExists;
+				if(collisionExists)
+					continue;
+				else
+					break;
+			}
+			
+			// apply optimum scaling factor
+			for(int i=0; i<points->size(); i++) {
+				Point *p = points->at(i);
+				qreal unscaledX = p->getX() - LEFT_MARGIN;
+				p->setX(unscaledX*scalingFactor + LEFT_MARGIN);
+			}
+			rootX *= scalingFactor;
+			maxX = (maxX - LEFT_MARGIN)*scalingFactor + LEFT_MARGIN;
+			
+			// set the size of the scene based on the right end of the axis
 			qreal length = maxX - LEFT_MARGIN;
 			int segmentCount = ((int)(length/AXIS_DEFAULT_TICK_SEPARATION)) + 1;
 			qreal axisMaxX = LEFT_MARGIN + segmentCount * AXIS_DEFAULT_TICK_SEPARATION;
 			scene->setSceneRect( 0, 0, axisMaxX + RIGHT_MARGIN, scene->height() );
 			
-			file.close();
+			treeFile.close();
+			headFile.close();
 		}
 	}
 }

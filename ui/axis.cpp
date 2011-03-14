@@ -25,6 +25,11 @@ Axis::~Axis() {
 		delete tick;
 }
 
+void Axis::deleteAllTicks() {
+	foreach(Tick *tick, ticks)
+		delete tick;
+}
+
 QPointF *Axis::getPoint(int i) const {
 	if(i == 1)
 		return p1;
@@ -32,6 +37,11 @@ QPointF *Axis::getPoint(int i) const {
 		return p2;
 	else
 		return NULL;
+}
+
+void Axis::setP2X(qreal x) {
+	p2->setX(x);
+	width = p2->x() - p1->x();
 }
 
 QRectF Axis::boundingRect() const {
@@ -50,7 +60,7 @@ QPainterPath Axis::shape() const {
 	return path;
 }
 
-void Axis::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
+void Axis::paint(QPainter *painter, const QStyleOptionGraphicsItem * /* option */, QWidget * /* widget */) {
 	QPen pen(QBrush(AXIS_DEFAULT_COLOR), 0.0);
 	
 	painter->setPen(pen);
@@ -63,12 +73,14 @@ void Axis::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 	update();
 }
 
-void Axis::drawTicks(QGraphicsScene *scene, qreal rootX) {
+void Axis::drawTicks(QGraphicsScene *scene, qreal rootX, float scalingFactor) {
+	foreach(Tick *tick, ticks)
+		delete tick;
 	for( qreal x=p1->x(); x<=p2->x(); x+=tickSeparation ) {
 		QString labelText;
 		//if( int((x-p1->x())/tickSeparation)%2 == 0)
 		//qDebug() << qint64(x) << "," << qint64(LEFT_MARGIN) << "," << qint64(rootX) << "," << SCALING_FACTOR;
-		labelText = QDateTime::fromMSecsSinceEpoch(1000*(qint64(x) - qint64(LEFT_MARGIN) + qint64(rootX))/SCALING_FACTOR).toString("   h:m AP\nd MMM, yyyy");
+		labelText = QDateTime::fromMSecsSinceEpoch(1000*(qint64(x) - qint64(LEFT_MARGIN) + qint64(rootX))/scalingFactor).toString("   h:m AP\nd MMM, yyyy");
 		//else
 //			labelText = "";
 		/*#if defined(__arm__)

@@ -8,17 +8,19 @@
 #include "params.h"
 
 class Line;
+class GraphWindow;
 
 class Point : public QObject, public QGraphicsItem {
 	Q_OBJECT
 	//Q_PROPERTY(QColor backgroundColor READ getBackgroundColor WRITE setBackgroundColor)
 	
 	public:
-		Point(QGraphicsScene *scene, qreal x, qreal y, qreal r = POINT_DEFAULT_RADIUS, QString tagText = "", QString tooltipText = "", Point *parent = 0);
+		Point(QGraphicsScene *scene, qreal x, qreal y, qreal r = POINT_DEFAULT_RADIUS, QString tagText = "", QString tooltipText = "", Point *parent = 0, GraphWindow *window = 0);
 		~Point();
 		
 		qreal getX() const;
 		qreal getY() const;
+		qreal getXAtScale(float scale) const;
 		qreal getRadius() const;
 		Point *getParent() const;
 		QSet<Point *> getChildren() const;
@@ -26,6 +28,7 @@ class Point : public QObject, public QGraphicsItem {
 		int getAncestorCount() const;
 		QGraphicsItemAnimation *getAnimation() const;
 		QTimeLine *getTimeLine() const;
+		qreal getOutlineWidth() const;
 		QColor getBackgroundColor() const;
 		QGraphicsSimpleTextItem *getTag() const;
 		
@@ -60,6 +63,7 @@ class Point : public QObject, public QGraphicsItem {
   	//void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
   	QVariant itemChange(GraphicsItemChange change, const QVariant &value);
   	//bool sceneEventFilter(QGraphicsItem *watched, QEvent *event);
+  	void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 	
 	public slots:
 		void startTimeLine();
@@ -88,6 +92,7 @@ class Point : public QObject, public QGraphicsItem {
 		QGraphicsItemAnimation *animation;
 		QTimeLine *timeline;
 		QTimer *timer;
+		GraphWindow *window;
 };
 
 #endif

@@ -1,11 +1,12 @@
 #ifndef TIMELINE_PARAMS_H
 #define TIMELINE_PARAMS_H
 
-// Data file
-#define DATA_FILE ("data2")
+// LO/PO
+#define LO 0
+#define PO 1
 
 // Scaling factor
-#define SCALING_FACTOR ( ((float)100) / (3600) )
+//#define SCALING_FACTOR ( ((float)100) / (3600) )
 
 // Size and position
 #define TIMELINE_DEFAULT_HEIGHT (20)
@@ -32,6 +33,8 @@
 #define EDITOR_EXCLUSIVE_HIGHLIGHT_COLOR (QColor(Qt::red).lighter(180))
 
 // Points
+#define POINT_MINIMUM_DISTANCE (5.0)
+
 #define POINT_DEFAULT_RADIUS (5.0)
 #define POINT_DEFAULT_OUTLINE_WIDTH (1.0)
 #define POINT_HEAD_OUTLINE_WIDTH (3.0)
@@ -41,7 +44,7 @@
 
 #define POINT_DEFAULT_BG_COLOR (Qt::blue)
 #define POINT_SELECTED_BG_COLOR (Qt::red)
-#define POINT_HOVER_BG_COLOR (Qt::yellow)
+#define POINT_HOVER_BG_COLOR (QColor(POINT_DEFAULT_BG_COLOR).lighter())
 #define POINT_HOVER_SELECTED_BG_COLOR (QColor(POINT_SELECTED_BG_COLOR).lighter())
 
 #define POINT_CURRENT_DEFAULT_BG_COLOR (Qt::green)

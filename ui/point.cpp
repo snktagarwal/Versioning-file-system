@@ -2,8 +2,9 @@
 
 #include "point.h"
 #include "line.h"
+#include "window.h"
 
-Point::Point(QGraphicsScene *scene, qreal x, qreal y, qreal r, QString tagText, QString tooltipText, Point *parent) {	
+Point::Point(QGraphicsScene *scene, qreal x, qreal y, qreal r, QString tagText, QString tooltipText, Point *parent, GraphWindow *window) {	
 	if(tagText.length() > TAG_MAX_LENGTH)
 		tagText = tagText.left(TAG_MAX_LENGTH).append("...");
 	tagText.prepend("[").append("]");
@@ -16,6 +17,7 @@ Point::Point(QGraphicsScene *scene, qreal x, qreal y, qreal r, QString tagText, 
 	this->parent = parent;
 	this->ancestorCount = 0;
 	this->current = false;
+	this->window = window;
 	
 	textColor = TEXT_COLOR;
 	backgroundColor = POINT_DEFAULT_BG_COLOR;
@@ -49,6 +51,7 @@ Point::~Point() {
 
 qreal Point::getX() const { return x; }
 qreal Point::getY() const { return y; }
+qreal Point::getXAtScale(float scale) const { return x*scale; }
 qreal Point::getRadius() const { return r; }
 Point *Point::getParent() const { return parent; }
 QSet<Point *> Point::getChildren() const { return children; }
@@ -57,6 +60,7 @@ int Point::getAncestorCount() const { return ancestorCount; }
 QGraphicsItemAnimation *Point::getAnimation() const { return animation; }
 QTimeLine *Point::getTimeLine() const { return timeline; }
 QColor Point::getBackgroundColor() const { return backgroundColor; }
+qreal Point::getOutlineWidth() const { return outlineWidth; }
 QGraphicsSimpleTextItem *Point::getTag() const { return tag; }
 
 void Point::setX(qreal x) { this->x = x; }
@@ -112,7 +116,7 @@ QVariant Point::itemChange(GraphicsItemChange change, const QVariant &value)
 	return QGraphicsItem::itemChange(change, value);
 }
 
-void Point::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
+void Point::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget * /* widget */) {
 	QPen pen(QBrush(outlineColor), outlineWidth);
 	if(!current) {
 		if((option->state & QStyle::State_Selected) && (option->state & QStyle::State_MouseOver)) {
@@ -170,6 +174,22 @@ void Point::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 // event handlers
 void Point::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 	std::cout << "Point (" << getX() << "," << getY() << ") was clicked." << std::endl;
+	event->accept();
+}
+
+void Point::contextMenuEvent(QGraphicsSceneContextMenuEvent *event) {
+	QMenu menu;
+  
+  QAction *checkoutAction = menu.addAction(QIcon::fromTheme("gtk-jump-to-ltr", QIcon()), "Checkout this version");
+  QAction *revertAction = menu.addAction(QIcon::fromTheme("gtk-revert-to-saved-ltr", QIcon()), "Revert to this version");
+  
+  bool isAncestorOfCurrent = this->isAncestorOf(window->getCurrent());
+  
+  revertAction->setEnabled(isAncestorOfCurrent);
+  
+  //menu.exec(event->globalPos());
+  QAction *selectedAction = menu.exec(event->screenPos());
+	
 	event->accept();
 }
 

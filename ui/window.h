@@ -15,14 +15,21 @@ class GraphWindow : public QMainWindow {
 		GraphWindow();
 		
 		Point *getRoot() const;
+		Point *getCurrent() const;
 		void setRoot(Point *p);
 	
 	private slots:
 		void showDocument();
 		void startTimeLine(Point *p);
 		void updateRange(int min, int max);
+		//void loadFile();
+		//void setScale(int scale);
 			
 	private:
+		//QLineEdit *fileLineEdit;
+		//QPushButton *fileButton;
+		//QSlider *zoomSlider;
+		
 		QGraphicsScene *scene;
 		QGraphicsView *view;
 		
@@ -47,6 +54,7 @@ class GraphWindow : public QMainWindow {
 		qreal rootX;
 		qreal maxX;
 		int current;
+		float scalingFactor;
 		//int maxAncestorCount;
 		
 		void setupModel();
