@@ -16,7 +16,11 @@ class GraphWindow : public QMainWindow {
 		
 		Point *getRoot() const;
 		Point *getCurrent() const;
+		QList<Point *> *getPoints() const;
+		QGraphicsScene *getScene() const;
+		
 		void setRoot(Point *p);
+		void setCurrent(Point *current);
 	
 	private slots:
 		void showDocument();
@@ -53,7 +57,7 @@ class GraphWindow : public QMainWindow {
 		Point *root;
 		qreal rootX;
 		qreal maxX;
-		int current;
+		Point *current;
 		float scalingFactor;
 		//int maxAncestorCount;
 		
@@ -66,7 +70,7 @@ class GraphWindow : public QMainWindow {
 		void readFromFile(const QString &path);
 		void animateTree();
 		void setAncestorCount();
-		void highlightDifferences(QFile *file1, QFile *file2);
+		void highlightDifferences();
 };
 
 #endif

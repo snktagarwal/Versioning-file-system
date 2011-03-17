@@ -4,10 +4,24 @@
 #include "line.h"
 #include "window.h"
 
-Point::Point(QGraphicsScene *scene, qreal x, qreal y, qreal r, QString tagText, QString tooltipText, Point *parent, GraphWindow *window) {	
+Point::Point(QString filepath, QGraphicsScene *scene, qreal x, qreal y, qreal r, QString tagText, QString tooltipText, Point *parent, GraphWindow *window) {	
 	if(tagText.length() > TAG_MAX_LENGTH)
 		tagText = tagText.left(TAG_MAX_LENGTH).append("...");
 	tagText.prepend("[").append("]");
+	
+	QStringList filePathPieces = filepath.split("/");
+	for(int i=0; i<filePathPieces.size(); i++) {
+		QString piece = filePathPieces.value(i);
+		if(piece.compare("mountdir", Qt::CaseSensitive) == 0) {
+			for(int j=i+1; j<filePathPieces.size(); j++) {
+				QString usefulPiece = filePathPieces.value(j);
+				relativeFilePath += "/"+usefulPiece;
+			}
+		}
+	}
+	relativeFilePath = relativeFilePath.remove(0,1);
+	
+	//qDebug() << "File path relative to mountdir: " << relativeFilePath;
 	
 	this->x = x;
 	this->y = y;
@@ -16,6 +30,7 @@ Point::Point(QGraphicsScene *scene, qreal x, qreal y, qreal r, QString tagText, 
 	this->tooltipText = tooltipText;
 	this->parent = parent;
 	this->ancestorCount = 0;
+	this->invalidCount = 0;
 	this->current = false;
 	this->window = window;
 	
@@ -43,6 +58,7 @@ Point::Point(QGraphicsScene *scene, qreal x, qreal y, qreal r, QString tagText, 
 }
 
 Point::~Point() {
+	qDebug() << "deleting point using destructor...";
 	foreach(Line *line, lines)
 		delete line;
 	foreach(Point *p, children)
@@ -62,6 +78,10 @@ QTimeLine *Point::getTimeLine() const { return timeline; }
 QColor Point::getBackgroundColor() const { return backgroundColor; }
 qreal Point::getOutlineWidth() const { return outlineWidth; }
 QGraphicsSimpleTextItem *Point::getTag() const { return tag; }
+int Point::getInvalidCount() const { return invalidCount; }
+bool Point::isValid() const { return valid; }
+bool Point::isHead() const { if(this->children.size() == 0) { return true; } return false; }
+QString Point::getRelativeFilePath() const { return relativeFilePath; }
 
 void Point::setX(qreal x) { this->x = x; }
 void Point::setY(qreal y) { this->y = y; }
@@ -72,6 +92,16 @@ void Point::setTimeLine(QTimeLine *timeline) { this->timeline = timeline; }
 void Point::setBackgroundColor(const QColor &color) { backgroundColor = color; }
 void Point::setOutlineColor(const QColor &color) { outlineColor = color; }
 void Point::setOutlineWidth(qreal width) { outlineWidth = width; }
+void Point::setInvalidCount(int invalidCount) { this->invalidCount = invalidCount; }
+void Point::setValidity(bool valid) { this->valid = valid; }
+void Point::setTagText(QString tagText) {
+	tagText = "tag";
+	qDebug() << "here1";
+	this->tagText = tagText;
+	qDebug() << "here2 " << tagText;
+	this->tag->setText(tagText);
+	qDebug() << "here3";
+}
 
 void Point::updateTagPosition() {
 	if(tagText.compare("[]") != 0) {
@@ -83,13 +113,80 @@ void Point::updateTagPosition() {
 	}
 }
 
+void Point::checkoutVersion() {
+	QString command = "checkout "+relativeFilePath+" "+this->data(POINT_TIMESTAMP_INDEX).toString();
+	qDebug() << "Checkout command: " << command;
+	system(command.toLatin1().data());
+	window->setCurrent(this);
+	updateContextMenu();
+}
+void Point::revertToVersion() {
+	QString command = "revert "+relativeFilePath+" "+this->data(POINT_TIMESTAMP_INDEX).toString();
+	qDebug() << "Revert command: " << command;
+	system(command.toLatin1().data());
+	Point *oldCurrent = window->getCurrent();
+	window->setCurrent(this);
+	// OPTIONAL TODO: roll in reverted points
+	updateContextMenu();
+	qDebug() << "Offset of oldCurrent: " << oldCurrent->data(POINT_OFFSET_INDEX).toInt();
+	qDebug() << "Offset of newCurrent: " << this->data(POINT_OFFSET_INDEX).toInt();
+	removeInvalidVersions(oldCurrent, this);
+}
+
+void Point::removeInvalidVersions(Point *oldCurrent, Point *newCurrent) {
+	Point *p = oldCurrent;
+	Point *q;
+	QList<Point *> *points = window->getPoints();
+	QList<int> *markedPoints = new QList<int>;
+	
+	while(p->childCount() <=1 && newCurrent->isAncestorOf(p)) {
+		q = p->getParent();
+		
+		for(int i=points->size()-1; i>=0; i--) {
+			if(points->at(i)->data(POINT_OFFSET_INDEX) == p->data(POINT_OFFSET_INDEX)) {
+				markedPoints->append(i);
+				qDebug() << "marked point at index " << i << " for deletion";
+				break;
+			}
+		}
+		
+		p = q;
+	}
+	
+	for(int i=0; i<markedPoints->size(); i++) {
+		Point *p = window->getPoints()->at(markedPoints->at(i));
+		p->deleteAllLines();
+		window->getPoints()->removeAt(markedPoints->at(i));
+		window->getScene()->removeItem(p);
+		//delete p;
+		qDebug() << "Removed point at index " << markedPoints->at(i);
+	}
+	
+}
+
 void Point::addLine(Line *line) { lines.insert(line); }
 void Point::removeLine(Line *line) { lines.remove(line); }
+void Point::deleteAllLines() {
+	foreach(Line *line, lines)
+		delete line;
+}
+
 void Point::addChild(Point *child) { children.insert(child); }
 void Point::incrementAncestorCount() { ancestorCount++; }
 
 void Point::startTimer(int msec) { timer->start(msec); }
 void Point::startTimeLine() { timeline->start(); }
+
+void Point::updateContextMenu() {
+	bool destinationIsAncestorOfCurrent = this->isAncestorOf(window->getCurrent());
+	//bool isDescendantOfCurrent = window->getCurrent()->isAncestorOf(this);
+	bool destinationIsHead = this->isHead();
+	bool currentIsHead = window->getCurrent()->isHead();
+	qDebug() << "current is head: " << currentIsHead;
+	
+	checkoutAction->setEnabled(destinationIsAncestorOfCurrent || destinationIsHead);
+	revertAction->setEnabled(destinationIsAncestorOfCurrent && currentIsHead);
+}
 
 QRectF Point::boundingRect() const {
     QRectF rect(getX()-r, getY()-r, 2*r, 2*r);
@@ -158,37 +255,28 @@ void Point::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 	
 	painter->drawEllipse(boundingRect());
 	
-	//tag->update(tag->boundingRect());
-	
-	//std::cout << "(" << getX() << "," << getY() << ") isSelected(): " << isSelected() << std::endl;
-	
-	//if(tagText.compare("") != 0) {
-		//qDebug() << "tagText: " << tagText << " | " << tagTextRect();
-		//painter->setPen(TEXT_COLOR);
-		//painter->drawText(tagTextRect(), Qt::AlignCenter, "tag");
-	//}
-	
 	update();
 }
 
 // event handlers
 void Point::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 	std::cout << "Point (" << getX() << "," << getY() << ") was clicked." << std::endl;
+	
 	event->accept();
 }
 
 void Point::contextMenuEvent(QGraphicsSceneContextMenuEvent *event) {
 	QMenu menu;
-  
-  QAction *checkoutAction = menu.addAction(QIcon::fromTheme("gtk-jump-to-ltr", QIcon()), "Checkout this version");
-  QAction *revertAction = menu.addAction(QIcon::fromTheme("gtk-revert-to-saved-ltr", QIcon()), "Revert to this version");
-  
-  bool isAncestorOfCurrent = this->isAncestorOf(window->getCurrent());
-  
-  revertAction->setEnabled(isAncestorOfCurrent);
-  
-  //menu.exec(event->globalPos());
-  QAction *selectedAction = menu.exec(event->screenPos());
+	
+	checkoutAction = menu.addAction(QIcon::fromTheme("gtk-jump-to-ltr", QIcon()), "Checkout this version");
+	revertAction = menu.addAction(QIcon::fromTheme("gtk-revert-to-saved-ltr", QIcon()), "Revert to this version");
+	
+	updateContextMenu();
+	
+	connect( checkoutAction , SIGNAL(triggered()) , this , SLOT(checkoutVersion()) );
+	connect( revertAction , SIGNAL(triggered()) , this , SLOT(revertToVersion()) );
+	
+	QAction *selectedAction = menu.exec(event->screenPos());
 	
 	event->accept();
 }
@@ -197,26 +285,26 @@ void Point::contextMenuEvent(QGraphicsSceneContextMenuEvent *event) {
 	std::cout << "Point (" << getX() << "," << getY() << ") was hovered over (ENTER)." << std::endl;
 	QStyleOptionGraphicsItem *option = new QStyleOptionGraphicsItem;
 	option->state = QStyle::State_MouseOver;
-	paint(new QPainter, option, NULL);*/
+	paint(new QPainter, option, NULL);
 	
-	/* QPointF scenePos = event->pos();
+	QPointF scenePos = event->pos();
 	qreal distanceSquared = (scenePos.x()-getX())*(scenePos.x()-getX()) - (scenePos.y()-getY())*(scenePos.y()-getY());
 	std::cout << distanceSquared << std::endl;
 	
 	std::cout << "point: " << getX() << "," << getY() << std::endl;
 	std::cout << "pos: " << (event->pos()).x() << "," << (event->pos()).y() << std::endl;
 	std::cout << "scene: " << (event->scenePos()).x() << "," << (event->scenePos()).y() << std::endl;
-	std::cout << "screen: " << (event->screenPos()).x() << "," << (event->screenPos()).y() << std::endl; */
+	std::cout << "screen: " << (event->screenPos()).x() << "," << (event->screenPos()).y() << std::endl;
 	
-	//if(this->contains(this->mapFromScene(event->scenePos()))) {
-	//if( distanceSquared < r*r ) {
-		//QGraphicsOpacityEffect *opacityEffect = new QGraphicsOpacityEffect;
-		//this->setGraphicsEffect(opacityEffect);
+	if(this->contains(this->mapFromScene(event->scenePos()))) {
+	if( distanceSquared < r*r ) {
+		QGraphicsOpacityEffect *opacityEffect = new QGraphicsOpacityEffect;
+		this->setGraphicsEffect(opacityEffect);
 		
-		//QGraphicsBlurEffect *blurEffect = new QGraphicsBlurEffect;
-		//this->setGraphicsEffect(blurEffect);
+		QGraphicsBlurEffect *blurEffect = new QGraphicsBlurEffect;
+		this->setGraphicsEffect(blurEffect);
 	
-		/*QPropertyAnimation animation(this, "backgroundColor");
+		QPropertyAnimation animation(this, "backgroundColor");
 		animation.setDuration(3000);
 		QColor color = getBackgroundColor();
 		color.setAlpha(1.0);
@@ -224,30 +312,30 @@ void Point::contextMenuEvent(QGraphicsSceneContextMenuEvent *event) {
 		color.setAlpha(0.6);
 		animation.setEndValue(color);
 
-		//animation.setEasingCurve(QEasingCurve::OutBounce);
+		animation.setEasingCurve(QEasingCurve::OutBounce);
 
-		animation.start();*/
-	//}
-//}
+		animation.start();
+	}
+}*/
 
 /*void Point::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
 	std::cout << "Point (" << getX() << "," << getY() << ") was hovered over (ENTER)." << std::endl;
 	QStyleOptionGraphicsItem *option = new QStyleOptionGraphicsItem;
 	option->state = QStyle::State_MouseOver;
-	paint(new QPainter, option, NULL); */
+	paint(new QPainter, option, NULL);
 	
-	//QPointF scenePos = event->pos();
-	//qreal distanceSquared = (scenePos.x()-getX())*(scenePos.x()-getX()) - (scenePos.y()-getY())*(scenePos.y()-getY());
-	//std::cout << distanceSquared << std::endl;
+	QPointF scenePos = event->pos();
+	qreal distanceSquared = (scenePos.x()-getX())*(scenePos.x()-getX()) - (scenePos.y()-getY())*(scenePos.y()-getY());
+	std::cout << distanceSquared << std::endl;
 	
-	//if( distanceSquared > r*r ) {	
-		//QGraphicsOpacityEffect *opacityEffect = new QGraphicsOpacityEffect;
-		//opacityEffect->setOpacity(1.0);
-		//this->setGraphicsEffect(opacityEffect);
+	if( distanceSquared > r*r ) {	
+		QGraphicsOpacityEffect *opacityEffect = new QGraphicsOpacityEffect;
+		opacityEffect->setOpacity(1.0);
+		this->setGraphicsEffect(opacityEffect);
 		
-		//this->setGraphicsEffect(NULL);
+		this->setGraphicsEffect(NULL);
 	
-		/*QPropertyAnimation animation(this, "backgroundColor");
+		QPropertyAnimation animation(this, "backgroundColor");
 		animation.setDuration(3000);
 		QColor color = getBackgroundColor();
 		color.setAlpha(1.0);
@@ -255,11 +343,11 @@ void Point::contextMenuEvent(QGraphicsSceneContextMenuEvent *event) {
 		color.setAlpha(0.6);
 		animation.setEndValue(color);
 
-		//animation.setEasingCurve(QEasingCurve::OutBounce);
+		animation.setEasingCurve(QEasingCurve::OutBounce);
 
-		animation.start();*/
-	//}
-//}
+		animation.start();
+	}
+}*/
 
 /*bool Point::sceneEventFilter(QGraphicsItem *watched, QEvent *event) {
 	Point *p = dynamic_cast<Point *>(watched);

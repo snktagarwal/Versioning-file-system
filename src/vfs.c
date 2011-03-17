@@ -27,8 +27,13 @@
 #define MAXTAG 255
 #define NORMAL 0
 #define ABNORMAL 1
+#define INS 0
+#define DEL 1
 VerInfo ver_info;
 int last_epoch = 0;
+
+// flag that takes value 0 when a file has not yet been written and 1 when the file has just been written
+int is_written = 0;
 
 // Report errors to logfile and give -errno to caller
 static int vfs_error(char *str)
@@ -85,6 +90,72 @@ static void vfs_fullpath(char fpath[PATH_MAX], const char *path)
 	strcat(filepath,"/");
 	strcat(filepath,act_filename);
 	return filepath;
+}
+/*Creates the file from the PO and nearest LO */
+
+int create_file_fromlo(char * file_tree_path, int d_off, int lo_off, char * obj_dir_path)         // returns 1 for success and 0 for no success
+{
+	FILE * fp = fopen(file_tree_path, "r");
+	fseek(fp, lo_off, SEEK_SET);
+	int valid, off = lo_off;
+	fscanf(fp, "%d", &valid);
+	log_msg("[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[");
+	if(valid==0)
+	{
+		log_msg("ERROR1: NOT POSSIBLE.\n");
+		return 0;
+	}
+	
+	int tp, lp, diff_ct, p_off;
+	char * hash = (char *)malloc(50*sizeof(char));
+	char * tag = (char *)malloc(255*sizeof(char));
+	
+	fscanf(fp, "%d %d %s %s %d %d", &tp, &lp, hash, tag, &diff_ct, &p_off);
+	
+	char * temp_file = (char *)malloc(PATH_MAX*sizeof(char));
+	mkdir("/tmp/rvfs", (mode_t)0755);
+	FILE *ftemp;
+	strcpy(temp_file, "/tmp/rvfs/switch1");
+	ftemp = fopen(temp_file,"r");
+	if(ftemp != NULL) {
+		strcpy(temp_file, "/tmp/rvfs/switch2");
+		fclose(ftemp);
+	}
+	//strcpy(temp_file, "/tmp/rvfs/switch");
+	char * curr_file = (char *)malloc(PATH_MAX*sizeof(char));
+	strcpy(curr_file, obj_dir_path);
+	
+	strcat(curr_file, hash);
+	
+	copy(curr_file, temp_file);
+	
+	while(off!=d_off)
+	{
+		log_msg("%------------------------------------%d",off);
+		off = p_off;
+		fseek(fp, off, SEEK_SET);
+		fscanf(fp, "%d", &valid);
+		if(valid==0)
+		{
+			printf("ERROR2: NOT POSSIBLE.\n");
+			return 0;
+		}
+		
+		fscanf(fp, "%d %d %s %s %d %d", &tp, &lp, hash, tag, &diff_ct, &p_off);
+		int i = strlen(curr_file);
+		while(curr_file[i]!='/')
+			i--;
+		curr_file[i+1] = '\0';
+		strcat(curr_file, hash);
+		
+		if(lp==0)
+			copy(curr_file, temp_file);
+		else
+			patch(temp_file, curr_file);
+	}
+	fclose(fp);
+	log_msg("Exiting create_file_fromlo\n");
+	return 1;
 }
 /*	Sets the tag of the file in the metadata stored in the .tree file. 
 	Takes filepath, timestamp of the version to be tagged and the tag as params */	
@@ -290,6 +361,64 @@ int report_file_tag(char *filepath, int timestamp, char *tag)
  * ignored.  The 'st_ino' field is ignored except if the 'use_ino'
  * mount option is given.
  */
+char *switchBranch(char *path, int mode)
+{
+	log_msg("Entered into switch branch \n");
+	int len1 = 0,len2 = 0,len;
+ 	char *d_off = (char*)malloc(PATH_MAX*sizeof(char));
+ 	char *nearest_lo_off = (char*)malloc(PATH_MAX*sizeof(char));
+ 	char *ret_file_path = (char*)malloc(PATH_MAX*sizeof(char));
+ 	char *path_tmp = (char*)malloc(PATH_MAX*sizeof(char));
+ 	char fpath[PATH_MAX];
+ 	strcpy(path_tmp,path);
+ 	len = strlen(path_tmp);
+ 	len--;
+ 	while(path_tmp[len] != '|')
+ 	{
+ 		nearest_lo_off[len1++] = path_tmp[len];
+ 		len--;
+ 	}
+ 	nearest_lo_off[len1] = '\0';
+ 	g_strreverse(nearest_lo_off); 
+ 	log_msg("nearest_lo_off ::::: %s\n",nearest_lo_off);
+ 	len--;
+ 	while(path_tmp[len] != '|')
+ 	{
+ 		d_off[len2++] = path_tmp[len];
+ 		len--;
+ 	}
+ 	d_off[len2] = '\0';
+ 	g_strreverse(d_off); 
+ 	log_msg("d_off ::::: %s\n",d_off);
+ 	path_tmp[len] = '\0';
+ 	log_msg("path_tmp ::::: %s",path_tmp);
+ 	int d_off_val = atoi(d_off);
+ 	int nearest_lo_off_val = atoi(nearest_lo_off);
+ 	vfs_fullpath(fpath,path_tmp);
+ 	log_msg("fpath ::::: %s",fpath);
+ 	strcpy(ret_file_path,fpath);
+ 	if(mode == 0)
+ 	{
+ 		char *file_tree_path = (char*)malloc(PATH_MAX*sizeof(char));
+ 		char *obj_dir_path = (char*)malloc(PATH_MAX*sizeof(char));
+ 		char *ver_dir_path = (char*)malloc(PATH_MAX*sizeof(char));
+ 		char *filename = (char*)malloc(PATH_MAX*sizeof(char));
+ 		get_file_name_new(ver_dir_path,filename,path_tmp);
+ 		strcpy(obj_dir_path,ver_dir_path);
+ 		strcat(obj_dir_path,"/objects/");
+ 		
+ 		strcpy(file_tree_path,ver_dir_path);
+ 		strcat(file_tree_path,"/trees/");
+ 		strcat(file_tree_path,filename);
+ 		strcat(file_tree_path,".tree");
+ 		
+ 		log_msg("file tree path ::: %s\n",file_tree_path);
+ 		log_msg("obj dir path ::: %s\n",obj_dir_path);
+ 		int ret = create_file_fromlo(file_tree_path,d_off_val,nearest_lo_off_val,obj_dir_path);
+ 		log_msg("Return Status : %d \n",ret); 
+ 	}
+ 	return ret_file_path;
+}
 
 int vfs_getattr(const char *path, struct stat *statbuf)
 {
@@ -315,7 +444,9 @@ int vfs_getattr(const char *path, struct stat *statbuf)
     else if(strstr(path,"&")!=NULL)
     	retstat = lstat(revert_to(fpath,NORMAL),statbuf);
     else if(strstr(path,"^")!=NULL)
-	retstat = lstat(cleanDisc(fpath,NORMAL),statbuf);    
+	retstat = lstat(cleanDisc(fpath,NORMAL),statbuf);
+    else if(strstr(path,"|")!=NULL)
+	retstat = lstat(switchBranch(path,NORMAL),statbuf);        
     else
     	retstat = lstat(fpath, statbuf);
     if (retstat != 0)
@@ -562,11 +693,12 @@ void iterator(gpointer key,gpointer val,gpointer f)
 //Edit
 void remove_versions(const char *fpath)
 {
-	char *file_heads_path,*file_objects_path,*file_trees_path,*file_objmd_path;
+	char *file_heads_path,*file_objects_path,*file_trees_path,*file_objmd_path,*file_md_data_path;
 	file_heads_path = (char*)malloc(PATH_MAX*sizeof(char));
 	file_trees_path = (char*)malloc(PATH_MAX*sizeof(char));
 	file_objects_path = (char*)malloc(PATH_MAX*sizeof(char));
 	file_objmd_path = (char*)malloc(PATH_MAX*sizeof(char));
+	file_md_data_path = (char*)malloc(PATH_MAX*sizeof(char));
 	char filename[PATH_MAX]; 
 	get_file_name(fpath,filename);
 	
@@ -576,11 +708,13 @@ void remove_versions(const char *fpath)
 	strcpy(file_trees_path,fpath);	
 	strcpy(file_objects_path,fpath);	
 	strcpy(file_objmd_path,fpath);
+	strcpy(file_md_data_path,fpath);
 	
 	strcat(file_heads_path,"/heads/");
 	strcat(file_trees_path,"/trees/");
 	strcat(file_objects_path,"/objects/");
 	strcat(file_objmd_path,"/OBJ_MD");
+	strcat(file_md_data_path,"/md_data/");
 	FILE *f;
 	/*
 	f = fopen(file_objmd_path,"r");	
@@ -597,6 +731,8 @@ void remove_versions(const char *fpath)
 	strcat(file_heads_path,".head");
 	strcat(file_trees_path,filename);
 	strcat(file_trees_path,".tree");
+	strcat(file_md_data_path,filename);
+	strcat(file_md_data_path,".md");
 	char *str = (char*)malloc(PATH_MAX*sizeof(char));
 	
 	char *file_obj_path = (char*)malloc(PATH_MAX*sizeof(char));
@@ -625,6 +761,7 @@ void remove_versions(const char *fpath)
 	fclose(f);
 	unlink(file_heads_path);
 	unlink(file_trees_path);
+	unlink(file_md_data_path);
 	//f = fopen(file_objmd_path,"w");
 	//g_hash_table_foreach(gHashTable,(GHFunc)iterator,f);
 	//fclose(f);
@@ -656,7 +793,8 @@ int remove_ver_dir(const char *fpath)
      	  *heads_path = (char*)malloc(PATH_MAX*sizeof(char)),
      	  *trees_path = (char*)malloc(PATH_MAX*sizeof(char)),
      	  *objects_path = (char*)malloc(PATH_MAX*sizeof(char)),
-     	  *objmd_path = (char*)malloc(PATH_MAX*sizeof(char));
+     	  *objmd_path = (char*)malloc(PATH_MAX*sizeof(char)),
+     	  *md_data_path = (char*)malloc(PATH_MAX*sizeof(char));
      strcpy(ver_dir_path,fpath);
      strcat(ver_dir_path,"/.ver");
      
@@ -681,7 +819,7 @@ int remove_ver_dir(const char *fpath)
      }
      
      strcpy(objects_path,ver_dir_path);
-     strcat(objects_path,"/heads");
+     strcat(objects_path,"/objects");
      retstat = 0;
      retstat = rmdir(objects_path);
      if(retstat<0)
@@ -690,13 +828,23 @@ int remove_ver_dir(const char *fpath)
      	return -1;
      }
      
+     strcpy(md_data_path,ver_dir_path);
+     strcat(md_data_path,"/md_data");
+     retstat = 0;
+     retstat = rmdir(md_data_path);
+     if(retstat<0)
+     {
+     	log_msg("Error removing md_data folder\n");
+     	return -1;
+     }
+     
      strcpy(objmd_path,ver_dir_path);
-     strcat(objmd_path,"/heads");
+     strcat(objmd_path,"/OBJ_MD");
      retstat = 0;
      retstat = unlink(objmd_path);
      if(retstat<0)
      {
-     	log_msg("Error removing objmd folder\n");
+     	log_msg("Error removing objmd\n");
      	return -1;
      }
      
@@ -791,6 +939,8 @@ int vfs_version_rename(const char *path, const char *newpath)
 	char fnewpath[PATH_MAX];
 	char treepath[PATH_MAX],headpath[PATH_MAX], newtreepath[PATH_MAX], newheadpath[PATH_MAX], dirpath[PATH_MAX];
 	char objpath[PATH_MAX],newobjpath[PATH_MAX];
+	char obj_md_path[PATH_MAX],newobj_md_path[PATH_MAX];
+	char md_data_path[PATH_MAX],newmd_data_path[PATH_MAX];
 	
 	FILE *fp;
 	
@@ -812,6 +962,10 @@ int vfs_version_rename(const char *path, const char *newpath)
 	strcpy(newheadpath,fnewpath);
 	strcpy(objpath,fpath);
 	strcpy(newobjpath,fnewpath);
+	strcpy(obj_md_path,fpath);
+	strcpy(newobj_md_path,fnewpath);
+	strcpy(md_data_path,fpath);
+	strcpy(newmd_data_path,fnewpath);
 	
 	log_msg("\ntreepath = %s\nnew tree path = %s\nhead path = %s\nnew head path = %s\n",treepath,newtreepath,headpath,newheadpath);
 	
@@ -821,6 +975,10 @@ int vfs_version_rename(const char *path, const char *newpath)
 	strcat(newheadpath,"/heads/");
 	strcat(objpath,"/objects/");
 	strcat(newobjpath,"/objects/");
+	strcat(obj_md_path,"/OBJ_MD");
+	strcat(newobj_md_path,"/OBJ_MD");
+	strcat(md_data_path,"/md_data/");
+	strcat(newmd_data_path,"/md_data/");
 	
 	log_msg("\ntreepath = %s\nnew tree path = %s\nhead path = %s\nnew head path = %s\n",treepath,newtreepath,headpath,newheadpath);
 	
@@ -828,6 +986,8 @@ int vfs_version_rename(const char *path, const char *newpath)
 	strcat(newtreepath,newfilename);
 	strcat(headpath,filename);
 	strcat(newheadpath,newfilename);
+	strcat(md_data_path,filename);
+	strcat(newmd_data_path,newfilename);
 	
 	log_msg("\ntreepath = %s\nnew tree path = %s\nhead path = %s\nnew head path = %s\n",treepath,newtreepath,headpath,newheadpath);
 	
@@ -835,9 +995,12 @@ int vfs_version_rename(const char *path, const char *newpath)
 	strcat(newtreepath,".tree");
 	strcat(headpath,".head");
 	strcat(newheadpath,".head");
+	strcat(md_data_path,".md");
+	strcat(newmd_data_path,".md");
 	
 	// Move the objects to the corresponding path
-	
+	if(strcmp(fpath,fnewpath) != 0)
+	{
 	fp = fopen(treepath, "r");
 	
 	char *str = (char *)malloc(256*sizeof(char));
@@ -864,16 +1027,21 @@ int vfs_version_rename(const char *path, const char *newpath)
 		fscanf(fp,"%s",str);
 		fscanf(fp,"%s",str);		
 		fscanf(fp,"%s",str);		//	not useful 
+		
+			/*update obj_md_file*/
+			update_objmd_file(hash,obj_md_path,DEL);
+			update_objmd_file(hash,newobj_md_path,INS);		
+		
+		}
+		fclose(fp);
 	}
-	
-	fclose(fp); 
-	
-	/* Still need to update OBJ_MD files in both folders   */
+	 
 	
 	log_msg("\ntreepath = %s\nnew tree path = %s\nhead path = %s\nnew head path = %s\n",treepath,newtreepath,headpath,newheadpath);
 	
 	rename(treepath,newtreepath);
 	rename(headpath,newheadpath);
+	rename(md_data_path,newmd_data_path);
 		
 	log_msg("\ntreepath = %s\nnew tree path = %s\nhead path = %s\nnew head path = %s\n",treepath,newtreepath,headpath,newheadpath);
 	
@@ -987,7 +1155,7 @@ int vfs_utime(const char *path, struct utimbuf *ubuf)
     log_msg("\nvfs_utime(path=\"%s\", ubuf=0x%08x)\n",
 	    path, ubuf);
     vfs_fullpath(fpath, path);
-    if(strstr(path,"%")!=NULL || strstr(path,"@")!=NULL || strstr(path,"&")!=NULL || strstr(path,"^")!=NULL)
+    if(strstr(path,"%")!=NULL || strstr(path,"@")!=NULL || strstr(path,"&")!=NULL || strstr(path,"^")!=NULL || strstr(path,"|")!=NULL)
     	set_tags(fpath,ABNORMAL);
     retstat = utime(fpath, ubuf);
     if (retstat < 0)
@@ -1015,7 +1183,7 @@ int vfs_open(const char *path, struct fuse_file_info *fi)
     log_msg("\nvfs_open(path\"%s\", fi=0x%08x)\n",
 	    path, fi);
     vfs_fullpath(fpath, path);
-    if(strstr(path,"%")!=NULL || strstr(path,"@")!=NULL || strstr(path,"&")!=NULL || strstr(path,"^")!=NULL)
+    if(strstr(path,"%")!=NULL || strstr(path,"@")!=NULL || strstr(path,"&")!=NULL || strstr(path,"^")!=NULL || strstr(path,"|")!=NULL)
     {
     	//set_tags(fpath,ABNORMAL);
     	return 0;
@@ -1116,9 +1284,7 @@ int vfs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse
 	/*or from command line*/
 	else
 	{
-	
-		strcpy(temp,"/tmp/rvfs/templist");
-		copy(fpath_tree, temp);
+		print_all_versions(fpath_head,fpath_tree);
 		/*TODO present the tree file nicely*/
 	}		
 	
@@ -1151,6 +1317,7 @@ int vfs_write(const char *path, const char *buf, size_t size, off_t offset,
 	     struct fuse_file_info *fi)
 {
     int retstat = 0;
+    is_written = 1;
     
     log_msg("\nvfs_write(path=\"%s\", buf=0x%08x, size=%d, offset=%lld, fi=0x%08x)\n",
 	    path, buf, size, offset, fi
@@ -1219,7 +1386,7 @@ int vfs_statfs(const char *path, struct statvfs *statv)
 int vfs_flush(const char *path, struct fuse_file_info *fi)
 {
     int retstat = 0;
-    
+    is_written = 1;
     log_msg("\nvfs_flush(path=\"%s\", fi=0x%08x)\n", path, fi);
     // no need to get fpath on this one, since I work from fi->fh not the path
     log_fi(fi);
@@ -1250,7 +1417,7 @@ int vfs_release(const char *path, struct fuse_file_info *fi)
 		//else
 		//last_epoch = current_epoch;
     int retstat = 0;
-    if(strstr(path,"%")!=NULL || strstr(path,"@")!=NULL || strstr(path,"&")!=NULL || strstr(path,"#")!=NULL || strstr(path,"^")!=NULL)
+    if(strstr(path,"%")!=NULL || strstr(path,"@")!=NULL || strstr(path,"&")!=NULL || strstr(path,"#")!=NULL || strstr(path,"^")!=NULL || strstr(path,"|")!=NULL)
     	return 0;
     
     log_msg("\nvfs_release(path=\"%s\", fi=0x%08x)\n",
@@ -1266,7 +1433,10 @@ int vfs_release(const char *path, struct fuse_file_info *fi)
     char fpath[PATH_MAX];
     vfs_fullpath(fpath,path);
 
-    version_file(ver_info, fpath);    
+		if(is_written) {
+    	version_file(ver_info, fpath);
+    	is_written = 0;
+    }    
     return retstat;
 }
 

@@ -439,7 +439,7 @@ void create_version(file_data * file,TreeMd * ver,int is_first_version)
 //	update_tree_data(file,ver);
 	update_heads_file(file,ver,is_first_version,is_creating_branch);
 	update_tree_data(file,ver,is_creating_branch,is_first_version);
-	update_objmd_file(ver->obj_hash,file);
+	update_objmd_file(ver->obj_hash,file->OBJ_MD_file_path,0);
 	update_sizemd_file(file,ver->timestamp);	
 }
 // constructs version data

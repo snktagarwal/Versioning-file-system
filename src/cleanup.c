@@ -33,7 +33,7 @@ int calc_file_size(char *fpath)
 	stat(fpath, &st);
 	size = st.st_size;
 	
-	log_msg("\nfile size of %s = %d\n",fpath,size);
+	//log_msg("\nfile size of %s = %d\n",fpath,size);
 	return size;
 
 }

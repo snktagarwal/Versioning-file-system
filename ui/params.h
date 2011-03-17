@@ -1,8 +1,6 @@
 #ifndef TIMELINE_PARAMS_H
 #define TIMELINE_PARAMS_H
 
-#define TEMP_PREFIX "/tmp/rvfs/"
-
 // LO/PO
 #define LO 0
 #define PO 1
@@ -35,7 +33,7 @@
 #define EDITOR_EXCLUSIVE_HIGHLIGHT_COLOR (QColor(Qt::red).lighter(180))
 
 // Points
-#define POINT_MINIMUM_DISTANCE (2.0)
+#define POINT_MINIMUM_DISTANCE (1.0)
 
 #define POINT_DEFAULT_RADIUS (5.0)
 #define POINT_DEFAULT_OUTLINE_WIDTH (1.0)
@@ -57,6 +55,10 @@
 #define ANIMATION_TIME (200)
 #define ANIMATION_EASING_CURVE (QTimeLine::EaseOutCurve)
 
+#define POINT_OFFSET_INDEX (0)
+#define POINT_LOPO_INDEX (1)
+#define POINT_TIMESTAMP_INDEX (2)
+
 // Lines
 #define LINE_DEFAULT_COLOR (QColor(0,0,0,255*0.4))
 #define LINE_DEFAULT_WIDTH (1.0)
@@ -76,9 +78,5 @@
 
 // Tags
 #define TAG_MAX_LENGTH (8)
-
-// Objects
-#define OBJECTS_DIR "files/"
-#define DIFF_FILE "files/diff"
 
 #endif

@@ -201,7 +201,7 @@ void update_heads_file(file_data  * file,TreeMd * ver,int is_first_version,int i
 
 /* Functions relevant to Obj_Md file handling */
 
-void update_objmd_file(char * s1,file_data * file);
+void update_objmd_file(char * s1,char * obj_md_path, int mode);
 
 /*Functions related to file cleanup*/
 
@@ -225,4 +225,8 @@ GSList* generate_ll(file_data*,GSList*);
 GSList* generate_ll_old(file_data*,GSList*);
 void cleanFile(char *filepath);
 
+/* Functions for formatted output of versions*/
+void add_normal_time(int tp, char * pr);
+void print_full_branch(char * tree_file_path, int off);
+void print_all_versions(char *heads_file_path, char *tree_file_path);
 

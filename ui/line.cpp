@@ -19,6 +19,8 @@ Line::Line(Point *parent, Point *child, qreal width = LINE_DEFAULT_WIDTH) {
 }
 
 Line::~Line() {
+	qDebug() << "deleting line using destructor...";
+	qDebug() << "Line: " << this;
 	parent->removeLine(this);
 	child->removeLine(this);
 }

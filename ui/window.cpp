@@ -14,6 +14,8 @@ GraphWindow::GraphWindow(char *filepath) {
 	this->filename = filePieces.value(size-1);
 	loadFileData(this->filepath);
 	
+	this->current = NULL;
+	
 	scene = new QGraphicsScene(0, 0, TIMELINE_DEFAULT_WIDTH, TIMELINE_DEFAULT_HEIGHT);
 	
 	setupModel();
@@ -41,8 +43,26 @@ GraphWindow::GraphWindow(char *filepath) {
 }
 
 Point *GraphWindow::getRoot() const { return root; }
-Point *GraphWindow::getCurrent() const { return points->at(current); }
+Point *GraphWindow::getCurrent() const { return current; }
+QList<Point *> *GraphWindow::getPoints() const { return points; }
+QGraphicsScene *GraphWindow::getScene() const { return scene; }
+
 void GraphWindow::setRoot(Point *p) { root = p; }
+void GraphWindow::setCurrent(Point *current) {
+	if(this->current != NULL) {
+		qDebug() << "Number 1";
+		this->current->setCurrent(false);
+		QStyleOptionGraphicsItem *option = new QStyleOptionGraphicsItem;
+		option->state = QStyle::State_None;
+		this->current->paint(new QPainter, option, NULL);
+	}
+	this->current = current;
+	qDebug() << "Number 2";
+	current->setCurrent(true);
+	QStyleOptionGraphicsItem *option = new QStyleOptionGraphicsItem;
+	option->state = QStyle::State_None;
+	this->current->paint(new QPainter, option, NULL);
+}
 
 void GraphWindow::animateTree() {
 	QList<Point *> *pointsCopy = new QList<Point *>;
@@ -55,9 +75,9 @@ void GraphWindow::animateTree() {
 	for(int i=0; i<points->size(); i++) {
 		Point *p = points->at(i);
 		if(p->getParent() == 0)
-			pointsCopy->insert(i, new Point(scene, 0, 0));
+			pointsCopy->insert(i, new Point(filepath, scene, 0, 0));
 		else
-			pointsCopy->insert(i, new Point(scene, p->getX()-p->getParent()->getX(), p->getY()-p->getParent()->getY()));
+			pointsCopy->insert(i, new Point(filepath, scene, p->getX()-p->getParent()->getX(), p->getY()-p->getParent()->getY()));
 	}
 	
 	//maxAncestorCount = points->at(0)->getAncestorCount();
@@ -247,6 +267,7 @@ void GraphWindow::setupViews() {
 }
 
 void GraphWindow::setupModel() {
+	QString TEMP_PREFIX = "/tmp/rvfs/";
 	readFromFile(TEMP_PREFIX+filename);
 	setAncestorCount();
 	
@@ -294,10 +315,37 @@ void GraphWindow::setupModel() {
 }*/
 
 void GraphWindow::showDocument() {
+	QString TEMP_PREFIX = "/tmp/rvfs/";
+	QString TEMP_FILE_NAME_1 = "switch1";
+	QString TEMP_FILE_NAME_2 = "switch2";
+	QString DIFF_FILE_NAME = "diff";
+	QString command;
+	
+	QFile *file1 = new QFile(TEMP_PREFIX+TEMP_FILE_NAME_1);
+	QFile *file2 = new QFile(TEMP_PREFIX+TEMP_FILE_NAME_2);
+	
+	if(file1->exists()) {
+		if(file2->exists())
+			command = "rm "+ TEMP_PREFIX+TEMP_FILE_NAME_1 +" "+ TEMP_PREFIX+TEMP_FILE_NAME_2;
+		else
+			command = "rm "+ TEMP_PREFIX+TEMP_FILE_NAME_1;
+		qDebug() << "Removing temp files... using " << command;
+		system(command.toLatin1().data());
+		
+		if(file1->exists() || file2->exists()) {
+			qDebug() << "inside if";
+		}
+		while(file1->exists() || file2->exists()) {
+			qDebug() << "here1";
+			view->setInteractive(false);
+		}
+		view->setInteractive(true);
+	}
+	
 	QList<QGraphicsItem *> selectedPoints = scene->selectedItems();
 	std::cout << "No. of selections: " << selectedPoints.size() << std::endl;
 	
-	QFile diff(DIFF_FILE);
+	QFile diff(TEMP_PREFIX+DIFF_FILE_NAME);
 	if(diff.exists())
 		diff.remove();
 	
@@ -310,52 +358,84 @@ void GraphWindow::showDocument() {
 		singleEditorWidget->show();
 		
 		Point *p = dynamic_cast<Point *>(selectedPoints.at(0));
-		QString filename = p->data(0).toString();
-		QString path = OBJECTS_DIR+filename;
+		//QString filename = p->data(0).toString();
+		//QString path = OBJECTS_DIR+filename;
 		
-		if(path.compare(OBJECTS_DIR) != 0) {
-			QFile file(path);
-			
-			if(file.open(QFile::ReadOnly | QFile::Text)) {
-				QTextStream stream(&file);
-				singleEditor->setText(stream.readAll());
-			}
+		command = "__guiswitch "+p->getRelativeFilePath()+" "+p->data(POINT_OFFSET_INDEX).toString()+" "+p->data(POINT_LOPO_INDEX).toString();
+		qDebug() << "Switch command: " << command;
+		system(command.toLatin1().data());
+		
+		while(!file1->exists()) {
+			qDebug() << "[SEL] 1";
+			view->setInteractive(false);
+		}
+		view->setInteractive(true);
+		
+		if(file1->open(QFile::ReadOnly | QFile::Text)) {
+			QTextStream stream(file1);
+			singleEditor->setText(stream.readAll());
 		}
 	}
+	
 	// 2 points selected
 	else if(selectedPoints.size() == 2) {
+		command = "rm "+ TEMP_PREFIX+TEMP_FILE_NAME_1;
+		qDebug() << "Removing temp files... using " << command;
+		system(command.toLatin1().data());
+		
+		while(file1->exists()) {
+			qDebug() << "rm switch1 here";
+			view->setInteractive(false);
+		}
+		view->setInteractive(true);
+		
 		singleEditor->setText("");
 		doubleEditorLeft->setText("");
 		doubleEditorRight->setText("");
 		singleEditorWidget->hide();
 		doubleEditorWidget->show();
 		
+		// Point #1
 		Point *p1 = dynamic_cast<Point *>(selectedPoints.at(0));
-		QString filename1 = p1->data(0).toString();
-		QString path1 = OBJECTS_DIR+filename1;
+		//QString filename1 = p1->data(0).toString();
+		//QString path1 = OBJECTS_DIR+filename1;
 		
-		QFile *file1 = NULL, *file2 = NULL;
-		if(path1.compare(OBJECTS_DIR) != 0) {
-			file1 = new QFile(path1);
-			if(file1->open(QFile::ReadOnly | QFile::Text)) {
-				QTextStream stream1(file1);
-				doubleEditorLeft->setText(stream1.readAll());
-			}
+		command = "__guiswitch "+p1->getRelativeFilePath()+" "+p1->data(POINT_OFFSET_INDEX).toString()+" "+p1->data(POINT_LOPO_INDEX).toString();
+		qDebug() << "Switch command: " << command;
+		system(command.toLatin1().data());
+		
+		while(!file1->exists()) {
+			qDebug() << "here1";
+			view->setInteractive(false);
 		}
+		view->setInteractive(true);
 		
+		// Point #2
 		Point *p2 = dynamic_cast<Point *>(selectedPoints.at(1));
-		QString filename2 = p2->data(0).toString();
-		QString path2 = OBJECTS_DIR+filename2;
+		//QString filename2 = p2->data(0).toString();
+		//QString path2 = OBJECTS_DIR+filename2;
 		
-		if(path2.compare(OBJECTS_DIR) != 0) {
-			file2 = new QFile(path2);
-			if(file2->open(QFile::ReadOnly | QFile::Text)) {
-				QTextStream stream2(file2);
-				doubleEditorRight->setText(stream2.readAll());
-			}
+		command = "__guiswitch "+p2->getRelativeFilePath()+" "+p2->data(POINT_OFFSET_INDEX).toString()+" "+p2->data(POINT_LOPO_INDEX).toString();
+		qDebug() << "Switch command: " << command;
+		system(command.toLatin1().data());
+		
+		while(!file2->exists()) {
+			//qDebug() << "here2";
+			view->setInteractive(false);
+		}
+		view->setInteractive(true);
+		
+		if(file1->open(QFile::ReadOnly | QFile::Text)) {
+			QTextStream stream1(file1);
+			doubleEditorLeft->setText(stream1.readAll());
 		}
 		
-		highlightDifferences(file1, file2);
+		if(file2->open(QFile::ReadOnly | QFile::Text)) {
+			QTextStream stream2(file2);
+			doubleEditorRight->setText(stream2.readAll());
+		}
+		
+		highlightDifferences();
 		
 		file1->close();
 		file2->close();
@@ -371,14 +451,19 @@ void GraphWindow::showDocument() {
 	}
 }
 
-void GraphWindow::highlightDifferences(QFile *file1, QFile *file2) {
+void GraphWindow::highlightDifferences() {
+	QString TEMP_PREFIX = "/tmp/rvfs/";
+	QString TEMP_FILE_NAME_1 = "switch1";
+	QString TEMP_FILE_NAME_2 = "switch2";
+	QString DIFF_FILE_NAME = "diff";
+	
 	QList<QTextEdit::ExtraSelection> extraSelections1, extraSelections2;
 	
-	QString command = "diff "+file1->fileName()+" "+file2->fileName()+">"+DIFF_FILE;
+	QString command = "diff "+ TEMP_PREFIX+TEMP_FILE_NAME_1 +" "+ TEMP_PREFIX+TEMP_FILE_NAME_2 +">"+TEMP_PREFIX+DIFF_FILE_NAME;
 	int status = system(command.toLatin1().data());
 	
 	if(status != -1) {
-		QFile *diff_file = new QFile(DIFF_FILE);
+		QFile *diff_file = new QFile(TEMP_PREFIX+DIFF_FILE_NAME);
 		QString thunkHead, line;
 		if(diff_file->open(QFile::ReadOnly | QFile::Text)) {
 			QTextStream stream(diff_file);
@@ -612,11 +697,6 @@ void GraphWindow::readFromFile(const QString &path) {
 		100.0/(5*60),
 		100.0/(3*60),
 		100.0/(60),
-		100.0/(30),
-		100.0/(10),
-		100.0/(5),
-		100.0/(2),
-		100.0/(1),
 	};
 	
 	if(!path.isNull()) {
@@ -633,9 +713,10 @@ void GraphWindow::readFromFile(const QString &path) {
 			QString line;
 			
 			QString currentString = headStream.readLine();
-			current = currentString.split(" ").value(0).right(10).toInt();
+			int currentIndex = currentString.split(" ").value(0).right(10).toInt();
 			
 			int counter = 0;
+			int invalidCount = 0;
 			
 			do {
 				line = treeStream.readLine();
@@ -655,15 +736,31 @@ void GraphWindow::readFromFile(const QString &path) {
 					
 					QStringList pieces = line.split(" ", QString::SkipEmptyParts);
 					
+					bool valid = (pieces.value(0).toInt())?(true):(false);
 					qreal x = pieces.value(1).toDouble();
 					int timestamp = pieces.value(1).toInt();
 					qreal y;
 					qreal radius = 8; // + 10 * (1 - exp( -1*(pieces.value(5).toDouble()-130)/500 ));
 					QString parentString = pieces.value(6);
-					int parentIndex = ( parentString.toInt() )/326;
+					int parentOffset = parentString.toInt();
+					int parentIndex = parentOffset/326;
 					QString tagText = (pieces.value(4)=="_")?(""):(pieces.value(4));
 					QString tooltipText = tagText;
 					int lopo = pieces.value(2).toInt();
+					
+					for(int i=0; i<points->size(); i++) {
+						if(points->at(i)->data(POINT_OFFSET_INDEX) == parentOffset) {
+							parentIndex -= points->at(i)->getInvalidCount();
+						}
+					}
+					
+					//qDebug() << counter << " " << x << " " << timestamp << " " << radius << " " << parentString << " " << parentIndex << " " << tagText << " " << tooltipText << " " << lopo;
+					
+					if(!valid) {
+						invalidCount++;
+						counter++;
+						continue;
+					}
 					
 					if(parentString.compare("-1") == 0) {
 						rootX = x;
@@ -676,7 +773,7 @@ void GraphWindow::readFromFile(const QString &path) {
 						if(y > (scene->height() - BOTTOM_MARGIN))
 							scene->setSceneRect(0, 0, scene->width(), y+BOTTOM_MARGIN);
 						
-						Point *p = new Point( scene, LEFT_MARGIN+x, y, radius, tagText, tooltipText, NULL, this );
+						Point *p = new Point( filepath, scene, LEFT_MARGIN+x, y, radius, tagText, tooltipText, NULL, this );
 						points->append(p);
 						setRoot(p);
 						
@@ -684,22 +781,25 @@ void GraphWindow::readFromFile(const QString &path) {
 							maxX = LEFT_MARGIN+x;
 						
 						//p->setData(0, filename);
-						p->setData(0, 326*counter);
+						p->setData(POINT_OFFSET_INDEX, 326*counter);
+						//p->setTagText(QString( p->data(POINT_OFFSET_INDEX).toString() ));
+						p->setInvalidCount(invalidCount);
+						p->setValidity(valid);
 						
-						if(timestamp == current) {
-							p->setCurrent(true);
-							current = counter;
+						if(timestamp == currentIndex) {
+							this->setCurrent(p);
 						}
 						
 						if(lopo == LO) {
-							p->setData(1, 0);
+							p->setData(POINT_LOPO_INDEX, 0);
 						}
+						p->setData(POINT_TIMESTAMP_INDEX, timestamp);
 					}
 					else {
 						x -= rootX;
 						
 						Point *parent = points->at(parentIndex);
-						Point *child = new Point( scene, LEFT_MARGIN+x, parent->getY(), radius, tagText, tooltipText, parent, this );
+						Point *child = new Point( filepath, scene, LEFT_MARGIN+x, parent->getY(), radius, tagText, tooltipText, parent, this );
 						parent->addChild(child);
 						
 						if(LEFT_MARGIN+x > maxX) {
@@ -726,23 +826,27 @@ void GraphWindow::readFromFile(const QString &path) {
 						points->append(child);
 						
 						//child->setData(0, filename);
-						child->setData(0, 326*counter);
+						child->setData(POINT_OFFSET_INDEX, 326*counter);
+						//child->setTagText(QString( child->data(POINT_OFFSET_INDEX).toString() ));
+						child->setInvalidCount(invalidCount);
+						child->setValidity(valid);
 						
-						if(timestamp == current) {
-							child->setCurrent(true);
-							current = counter;
+						if(timestamp == currentIndex) {
+							this->setCurrent(child);
 						}
 						
 						if(lopo == LO) {
 							Point *q = child;
-							//qDebug() << child->getX();
+							qDebug() << child->data(POINT_OFFSET_INDEX).toInt();
 							do {
-								q->setData(1, child->data(0).toInt());
+								q->setData(POINT_LOPO_INDEX, child->data(POINT_OFFSET_INDEX).toInt());
 								//qDebug() << "[] x: " << q->getX() << ", nearest lo: " << (q->data(1).toInt())/326;
+								qDebug() << " point: " << q->data(POINT_OFFSET_INDEX).toString() << ", nearest lo: " << child->data(POINT_OFFSET_INDEX).toInt() << "," << q->data(POINT_LOPO_INDEX).toInt();
 								q = q->getParent();
-								//qDebug() << " parent: " << q->getX() << "nearest lo: " << q->data(1).toString();
-							} while( q!=NULL && q->data(1).toString().isEmpty() );
+							} while( q!=NULL && q->data(POINT_LOPO_INDEX).toString().isEmpty() );
 						}
+
+						child->setData(POINT_TIMESTAMP_INDEX, timestamp);
 					}
 				}
 				
@@ -753,6 +857,10 @@ void GraphWindow::readFromFile(const QString &path) {
 				Point *p = points->at(i);
 				qDebug() << "x: " << p->getX() << ", nearest lo: " << (p->data(1).toInt())/326;
 			} */
+			
+			/*for(int i=0; i<points->size(); i++) {
+				if
+			}*/
 			
 			bool collisionExists;
 			
