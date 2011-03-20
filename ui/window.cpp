@@ -1,9 +1,12 @@
 #include <iostream>
 #include <cstdlib>
 #include <cmath>
+#include <unistd.h>
 
-//#include "qxtspanslider.h"
+#define FILE_EXISTS(x) (access( QString(x).toLatin1().data() , F_OK ) == 0)
+
 #include "window.h"
+#include "filechooser.h"
 #include "params.h"
 
 GraphWindow::GraphWindow(char *filepath) {
@@ -12,6 +15,14 @@ GraphWindow::GraphWindow(char *filepath) {
 	QStringList filePieces = filepathString->split("/");
 	int size = filePieces.size();
 	this->filename = filePieces.value(size-1);
+	mountdir_path = "";
+	foreach(QString piece, filePieces) {
+		mountdir_path += piece+"/";
+		if(piece.compare("mountdir")==0)
+			break;
+	}
+	qDebug() << "RVFS Mount Point:" << mountdir_path;
+	
 	loadFileData(this->filepath);
 	
 	this->current = NULL;
@@ -20,11 +31,11 @@ GraphWindow::GraphWindow(char *filepath) {
 	
 	setupModel();
 	setupViews();
-	animateTree();
+	//animateTree();
 	
 	QScrollBar *horizontalScrollBar = view->horizontalScrollBar();
 	horizontalScrollBar->setValue(horizontalScrollBar->maximum());
-	horizontalScrollBar->setValue(horizontalScrollBar->minimum());
+	//horizontalScrollBar->setValue(horizontalScrollBar->minimum());
 	
 	QList<int> sizes;
 	sizes.append(scene->height());
@@ -38,14 +49,24 @@ GraphWindow::GraphWindow(char *filepath) {
 	if(MAXIMIZED)
 		showMaximized();
 	setWindowTitle("Timeline");
-	setAnimated(true);
+	//setAnimated(true);
 	setMaximumSize(QApplication::desktop()->screenGeometry().width(), QApplication::desktop()->screenGeometry().height());
+	
+	FileChooser *fileChooser = new FileChooser(filepath);
+	
+	QTabWidget *tabWidget = new QTabWidget;
+	tabWidget->addTab(this, "Timeline");
+	tabWidget->addTab(fileChooser, "Space Analysis");
+	//tabWidget->setWindowTitle("RVFS: "+QString(argv[1]));
+	tabWidget->showMaximized();
+	tabWidget->show();
 }
 
 Point *GraphWindow::getRoot() const { return root; }
 Point *GraphWindow::getCurrent() const { return current; }
 QList<Point *> *GraphWindow::getPoints() const { return points; }
 QGraphicsScene *GraphWindow::getScene() const { return scene; }
+QString GraphWindow::getMountDirPath() const { return mountdir_path; }
 
 void GraphWindow::setRoot(Point *p) { root = p; }
 void GraphWindow::setCurrent(Point *current) {
@@ -104,26 +125,13 @@ void GraphWindow::animateTree() {
 		}
 		
 		p->startTimer((p->getAncestorCount()+1)*ANIMATION_TIME + 300);
-		
-		/* if(p->getAncestorCount() > maxAncestorCount) {
-			maxAncestorCount = p->getAncestorCount();
-		} */
 	}
-	
-	/* qDebug() << "maxAncestorCount: " << maxAncestorCount;
-	for(int i=0; i<points->size(); i++) {
-		Point *p = points->at(i);
-		QTimer *animationEndedTimer = new QTimer;
-		animationEndedTimer->setSingleShot(true);
-		connect( animationEndedTimer , SIGNAL(timeout()) , p , SLOT(animationEnded()) );
-		animationEndedTimer->start((maxAncestorCount+10)*ANIMATION_TIME);
-	} */
 }
 
 void GraphWindow::startTimeLine(Point *p) { p->startTimeLine(); }
 
 void GraphWindow::loadFileData(QString filepath) {
-	QString command = "__guidata "+filepath;
+	QString command = "cd "+mountdir_path+" && __guidata "+filepath;
 	system(command.toLatin1().data());
 	sleep(1);
 }
@@ -139,32 +147,10 @@ void GraphWindow::setAncestorCount() {
 			p2 = p1->getParent();
 			p->incrementAncestorCount();
 		}
-		//std::cout << "Ancestors: " << p->getAncestorCount() << std::endl;
 	}
 }
 
 void GraphWindow::setupViews() {
-	// file chooser + zoom slider
-	/*fileLineEdit = new QLineEdit;
-	fileLineEdit->setReadOnly(true);
-	
-	fileButton = new QPushButton("Browse...");
-	connect( fileButton , SIGNAL(clicked()) , this , SLOT(loadFile()) );
-	
-	zoomSlider = new QSlider(Qt::Horizontal);
-	zoomSlider->setRange(5, 24*60);
-	zoomSlider->setTickInterval(5);
-	zoomSlider->setSingleStep(5);
-	zoomSlider->setPageStep(60);
-	zoomSlider->setFixedWidth(200);
-	zoomSlider->setValue(int(100.0/scalingFactor));
-	connect( zoomSlider , SIGNAL(valueChanged(int)) , this , SLOT(setScale(int)) );
-	
-	QHBoxLayout *toolbarLayout = new QHBoxLayout;
-	toolbarLayout->addWidget(fileLineEdit);
-	toolbarLayout->addWidget(fileButton);
-	toolbarLayout->addWidget(zoomSlider);*/
-	
 	// timeline view
 	view = new QGraphicsView;
 	view->setScene(scene);
@@ -181,7 +167,6 @@ void GraphWindow::setupViews() {
 	
 	// widget for timeline + toolbarLayout
 	QVBoxLayout *topLayout = new QVBoxLayout;
-	//topLayout->addLayout(toolbarLayout);
 	topLayout->addWidget(view);
 	
 	QWidget *topWidget = new QWidget(this);
@@ -211,6 +196,7 @@ void GraphWindow::setupViews() {
 	doubleEditorLeft->setBaseSize(EDITOR_DEFAULT_WIDTH, EDITOR_DEFAULT_HEIGHT);
 	doubleEditorLeft->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	doubleEditorLeft->setContentsMargins(0,0,0,0);
+	doubleEditorLeft->setWordWrapMode(QTextOption::NoWrap);
 	
 	QHBoxLayout *layout = new QHBoxLayout;
 	layout->addWidget(doubleEditorLeft);
@@ -227,26 +213,33 @@ void GraphWindow::setupViews() {
 	doubleEditorRight->setBaseSize(EDITOR_DEFAULT_WIDTH, EDITOR_DEFAULT_HEIGHT);
 	doubleEditorRight->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	doubleEditorRight->setContentsMargins(0,0,0,0);
+	doubleEditorRight->setWordWrapMode(QTextOption::NoWrap);
 	
 	QVBoxLayout *doubleEditorRightLayout = new QVBoxLayout;
 	doubleEditorRightLayout->addWidget(doubleEditorRightLabel);
 	doubleEditorRightLayout->addWidget(doubleEditorRight);
 	
-	// Create and connect common scroll bar to editors
-	QScrollBar *leftScrollBar = doubleEditorLeft->verticalScrollBar();
-	QScrollBar *rightScrollBar = doubleEditorRight->verticalScrollBar();
-	doubleEditorScrollBar = new QScrollBar(Qt::Vertical, this);
-	connect( leftScrollBar , SIGNAL(valueChanged(int)) , rightScrollBar , SLOT(setValue(int)) );
-	connect( rightScrollBar , SIGNAL(valueChanged(int)) , leftScrollBar , SLOT(setValue(int)) );
-	connect( doubleEditorScrollBar , SIGNAL(valueChanged(int)) , leftScrollBar , SLOT(setValue(int)) );
-	connect( doubleEditorScrollBar , SIGNAL(valueChanged(int)) , rightScrollBar , SLOT(setValue(int)) );
-	connect( leftScrollBar , SIGNAL(valueChanged(int)) , doubleEditorScrollBar , SLOT(setValue(int)) );
-	connect( rightScrollBar , SIGNAL(valueChanged(int)) , doubleEditorScrollBar , SLOT(setValue(int)) );
+	// Create and connect common vertical scroll bar to editors, and connect horizontal scroll bars
+	QScrollBar *leftVerticalScrollBar = doubleEditorLeft->verticalScrollBar();
+	QScrollBar *rightVerticalScrollBar = doubleEditorRight->verticalScrollBar();
+	QScrollBar *leftHorizontalScrollBar = doubleEditorLeft->horizontalScrollBar();
+	QScrollBar *rightHorizontalScrollBar = doubleEditorRight->horizontalScrollBar();
+	doubleEditorVerticalScrollBar = new QScrollBar(Qt::Vertical, this);
 	
-	connect( leftScrollBar , SIGNAL(rangeChanged(int,int)) , this , SLOT(updateRange(int,int)) ) ;
-	connect( rightScrollBar , SIGNAL(rangeChanged(int,int)) , this , SLOT(updateRange(int,int)) ) ;
+	connect( leftVerticalScrollBar , SIGNAL(valueChanged(int)) , rightVerticalScrollBar , SLOT(setValue(int)) );
+	connect( rightVerticalScrollBar , SIGNAL(valueChanged(int)) , leftVerticalScrollBar , SLOT(setValue(int)) );
+	connect( doubleEditorVerticalScrollBar , SIGNAL(valueChanged(int)) , leftVerticalScrollBar , SLOT(setValue(int)) );
+	connect( doubleEditorVerticalScrollBar , SIGNAL(valueChanged(int)) , rightVerticalScrollBar , SLOT(setValue(int)) );
+	connect( leftVerticalScrollBar , SIGNAL(valueChanged(int)) , doubleEditorVerticalScrollBar , SLOT(setValue(int)) );
+	connect( rightVerticalScrollBar , SIGNAL(valueChanged(int)) , doubleEditorVerticalScrollBar , SLOT(setValue(int)) );
 	
-	layout->addWidget(doubleEditorScrollBar);
+	connect( leftHorizontalScrollBar , SIGNAL(valueChanged(int)) , rightHorizontalScrollBar , SLOT(setValue(int)) );
+	connect( rightHorizontalScrollBar , SIGNAL(valueChanged(int)) , leftHorizontalScrollBar , SLOT(setValue(int)) );
+	
+	connect( leftVerticalScrollBar , SIGNAL(rangeChanged(int,int)) , this , SLOT(updateRange(int,int)) ) ;
+	connect( rightVerticalScrollBar , SIGNAL(rangeChanged(int,int)) , this , SLOT(updateRange(int,int)) ) ;
+	
+	layout->addWidget(doubleEditorVerticalScrollBar);
 	
 	// Double Editor Widget
 	QHBoxLayout *doubleEditorLayout = new QHBoxLayout;
@@ -263,6 +256,9 @@ void GraphWindow::setupViews() {
 	splitter->addWidget(singleEditorWidget);
 	splitter->addWidget(doubleEditorWidget);
 	
+	//QVBoxLayout *mainLayout = new QVBoxLayout;
+	//mainLayout->addWidget(splitter);
+	//setLayout(mainLayout);
 	setCentralWidget(splitter);
 }
 
@@ -324,23 +320,24 @@ void GraphWindow::showDocument() {
 	QFile *file1 = new QFile(TEMP_PREFIX+TEMP_FILE_NAME_1);
 	QFile *file2 = new QFile(TEMP_PREFIX+TEMP_FILE_NAME_2);
 	
-	if(file1->exists()) {
-		if(file2->exists())
+	/*if( FILE_EXISTS(TEMP_PREFIX+TEMP_FILE_NAME_1) ) {
+		if( FILE_EXISTS(TEMP_PREFIX+TEMP_FILE_NAME_2) )
 			command = "rm "+ TEMP_PREFIX+TEMP_FILE_NAME_1 +" "+ TEMP_PREFIX+TEMP_FILE_NAME_2;
 		else
 			command = "rm "+ TEMP_PREFIX+TEMP_FILE_NAME_1;
 		qDebug() << "Removing temp files... using " << command;
 		system(command.toLatin1().data());
 		
-		if(file1->exists() || file2->exists()) {
-			qDebug() << "inside if";
-		}
-		while(file1->exists() || file2->exists()) {
-			qDebug() << "here1";
+		while(
+			FILE_EXISTS(TEMP_PREFIX+TEMP_FILE_NAME_1) ||
+			FILE_EXISTS(TEMP_PREFIX+TEMP_FILE_NAME_2)
+		) {
 			view->setInteractive(false);
 		}
 		view->setInteractive(true);
-	}
+	}*/
+	command = "rm "+ TEMP_PREFIX+TEMP_FILE_NAME_1 +" "+ TEMP_PREFIX+TEMP_FILE_NAME_2;
+	system(command.toLatin1().data());
 	
 	QList<QGraphicsItem *> selectedPoints = scene->selectedItems();
 	std::cout << "No. of selections: " << selectedPoints.size() << std::endl;
@@ -358,18 +355,30 @@ void GraphWindow::showDocument() {
 		singleEditorWidget->show();
 		
 		Point *p = dynamic_cast<Point *>(selectedPoints.at(0));
-		//QString filename = p->data(0).toString();
-		//QString path = OBJECTS_DIR+filename;
 		
-		command = "__guiswitch "+p->getRelativeFilePath()+" "+p->data(POINT_OFFSET_INDEX).toString()+" "+p->data(POINT_LOPO_INDEX).toString();
+		qDebug() << "[TIMESTAMP] " << p->data(POINT_TIMESTAMP_INDEX).toInt();
+		QString versionTime = QDateTime::fromMSecsSinceEpoch(1000*( qint64(p->data(POINT_TIMESTAMP_INDEX).toUInt()) )).toString("hh:mm:ss AP, d MMM, yyyy");
+		singleEditorLabel->setText(filename+" (created on "+versionTime+")");
+		
+		command = "cd "+mountdir_path+" && __guiswitch "+p->getRelativeFilePath()+" "+p->data(POINT_OFFSET_INDEX).toString()+" "+p->data(POINT_LOPO_INDEX).toString();
 		qDebug() << "Switch command: " << command;
-		system(command.toLatin1().data());
+		int status = system(command.toLatin1().data());
 		
-		while(!file1->exists()) {
-			qDebug() << "[SEL] 1";
+		QFile logFile("/tmp/log1");
+		if(logFile.open(QFile::Append | QFile::Text)) {
+			qDebug() << "Log opened.";
+			QTextStream logStream(&logFile);
+			logStream << command << "\t" << status << "\n";
+			//logStream->write(command.toLatin1().data());
+			logFile.close();
+		}
+		
+		/*while( !file1->exists() ) {
 			view->setInteractive(false);
 		}
-		view->setInteractive(true);
+		view->setInteractive(true);*/
+		
+		sleep(0.5);
 		
 		if(file1->open(QFile::ReadOnly | QFile::Text)) {
 			QTextStream stream(file1);
@@ -379,16 +388,6 @@ void GraphWindow::showDocument() {
 	
 	// 2 points selected
 	else if(selectedPoints.size() == 2) {
-		command = "rm "+ TEMP_PREFIX+TEMP_FILE_NAME_1;
-		qDebug() << "Removing temp files... using " << command;
-		system(command.toLatin1().data());
-		
-		while(file1->exists()) {
-			qDebug() << "rm switch1 here";
-			view->setInteractive(false);
-		}
-		view->setInteractive(true);
-		
 		singleEditor->setText("");
 		doubleEditorLeft->setText("");
 		doubleEditorRight->setText("");
@@ -397,33 +396,36 @@ void GraphWindow::showDocument() {
 		
 		// Point #1
 		Point *p1 = dynamic_cast<Point *>(selectedPoints.at(0));
-		//QString filename1 = p1->data(0).toString();
-		//QString path1 = OBJECTS_DIR+filename1;
 		
-		command = "__guiswitch "+p1->getRelativeFilePath()+" "+p1->data(POINT_OFFSET_INDEX).toString()+" "+p1->data(POINT_LOPO_INDEX).toString();
-		qDebug() << "Switch command: " << command;
+		command = "cd "+mountdir_path+" && __guiswitch "+p1->getRelativeFilePath()+" "+p1->data(POINT_OFFSET_INDEX).toString()+" "+p1->data(POINT_LOPO_INDEX).toString();
+		
 		system(command.toLatin1().data());
 		
-		while(!file1->exists()) {
+		/*while( !file1->exists() ) {
 			qDebug() << "here1";
 			view->setInteractive(false);
 		}
-		view->setInteractive(true);
+		view->setInteractive(true);*/
+		sleep(0.5);
 		
 		// Point #2
 		Point *p2 = dynamic_cast<Point *>(selectedPoints.at(1));
-		//QString filename2 = p2->data(0).toString();
-		//QString path2 = OBJECTS_DIR+filename2;
 		
-		command = "__guiswitch "+p2->getRelativeFilePath()+" "+p2->data(POINT_OFFSET_INDEX).toString()+" "+p2->data(POINT_LOPO_INDEX).toString();
+		command = "cd "+mountdir_path+" && __guiswitch "+p2->getRelativeFilePath()+" "+p2->data(POINT_OFFSET_INDEX).toString()+" "+p2->data(POINT_LOPO_INDEX).toString();
 		qDebug() << "Switch command: " << command;
 		system(command.toLatin1().data());
 		
-		while(!file2->exists()) {
-			//qDebug() << "here2";
+		/*while( !file2->exists() ) {
+			qDebug() << "here2";
 			view->setInteractive(false);
-		}
+		}*/
 		view->setInteractive(true);
+		sleep(0.5);
+		
+		QString versionTime1 = QDateTime::fromMSecsSinceEpoch(1000*( qint64(p1->data(POINT_TIMESTAMP_INDEX).toUInt()) )).toString("hh:mm:ss AP, d MMM, yyyy");
+		doubleEditorLeftLabel->setText(filename+" (created on "+versionTime1+")");
+		QString versionTime2 = QDateTime::fromMSecsSinceEpoch(1000*( qint64(p2->data(POINT_TIMESTAMP_INDEX).toUInt()) )).toString("hh:mm:ss AP, d MMM, yyyy");
+		doubleEditorRightLabel->setText(filename+" (created on "+versionTime2+")");
 		
 		if(file1->open(QFile::ReadOnly | QFile::Text)) {
 			QTextStream stream1(file1);
@@ -604,7 +606,7 @@ void GraphWindow::highlightDifferences() {
 				
 					QString file1Changes = changePieces.value(0);
 					QString file2Changes = changePieces.value(1);
-				
+				sleep(0.5);
 					qDebug() << file1Changes << "|" << file2Changes;
 				
 					if(!file1Changes.contains(",")) {
@@ -673,7 +675,7 @@ void GraphWindow::updateRange(int, int) {
 		scrollBarRangeMin = rightScrollBar->minimum();
 		//singleStep = rightScrollBar->singleStep();
 	}
-	doubleEditorScrollBar->setRange( scrollBarRangeMin , scrollBarRangeMax );
+	doubleEditorVerticalScrollBar->setRange( scrollBarRangeMin , scrollBarRangeMax );
 	//doubleEditorScrollBar->setSingleStep(singleStep);
 }
 
@@ -683,7 +685,7 @@ void GraphWindow::readFromFile(const QString &path) {
 	maxX = 0;
 	int branchCount = 1;
 	const float scalingFactors[] = {
-		100.0/(24*60*60),
+/*		100.0/(24*60*60),
 		100.0/(18*60*60),
 		100.0/(12*60*60),
 		100.0/(6*60*60),
@@ -695,8 +697,9 @@ void GraphWindow::readFromFile(const QString &path) {
 		100.0/(15*60),
 		100.0/(10*60),
 		100.0/(5*60),
-		100.0/(3*60),
-		100.0/(60),
+		100.0/(3*60),*/
+		//100.0/(2*60),
+		100.0/(10),
 	};
 	
 	if(!path.isNull()) {
@@ -740,7 +743,7 @@ void GraphWindow::readFromFile(const QString &path) {
 					qreal x = pieces.value(1).toDouble();
 					int timestamp = pieces.value(1).toInt();
 					qreal y;
-					qreal radius = 8; // + 10 * (1 - exp( -1*(pieces.value(5).toDouble()-130)/500 ));
+					qreal radius = POINT_DEFAULT_RADIUS; // + 10 * (1 - exp( -1*(pieces.value(5).toDouble()-130)/500 ));
 					QString parentString = pieces.value(6);
 					int parentOffset = parentString.toInt();
 					int parentIndex = parentOffset/326;
@@ -894,6 +897,7 @@ void GraphWindow::readFromFile(const QString &path) {
 				Point *p = points->at(i);
 				qreal unscaledX = p->getX() - LEFT_MARGIN;
 				p->setX(unscaledX*scalingFactor + LEFT_MARGIN);
+				p->updateTagPosition();
 			}
 			rootX *= scalingFactor;
 			maxX = (maxX - LEFT_MARGIN)*scalingFactor + LEFT_MARGIN;

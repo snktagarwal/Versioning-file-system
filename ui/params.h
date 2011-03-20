@@ -16,7 +16,7 @@
 
 #define MAXIMIZED 1
 
-#define BRANCH_SEPARATION (50.0)
+#define BRANCH_SEPARATION (60.0)
 //#define MARGIN (20.0)
 #define TOP_MARGIN (50.0)
 #define LEFT_MARGIN (50.0)
@@ -35,7 +35,7 @@
 // Points
 #define POINT_MINIMUM_DISTANCE (1.0)
 
-#define POINT_DEFAULT_RADIUS (5.0)
+#define POINT_DEFAULT_RADIUS (6.0)
 #define POINT_DEFAULT_OUTLINE_WIDTH (1.0)
 #define POINT_HEAD_OUTLINE_WIDTH (3.0)
 

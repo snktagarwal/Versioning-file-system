@@ -14,6 +14,8 @@ class Point : public QObject, public QGraphicsItem {
 	Q_OBJECT
 	
 	public:
+		//static QTextStream *logStream;
+		
 		Point(QString filepath, QGraphicsScene *scene, qreal x, qreal y, qreal r = POINT_DEFAULT_RADIUS, QString tagText = "", QString tooltipText = "", Point *parent = 0, GraphWindow *window = 0);
 		~Point();
 
@@ -34,6 +36,8 @@ class Point : public QObject, public QGraphicsItem {
 		bool isValid() const;
 		bool isHead() const;
 		QString getRelativeFilePath() const;
+		QAction *getCheckoutAction() const;
+		QAction *getRevertAction() const;
 
 		void setX(qreal x);
 		void setY(qreal y);
@@ -43,6 +47,8 @@ class Point : public QObject, public QGraphicsItem {
 		void setTimeLine(QTimeLine *timeline);
 		void setInvalidCount(int invalidCount);
 		void setValidity(bool valid);
+		void setCheckoutEnabled(bool enabled);
+		void setRevertEnabled(bool enabled);
 		void setTagText(QString tagText);
 
 		void setOutlineColor(const QColor &color);
@@ -54,8 +60,10 @@ class Point : public QObject, public QGraphicsItem {
 		void addLine(Line *line);
 		void removeLine(Line *line);
 		void deleteAllLines();
+		void deleteTag();
 
 		void addChild(Point *child);
+		void removeChild(Point *child);
 		void incrementAncestorCount();
 
 		void startTimer(int msec);
@@ -65,6 +73,7 @@ class Point : public QObject, public QGraphicsItem {
 		void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 		
 		void updateContextMenu();
+		void updateContextMenus();
 		void removeInvalidVersions(Point *oldCurrent, Point *newCurrent);
   
 	protected:
@@ -82,6 +91,7 @@ class Point : public QObject, public QGraphicsItem {
 	private slots:
 		void checkoutVersion();
 		void revertToVersion();
+		void tagVersion();
 	
 	private:
 		QRectF outlineRect() const;
@@ -105,6 +115,7 @@ class Point : public QObject, public QGraphicsItem {
 		
 		QAction *checkoutAction;
 		QAction *revertAction;
+		QAction *tagAction;
 		
 		Point *parent;
 		int ancestorCount;

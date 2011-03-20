@@ -1,0 +1,20 @@
+NAME	COLOR	SHAPE	PATTERN
+r0	909090	circle
+r1	994030	triangle
+r2	307099	triangle	stripe
+r3	994030	triangle
+r4	994030	triangle	stripe/45
+r5	307099	triangle
+r6	994030	triangle	spot
+r7	307099	triangle
+r8	994030	triangle
+s0	994030	star	cheque/135
+s1	307099	star
+s2	994030	star
+s3	994030	cross
+s4	307099	cross
+s5	994030	square
+s6	994030	square/45
+s7	901090	square/45
+s8	901090	square	circle
+s9	307099	square

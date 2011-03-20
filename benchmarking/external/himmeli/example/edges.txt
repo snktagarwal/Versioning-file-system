@@ -1,0 +1,42 @@
+HEAD	TAIL	WEIGHT	LABEL	COLOR
+r0	r1	1.1	methodA	991000
+r1	r2	0.6	methodB	002099
+r2	r3	1.0		991000
+r3	r4	1.4	methodC	991000
+r4	r5	1.3	methodA	002099
+r5	r6	2.7		991000
+r6	r7	1.5	methodA	002099
+r7	r8	1.3	error?	991000
+r8	s0	1.7	methodB	991000
+r2	s1	1.0	methodB	002099
+s1	s2	1.2	methodA	991000
+s0	s3	1.2		991000
+s0	s4	0.3	methodA	002099
+s2	s5	1.5	methodA	991000
+s0	s6	1.0	methodC	991000
+s5	s7	1.0	methodB	991000
+s0	s8	0.7	methodB	002099
+s0	s9	1.7	methodA	002099
+r1	s5	1.0		991000
+r2	s6	1.0	methodA	991000
+r3	s7	2.2	methodC	002099
+r4	s8	1.0	methodA	991000
+g0	g1	1.3	methodA	002099
+g0	g2	1.0	methodA	991000
+g1	g3	1.5		991000
+g2	g3	1.1	methodA	991000
+g1	g5	1.2	methodB	991000
+g2	g6	1.7	methodB	002099
+g3	g5	1.3	methodA	991000
+g3	g6	2.1	methodA	991000
+g5	g6	1.2	methodB	002099
+x0	x3	1.3	methodB	991000
+x0	x4	1.6	methodC	002099
+x1	x4	1.8		002099
+x1	x0	1.7	methodA	991000
+x2	x0	1.9		991000
+x2	x1	0.4	methodA	991000
+x3	x1	1.3		002099
+x3	x2	1.5	methodB	002099
+x4	x2	2.2	methodB	002099
+x4	x3	1.7	methodC	991000

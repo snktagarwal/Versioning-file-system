@@ -127,7 +127,12 @@ int create_file_fromlo(char * file_tree_path, int d_off, int lo_off, char * obj_
 	
 	strcat(curr_file, hash);
 	
+	decompress(curr_file);
 	copy(curr_file, temp_file);
+	compress(curr_file);
+	//decompress(temp_file);
+//	delete(temp_file);
+	//move("/tmp/rvfs/*.tmp",temp_file);
 	
 	while(off!=d_off)
 	{
@@ -147,11 +152,12 @@ int create_file_fromlo(char * file_tree_path, int d_off, int lo_off, char * obj_
 			i--;
 		curr_file[i+1] = '\0';
 		strcat(curr_file, hash);
-		
+		decompress(curr_file);
 		if(lp==0)
 			copy(curr_file, temp_file);
 		else
 			patch(temp_file, curr_file);
+		compress(curr_file);
 	}
 	fclose(fp);
 	log_msg("Exiting create_file_fromlo\n");
@@ -256,7 +262,9 @@ int report_file_tag(char *filepath, int timestamp, char *tag)
  	if(mode == 0)
  	{
  		log_msg("Entering into report tag %s\n",tag);
- 		int ret = report_file_tag(fpath,ver_no,tag);
+ 		int ret = 0;
+ 		if(fopen(fpath,"r")!=NULL)
+	 		 ret = report_file_tag(fpath,ver_no,tag);
  		log_msg("Return Status : %d \n",ret); 
  	}
  	return ret_file_path;
@@ -284,6 +292,7 @@ int report_file_tag(char *filepath, int timestamp, char *tag)
  	if(mode == 0)
  	{
  		log_msg("Entering into report checkout %s\n",ver);
+ 		if(fopen(fpath,"r")!=NULL)
  		report_checkout(fpath,tp);
  	}
  	return ret_file_path;
@@ -310,6 +319,7 @@ int report_file_tag(char *filepath, int timestamp, char *tag)
  	strcpy(ret_file_path,fpath);
  	if(mode == 0)
  	{
+ 		if(fopen(fpath,"r")!=NULL)
  		revert_to_version(fpath,tp);
  	}
  	return ret_file_path;
@@ -336,17 +346,27 @@ int report_file_tag(char *filepath, int timestamp, char *tag)
  {
  	int len = strlen(fpath);
  	int len2 = 0;
+ 	double ratio;
  	
+ 	char *rat = (char *)malloc(PATH_MAX*sizeof(char));
  	char *ret_file_path = (char*)malloc(PATH_MAX*sizeof(char));
  	len--;
  	while(fpath[len] != '^')
+ 	{
+ 		rat[len2++] = fpath[len];
  		len--;
- 	
+ 	}
+ 	rat[len2] = '\0';
+ 	g_strreverse(rat);
  	fpath[len] = '\0';
+ 	log_msg("rat = %s\n",rat);
+ 	ratio = atof(rat);
+ 	log_msg("ratio = %f\n",ratio);
  	strcpy(ret_file_path,fpath);
  	if(mode == 0)
  	{
- 		cleanFile(fpath);
+ 		if(fopen(fpath,"r")!=NULL)
+	 		cleanFile(fpath,ratio);
  	}
  	return ret_file_path;
  }
@@ -420,6 +440,41 @@ char *switchBranch(char *path, int mode)
  	return ret_file_path;
 }
 
+char *getMd(char *path, int mode)
+ {
+  char *path_tmp = (char*)malloc(PATH_MAX*sizeof(char));
+  char *fpath = (char*)malloc(PATH_MAX*sizeof(char));
+  strcpy(path_tmp,path);
+ 	int len = strlen(path_tmp);
+ 	int len2 = 0;
+ 	
+ 	char *ret_file_path = (char*)malloc(PATH_MAX*sizeof(char));
+ 	len--;
+ 	while(path_tmp[len] != '+')
+ 		len--;
+ 	
+ 	path_tmp[len] = '\0';
+ 	vfs_fullpath(fpath,path_tmp);
+ 	log_msg("fpath ::::: %s",fpath);
+ 	strcpy(ret_file_path,fpath);
+ 	if(mode == 0)
+ 	{
+ 	  char *file_md_path = (char*)malloc(PATH_MAX*sizeof(char));
+ 		char *ver_dir_path = (char*)malloc(PATH_MAX*sizeof(char));
+ 		char *md_dir_path = (char*)malloc(PATH_MAX*sizeof(char));
+ 		char *filename = (char*)malloc(PATH_MAX*sizeof(char));
+ 		get_file_name_new(ver_dir_path,filename,path_tmp);
+ 		strcpy(md_dir_path,ver_dir_path);
+ 		strcat(md_dir_path,"/md_data/");
+ 		strcpy(file_md_path,md_dir_path);
+ 		strcat(file_md_path,filename);
+ 		strcat(file_md_path,".md");
+ 		log_msg("FILE MD PATH ----------------------:%s",file_md_path);
+ 		copy(file_md_path,"/tmp/rvfs/md"); 		
+ 	}
+ 	return ret_file_path;
+ } 
+
 int vfs_getattr(const char *path, struct stat *statbuf)
 {
     //if(primary_rootver_exists() != 0)
@@ -447,6 +502,8 @@ int vfs_getattr(const char *path, struct stat *statbuf)
 	retstat = lstat(cleanDisc(fpath,NORMAL),statbuf);
     else if(strstr(path,"|")!=NULL)
 	retstat = lstat(switchBranch(path,NORMAL),statbuf);        
+	else if(strstr(path,"+")!=NULL)
+	retstat = lstat(getMd(path,NORMAL),statbuf);
     else
     	retstat = lstat(fpath, statbuf);
     if (retstat != 0)
@@ -1155,7 +1212,7 @@ int vfs_utime(const char *path, struct utimbuf *ubuf)
     log_msg("\nvfs_utime(path=\"%s\", ubuf=0x%08x)\n",
 	    path, ubuf);
     vfs_fullpath(fpath, path);
-    if(strstr(path,"%")!=NULL || strstr(path,"@")!=NULL || strstr(path,"&")!=NULL || strstr(path,"^")!=NULL || strstr(path,"|")!=NULL)
+    if(strstr(path,"%")!=NULL || strstr(path,"@")!=NULL || strstr(path,"&")!=NULL || strstr(path,"^")!=NULL || strstr(path,"|")!=NULL || strstr(path,"+")!=NULL)
     	set_tags(fpath,ABNORMAL);
     retstat = utime(fpath, ubuf);
     if (retstat < 0)
@@ -1183,7 +1240,7 @@ int vfs_open(const char *path, struct fuse_file_info *fi)
     log_msg("\nvfs_open(path\"%s\", fi=0x%08x)\n",
 	    path, fi);
     vfs_fullpath(fpath, path);
-    if(strstr(path,"%")!=NULL || strstr(path,"@")!=NULL || strstr(path,"&")!=NULL || strstr(path,"^")!=NULL || strstr(path,"|")!=NULL)
+    if(strstr(path,"%")!=NULL || strstr(path,"@")!=NULL || strstr(path,"&")!=NULL || strstr(path,"^")!=NULL || strstr(path,"|")!=NULL || strstr(path,"+")!=NULL)
     {
     	//set_tags(fpath,ABNORMAL);
     	return 0;
@@ -1386,7 +1443,7 @@ int vfs_statfs(const char *path, struct statvfs *statv)
 int vfs_flush(const char *path, struct fuse_file_info *fi)
 {
     int retstat = 0;
-    is_written = 1;
+    //is_written = 1;
     log_msg("\nvfs_flush(path=\"%s\", fi=0x%08x)\n", path, fi);
     // no need to get fpath on this one, since I work from fi->fh not the path
     log_fi(fi);
@@ -1411,13 +1468,9 @@ int vfs_flush(const char *path, struct fuse_file_info *fi)
  */
 int vfs_release(const char *path, struct fuse_file_info *fi)
 {
-		//int current_epoch  = (int)time(NULL);
-		//if(current_epoch - last_epoch < 10)
-		//return 0;
-		//else
-		//last_epoch = current_epoch;
+    char file_check[500];
     int retstat = 0;
-    if(strstr(path,"%")!=NULL || strstr(path,"@")!=NULL || strstr(path,"&")!=NULL || strstr(path,"#")!=NULL || strstr(path,"^")!=NULL || strstr(path,"|")!=NULL)
+    if(strstr(path,"%")!=NULL || strstr(path,"@")!=NULL || strstr(path,"&")!=NULL || strstr(path,"#")!=NULL || strstr(path,"^")!=NULL || strstr(path,"|")!=NULL || strstr(path,"+")!=NULL)
     	return 0;
     
     log_msg("\nvfs_release(path=\"%s\", fi=0x%08x)\n",
@@ -1433,10 +1486,13 @@ int vfs_release(const char *path, struct fuse_file_info *fi)
     char fpath[PATH_MAX];
     vfs_fullpath(fpath,path);
 
-		if(is_written) {
-    	version_file(ver_info, fpath);
+    /* An ugly hack to see if you have the text file or a binary */
+    sprintf(file_check, "if [ `file -b -i %s | cut -d \\/ -f 1` = 'text' ]; then exit 1; else exit 0; fi", fpath);
+    if(is_written && system(file_check))
+    {
+    	version_file(ver_info, fpath);    
     	is_written = 0;
-    }    
+    }
     return retstat;
 }
 

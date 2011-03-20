@@ -1,0 +1,841 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+  <title>Himmeli help</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <link href="files/thumb.ico" rel="shortcut icon">
+  <link href="files/default.css" rel="stylesheet">
+  <script language="javascript" src="files/scalepage.js" type="text/javascript">
+  </script>
+</head><body onload="scalePage();">
+<div align="center">
+<table style="font-size: 16px;" class="border"><tbody><tr><td>
+<table style="font-size: 16px;" class="canvas" id="tabelement" width="610">
+
+<tbody><tr><td valign="bottom">
+      <h1 style="color: rgb(16, 203, 48);">Himmeli v3.1</h1>
+      <h4>Tutorial and reference guide</h4>
+</td><td class="thumb"><img src="files/thumb.png" alt="himmeli" align="right">
+
+</td></tr><tr><td class="p" colspan="2">
+<a href="#basic">Basic graph</a> |
+<a href="#weight">Weighted edges</a> |
+<a href="#direct">Directed and labeled edges</a> |
+<a href="#manual">Manual colors</a> |
+<a href="#vertex">Vertex shapes and fill patterns</a> |
+<a href="#prune">Pruning and hiding edges</a> |
+<a href="#repeat">Repeatable layouts</a> |
+<a href="#info">Information elements</a> |
+<a href="#index">Index</a>
+
+<p><code>SVG</code> (Scalable Vector Graphics)<br>
+An XML specification and file format for expressing 2D vector graphics.
+Many web browsers can display SVG; for image processing you can use the <a href="http://www.inkscape.org/">Inkscape</a> software. SVG files are always
+converted to PNG by the job management system in normal conditions.
+</p><p><code>TXT</code> (Tabulator delimited text with column headings)<br>
+Primary format for storing numeric results. Compatible with MS Excel. If
+you are using an older version of <a href="http://www.openoffice.org/">OpenOffice</a>, convert filename extension
+to '.csv' before opening.
+
+</p><h3 id="start">Getting started</h3>
+Himmeli requires two input files to work. The first, referred to as the
+<i>configuration file</i>, contains the instructions that specify
+where to look for the graph data and how to visualize it. Furthermore, the
+name of the configuration file is the only command line argument that Himmeli
+accepts, everything else is defined by the instructions. If you call
+Himmeli without any command line arguments, a concise listing of all features
+is printed on the screen.
+
+<p>
+The second file, referred to as the <i>edge file</i>, contains the edges of
+the graph in tabulated plain text format. The first non-empty line of the file
+must contain the headings of the variable columns and the subsequent lines
+specify the graph topology. For each edge, you have to list at least the
+names of the end points on a single line of text in order for the edge to be
+registered by Himmeli.
+
+</p><p>
+Brief instructions on how to install the program on various platforms and
+operating systems can be found within the installation package.
+
+</p><h3 id="basic">Basic graph</h3>
+A graph is essentialy a set of relationships (edges or links or arcs,
+depending on context) between distinguishable entities (vertices or nodes).
+Consequently, the minimum dataset that can be visualized by Himmeli consists
+of pairs of vertices, denoted by the <i>tail vertex</i> (starting point) and
+the <i>head vertex</i> (end point). For now, it is assumed that the graph is
+undirected and no attention is paid to the order of vertices within a pair.
+
+<p>
+For practical reasons, Himmeli needs to know also the file that contains the
+graph data as a tabulator delimited plain text table (edge file) and the name
+of the graph for creating the result files later. Below is a transcript of a
+basic setup for a small graph (on a UNIX system):
+
+</p><pre>[vpm himmelidemo]$ cat config.txt 
+GraphName       demoGraph
+EdgeFile        edges.txt
+EdgeHeadVariable        HEAD
+EdgeTailVariable        TAIL
+
+[vpm himmelidemo]$ head -n 10 edges.txt 
+HEAD    TAIL
+r0      r1
+r1      r2
+r2      r3
+r3      r4
+r4      r5
+r5      r6
+r6      r7
+r7      r8
+r8      s0
+</pre>
+
+You can also use full paths for <code>GraphName</code> and
+<code>EdgeFile</code> (e.g. '/home/johndoe/results/demoGraph' and
+'/home/johndoe/himmelidemo/edges.txt'), which is useful if you want to store
+the results in another directory. Note, however, that Himmeli does not create
+new directories, so only existing paths can be used.
+
+<p>
+The connection between the configuration and edge files is made through the
+column headings: here the column <code>HEAD</code> contains the head vertex
+names for each of the pairs that form the graph. Notice how the same heading
+is listed as <code>EdgeHeadVariable</code> in the configuration file. The
+column headings can be anything (as long as they do not contain white space);
+the only requirement is that there is an unambiguous match between the
+configuration and edge files. Himmeli can now be started:
+
+</p><pre>[vpm himmelidemo]$ himmeli config.txt 
+3.x.x   Jul  4 2008     Graph
+1.0.0   Jul  4 2008     Component
+2.0.0   Jul  4 2008     Artist
+1.3.2   Jul  3 2008     Table
+
+Himmeli, copyright (C) 2006 Ville-Petteri Makinen
+Himmeli comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome to redistribute it
+under certain conditions; see the license file for details.
+
+Basic configuration:
+	ArrowMode              off             
+	DecorationMode         off             
+	DistanceUnit           1.00
+	EdgeWeightFilter       off
+	EdgeWeightMask         off
+	EdgeWeightTransform    auto
+	FigureLimit            10
+	IncrementMode          off             
+	LabelMode              vertex          
+	TimeLimit              10s
+	ChassisMode            off             
+
+Loading tabulator delimited data:
+	Copied  997  bytes from 'edges.txt'.
+
+Detecting variables:
+	EdgeColorVariable      empty
+	EdgeHeadVariable       'edges.txt'  'HEAD'  [ 1]
+	EdgeLabelVariable      empty
+	EdgeTailVariable       'edges.txt'  'TAIL'  [ 2]
+	EdgeWeightVariable     empty
+	EdgeWidthVariable      empty
+	VertexColorVariable    empty
+	VertexLabelVariable    empty
+	VertexNameVariable     empty
+	VertexPatternVariable  empty
+	VertexShapeVariable    empty
+	VertexSizeVariable     empty
+	VertexXVariable        empty
+	VertexYVariable        empty
+
+Importing graph:
+	[1]	19	22
+	[2]	6	9
+	[3]	5	10
+
+Computing layout:
+        [1]     655     iterations in 1s                                        
+        [2]     556     iterations in 0s                                        
+        [3]     569     iterations in 0s                                        
+	Layout computed in 1s.
+
+Saving figures:
+	Wrote 8.44K bytes to 'demoGraph_0001.svg'.
+	Wrote 3.33K bytes to 'demoGraph_0002.svg'.
+	Wrote 3.31K bytes to 'demoGraph_0003.svg'.
+
+Saving graph:
+	Wrote  985  bytes to 'demoGraph.config.txt'.
+	Wrote 1.16K bytes to 'demoGraph.edges.txt'.
+	Wrote 2.01K bytes to 'demoGraph.vertices.txt'.
+</pre>
+
+The screen output begins with version information and copyright statement for
+the various software modules within Himmeli. Next, a listing of the basic
+parameters is shown (there are also others, see the
+<a href="#index">index</a>). So far none of them is configured manually, so
+the default values are listed, but they will be modified in later
+sections of this document.
+
+<p>
+After data imports, the detected variables are listed on the screen. There
+were only two data columns, hence only two are detected. The last entry in
+the listing indicates the number of the column: the head vertex data were
+correctly detected in the first column.
+
+<table style="font-size: 16px;" align="right">
+<tbody><tr><td><a class="img" href="files/figure1.png">
+  <img class="link" src="files/figure1_tn.png" alt="Figure 1" align="right"></a>
+</td></tr><tr><td><center><b>Figure 1</b></center>
+</td></tr></tbody></table>
+
+</p><p>
+Himmeli makes no assumptions about the topology of the graph. Before
+visualization, though, the graph must be broken into connected components
+for technical reasons. Here we have three components and the largest comprise
+19 vertices and 22 edges. Next the vertex layout is calculated
+for each component separately. This is the computationally most demanding
+phase and can take a long time for large graphs.
+
+</p><p>
+Finally, the drawings are saved in Scalable Vector Graphics (SVG) format,
+and the layouts are stored in plain text tables. The text files will be
+covered later in the section on <a href="#repeat">repeatable layouts</a>. The
+drawing for the largest component is shown in Figure 1.
+
+</p><h3 id="weight">Weighted edges</h3>
+Drawing the binary links between vertices is the first step. In more realistic
+situations, it is often possible to quantify the strength or importance of an
+edge, with respect to the other edges. Previously, the <i>weight</i> of an
+edge was automatically set to a constant value due to the technical fact that
+Himmeli was primarily designed for weighted edge sets.
+
+<p>
+To import quantitative weight data into Himmeli, add an
+<code>EdgeWeightVariable</code> instruction in the configuration file:
+
+</p><pre>[vpm himmelidemo]$ cat config.txt 
+GraphName	demoGraph
+EdgeFile	edges.txt	
+EdgeHeadVariable	HEAD	
+EdgeTailVariable	TAIL	
+EdgeWeightVariable	WEIGHT  # New!
+DecorationMode		on      # New!
+
+[vpm himmelidemo]$ head -n 10 edges.txt 
+HEAD	TAIL	WEIGHT
+r0	r1	1.1
+r1	r2	0.6
+r2	r3	1.0
+r3	r4	1.4
+r4	r5	1.3
+r5	r6	2.7
+r6	r7	1.5
+r7	r8	1.3
+r8	s0	1.7
+</pre>
+
+The weights can be any positive real numbers. Note that values close to or
+less than zeros will cause a rejection of the edge in question, and missing
+values or non-numerical entries are interpreted as zeros. The weight value
+range can be anything; Himmeli will normalize the weights automatically.
+If necessary, the normalization feature can be controlled manually, see
+the section on <a href="#repeat">pruning and hiding edges</a> for details.
+
+<table style="font-size: 16px;" align="right">
+<tbody><tr><td><a class="img" href="files/figure2.png">
+  <img class="link" src="files/figure2_tn.png" alt="Figure 2" align="right"></a>
+</td></tr><tr><td><center><b>Figure 2</b></center>
+</td></tr></tbody></table>
+
+<p>
+The edge weights affect the layout by pulling those vertices closer that have
+a strong link between them. To make the weights more apparent, the color and
+width of each line can be set to reflect the edge strength. By setting
+<code>DecorationMode</code> 'on', Himmeli will determine the graphical
+features automatically. If manual control is preferred, see the section on
+<a href="#manual">manual colors</a> for further details.
+
+</p><p>
+The automatic decorations also extend to the vertices: those vertices that
+have many adjacent edges (high degree) are drawn with bigger symbols, and
+the color is determined by the sum of the weights of the adjacent edges. The
+results are depicted in Figure 2.
+
+</p><h3 id="direct">Directed and labeled edges</h3>
+So far the direction of an edge had no significance on the way it was
+depicted. However, many real world networks contain information on directed
+associations. A gene transcription and expression network is one example:
+a transcription factor triggers gene expression, which in turn triggers new
+genes and so on. As mentioned earlier, the directionality is encoded in the
+head and tail vertex lists. A transcription factor for a gene would thus be
+encoded as the tail, and the target gene as the head, within a vertex pair.
+
+<p>
+The direction does not affect the vertex layout (except the distance unit)
+but it changes the way edges are drawn. To show arrows instead of lines,
+<code>ArrowMode</code> should be activated.
+
+</p><p>
+Color and width are effective means to convey the edge weight information,
+but sometimes it is useful to have labels on the edges for extra guidance.
+Labeling in Himmeli is controlled via <code>LabelMode</code>: by default it
+is set to 'vertex', which makes Himmeli to print the names of vertices. To
+show also edge weights, it can be fully activated (set it to 'on'). The
+automatic labels can be replaced by user-defined text if necessary
+(<code>EdgeLabelVariable</code> and <code>VertexLabelVariable</code>).
+
+<table style="font-size: 16px;" align="right">
+<tbody><tr><td><a class="img" href="files/figure3.png">
+  <img class="link" src="files/figure3_tn.png" alt="Figure 3" align="right"></a>
+</td></tr><tr><td><center><b>Figure 3</b></center>
+</td></tr></tbody></table>
+
+</p><p>
+Suppose the graph was a results of several different methodologies. It is
+then useful to denote which method was used to uncover a particular connection
+between the vertices. Also, you can add other extra information that might
+be relevant when intepreting the figure. To add user-defined labels for edges,
+a new column must be added to the edge file:
+
+</p><pre>[vpm himmelidemo]$ cat config.txt 
+GraphName	demoGraph
+EdgeFile	edges.txt	
+EdgeHeadVariable	HEAD	
+EdgeTailVariable	TAIL	
+EdgeWeightVariable	WEIGHT
+EdgeLabelVariable	LABEL   # New!
+ArrowMode	on              # New!
+LabelMode	on              # New!
+DecorationMode		on
+
+[vpm himmelidemo]$ head -n 10 edges.txt 
+HEAD	TAIL	WEIGHT	LABEL
+r0	r1	1.1	methodA
+r1	r2	0.6	methodB
+r2	r3	1.0	
+r3	r4	1.4	methodC
+r4	r5	1.3	methodA
+r5	r6	2.7
+r6	r7	1.5	methodA
+r7	r8	1.3	error?
+r8	s0	1.7	methodB
+</pre>
+
+Adding arrowheads and labels to the graph requires more space to prevent
+undesired overlap of element. Therefore Himmeli adjusts
+<code>DistanceUnit</code> automatically to meet the needs. Of course, you can
+override this in the configuration file, if necessary. The directed drawing
+is shown in Figure 3.
+
+<h3 id="manual">Manual colors</h3>
+While it is convenient to have all the colors and other visual attributes
+automatically selected, in some cases you may need to set the colors based on
+other criteria than just edge weights. Himmeli makes this possible via two
+dedicated instructions <code>EdgeColorVariable</code> and
+<code>EdgeWidthVariable</code>.
+
+<table style="font-size: 16px;" align="right">
+<tbody><tr><td><a class="img" href="files/figure4.png">
+  <img class="link" src="files/figure4_tn.png" alt="Figure 4" align="right"></a>
+</td></tr><tr><td><center><b>Figure 4</b></center>
+</td></tr></tbody></table>
+
+<p>
+The human eye has three types of color-sensitive receptors, for red, green
+and blue. Consequently, colors are usually represented as a combination of
+the three main components according to the suitably named RGB scheme. In
+most web pages the color codes are hexadecimal numbers (such as A0F542) that
+indicate the red intensity in the first two digits, green in the next two and
+blue in the last two digits. Himmeli follows the same convention, except that
+the numbers are decimal to make the codes easier to use. Some examples are
+illustrated in Figure 4.
+
+<table style="font-size: 16px;" align="right">
+<tbody><tr><td><a class="img" href="files/figure5.png">
+  <img class="link" src="files/figure5_tn.png" alt="Figure 5" align="right"></a>
+</td></tr><tr><td><center><b>Figure 5</b></center>
+</td></tr></tbody></table>
+
+</p><p>
+Suppose the sample graph represents a metabolite network, where the vertices
+are metabolites and the edges describe their effects on the concentrations
+during a continuous process. To get the most out of the visualizations, the
+type of effect can be coded into the line colors so that a simultaneous
+increase of two metabolites is painted red, whereas a negatively correlated
+pair is painted blue. Some changes are needed in the configuration and edge
+files:
+
+</p><pre>[vpm himmelidemo]$ cat config.txt 
+GraphName	demoGraph
+EdgeFile	edges.txt	
+EdgeHeadVariable	HEAD	
+EdgeTailVariable	TAIL	
+EdgeWeightVariable	WEIGHT
+EdgeLabelVariable	LABEL
+EdgeColorVariable	COLOR   # New!
+ArrowMode	on
+LabelMode	on
+DecorationMode		on
+
+[vpm himmelidemo]$ head -n 10 edges.txt 
+HEAD	TAIL	WEIGHT	LABEL	COLOR
+r0	r1	1.1	methodA	991000
+r1	r2	0.6	methodB	002099
+r2	r3	1.0		991000
+r3	r4	1.4	methodC	991000
+r4	r5	1.3	methodA	002099
+r5	r6	2.7		991000
+r6	r7	1.5	methodA	002099
+r7	r8	1.3	error?	991000
+r8	s0	1.7	methodB	991000
+</pre>
+
+If some of the color data is missing or invalid, the corresponding edges will
+be painted with a default color. If you wish to hide a specific edge, set the
+width to non-positive via <code>EdgeWidthVariable</code> (see also the section
+on <a href="#prune">pruning and hiding</a>). The results for the manually
+colored graph are shown in Figure 5.
+
+<h3 id="vertex">Vertex shapes and fill patterns</h3>
+In the previous section the edges were colored according to their function
+in a hypothetical metabolite network. The same customization is also possible
+for the vertices, although a new <i>vertex file</i> must be created to pass
+the extra information to Himmeli:
+
+<pre>[vpm himmelidemo]$ cat config.txt 
+GraphName	demoGraph
+EdgeFile	edges.txt
+VertexFile	vertices.txt    # New!
+EdgeHeadVariable	HEAD	
+EdgeTailVariable	TAIL	
+EdgeWeightVariable	WEIGHT
+EdgeLabelVariable	LABEL
+EdgeColorVariable	COLOR
+VertexNameVariable	NAME    # New!
+VertexColorVariable	COLOR   # New!
+VertexShapeVariable	SHAPE   # New!
+VertexPatternVariable	PATTERN # New!
+ArrowMode	on
+LabelMode	on
+DecorationMode		on
+
+[vpm himmelidemo]$ head -n 10 vertices.txt 
+NAME	COLOR	SHAPE	PATTERN
+r0	909090	circle
+r1	994030	triangle
+r2	307099	triangle	stripe
+r3	994030	triangle
+r4	994030	triangle	stripe/45
+r5	307099	triangle
+r6	994030	triangle	spot
+r7	307099	triangle
+r8	994030	triangle
+</pre>
+
+Those vertices that have only positive (red) arrows to other vertices are
+colored red (R=99, G=40, B=30), those with only negative arrows pointing
+to other vertices are colored blue (R=30, G=70, B=99), those with both
+are painted magenta (R=90, G=10, B=90), and finally the one vertex with no
+outward connections is painted light-grey.
+
+<p>
+Note the new instructions in the configuration file: <code>VertexFile</code>
+tells where to look for vertex data, <code>VertexNameVariable</code> is needed
+to find the data records of individual vertices, and the
+<code>VertexColorVariable</code> denotes the column with color data. Although
+both the edge and vertex files have a column named 'COLOR', there is no
+ambiguity since the columns are located in different files. Of course they do
+not have to be the same in general, as long as the configuration file and data
+files are consistent.
+
+<table style="font-size: 16px;" align="right">
+<tbody><tr><td><a class="img" href="files/figure6.png">
+  <img class="link" src="files/figure6_tn.png" alt="Figure 6" align="right"></a>
+</td></tr><tr><td><center><b>Figure 6</b></center>
+</td></tr></tbody></table>
+
+</p><p>
+In addition to color, the configuration file contains instructions that
+control vertex shapes (<code>VertexShapeVariable</code>) and filling
+patterns within the symbols (<code>VertexPatternVariable</code>). The shapes
+and patterns are denoted by text keys and an optional rotation angle
+in degrees. For instance, to draw a diamond shape you start with a square
+and then rotate it 45 degrees to produce the final code string 'square/45'.
+
+</p><p>
+The fill patterns behave the same way as the shapes. For example, to create
+diagonal stripes, you start with the default horizontal stripes and then
+rotate by 45 degrees to produce the code string 'stripe/45'. Additional
+examples of vertex colors, shapes and patterns are shown in Figures 4 and 6.
+
+</p><h3 id="prune">Pruning and hiding edges</h3>
+For complex networks (in the topology sense) two-dimensional layout is always
+non-optimal and often somewhat difficult to grasp. One way to make the
+visualization clearer is to reduce the number of elements depicted in the
+figure according to pre-defined criteria. As a first step, a maximum spanning
+tree can provide insight into the topology, even if it discards most of the
+edges. Himmeli does the tree layout automatically if <code>ChassisMode</code>
+is activated.
+
+<table style="font-size: 16px;" align="right">
+<tbody><tr><td><a class="img" href="files/figure7.png">
+  <img class="link" src="files/figure7_tn.png" alt="Figure 7" align="right"></a>
+</td></tr><tr><td><center><b>Figure 7</b></center>
+</td></tr></tbody></table>
+
+<p>
+Another way to reduce the number of edges is to remove those with small
+(or large) weights. Himmeli has a built-in filter feature
+(<code>EdgeWeightFilter</code>) which makes it possible to exclude certain
+edges without manipulating the edge file. The filter has two operating
+modes: if set to 'abs' all edges with a weight below the lower or above the
+higher limit will be removed from the graph prior to any analyses. If set
+to 'frac', the limits denote weight quantiles; to remove the smallest 10%
+you can use the instruction <code>EdgeWeightFilter frac 0.1 1.0</code> in the
+configuration file.
+
+</p><p>
+The results are depicted in Figure 7. The largest connected component is now
+smaller (18 vertices and 19 edges) since some of the vertices became
+unconnected due to the removal of the affected edges.
+ 
+</p><p>
+Often the preferred approach is to include all the edges when computing the
+layout, but leave out some from the final figure. This can be accomplished
+with <code>EdgeWeightMask</code> which works the same way as the edge filter
+except that the unwanted edges are removed only from the figures but are
+included everywhere else. In fact, the effect of the weight mask is equivalent
+to setting the width of the affected edges to zero. Note also that a filter
+and a mask can be applied simultaneously, if necessary.
+
+</p><h3 id="repeat">Repeatable layouts</h3>
+If you have already tried Himmeli repeatedly, you may have noticed that the
+vertex layouts differ between each run of the program. This is due to the
+adaptive nature of the layout algorithm: it adjusts the internal parameters
+continuously according to the available calendar time (set by
+<code>TimeLimit</code>) and since the operating system allocates an
+unpredictable amount of processing resources for Himmeli, the resulting
+layouts are, in general, indeterministic.
+
+<p>
+To overcome this unwanted "feature", Himmeli offers additional text files that
+simplify the reproduction of previously calculated layouts. The three files
+(new configuration, edge and vertex files) contain all the information about
+the graph, so you can store them instead of the figure files as a backup
+of the layout. Specifically, the layout coordinates are stored in the columns
+indicated by <code>VertexXVariable</code> and <code>VertexYVariables</code>.
+
+</p><p>
+The new configuration file contains the instructions from the oiginal file,
+but also additional commands that override some of the original settings.
+Also, the new edge and vertex files are accessed instead of the original
+data files. To reconstruct the figures, simply use the command
+<code>himmeli demoGraph.config.txt</code> and the SVG files will be recreated.
+Obviously the names of the text files depend on the graph name; here it
+was set to 'demoGraph' in the original configuration file. The drawings
+will be identical to the originals, but there may be some small differences
+in the element information figure (demoGraph.info.svg) and edge and vertex
+files (demograph.edges.txt and demograph.vertices.txt). In particular, the
+edge weights were already normalized when stored, so the original values are
+lost.
+
+</p><h3 id="info">Information elements</h3>
+If the edges and vertices are visualized according to a pre-defined scheme,
+it is concenient to have the symbol information available in the figure. In
+earlier versions of Himmeli the software put the user-supplied items
+automatically in the figure files. After the migration to SVG, the users
+themselves can do this much better with
+<a href="http://www.inkscape.org/">Inkscape</a>, hence the automatic
+positioning is no longer supported.
+
+<table style="font-size: 16px;" align="right">
+<tbody><tr><td><a class="img" href="files/figure8.png">
+  <img class="link" src="files/figure8_tn.png" alt="Figure 8" align="right"></a>
+</td></tr><tr><td><center><b>Figure 8</b></center>
+</td></tr></tbody></table>
+
+<p>
+The extra meta-data can be supplied to Himmeli via the
+<i>info instructions</i> (such as <code>VertexColorInfo</code>, see the
+<a href="#index">index</a> for more details) that take two parameters, the
+first of which specifies a short text description and the latter indicates
+the corresponding visual element (e.g. color). Below are some examples of
+info instructions (the info element is shown in Figure 8):
+
+</p><pre>EdgeColorInfo		activation	991000
+EdgeColorInfo		inhibition	002099
+VertexColorInfo		activator       994030
+VertexColorInfo		inhibitor       307099
+VertexColorInfo		omnipotent	901090
+VertexColorInfo		impotent	909090
+VertexShapeInfo		pathwayA	circle
+VertexShapeInfo		pathwayB	triangle
+VertexShapeInfo		pathwayC	star
+VertexShapeInfo		pathwayD	cross
+VertexShapeInfo		pathwayE	square
+VertexPatternInfo	energy          stripe
+VertexPatternInfo	adhesion        cheque
+VertexPatternInfo	defense         spot
+VertexPatternInfo	unknown         null
+</pre>
+
+<h3 id="index">Index</h3>
+
+<dl><dt><code>ArrowMode (string)</code>
+</dt><dd>If set to 'on', each edge will be augmented with an arrowhead.
+The default is 'off'. 
+</dd></dl>
+
+<dl><dt><code>BackgroundColor (integer)</code>
+</dt><dd>Canvas background color, defined according to the convention presented in
+the section on <a href="#manual">manual colors</a>.
+</dd></dl>
+
+<dl><dt><code>ChassisMode (string) (real)</code>
+</dt><dd>If set to 'on', Himmeli will use only the maximum spanning multi-tree
+instead of the full graph. The proportional connectivity of can be set with
+the second argument (1.0 corresponds creates the spanning tree). The default
+is 'off'. 
+</dd></dl>
+
+<dl><dt><code>DecorationMode (string)</code>
+</dt><dd>If set to 'on', Himmeli will decorate the graph based on edge weights and
+vertex strengths. The default is 'off'.
+</dd></dl>
+
+<dl><dt><code>Delimiter (string)</code>
+</dt><dd>The character that separates the columns in the edge and vertex files. Use
+'tab' for the horizontal tabulator and 'ws' for white space.
+The default is 'tab'.
+</dd></dl>
+
+<dl><dt><code>DistanceUnit (real)</code>
+</dt><dd>The standard distance between nodes on the canvas. This is not a zoom;
+it scales the coordinate system that is used when drawing the figures in
+such a way that the node symbols are not modified, only their mutual
+distances are changed.
+</dd></dl>
+
+<dl><dt><code>EdgeColorInfo (string) (string)</code>
+</dt><dd>The label (1st value) of specific a edge color (2nd value) in the info
+box. Colors are defined according to the convention presented in the section
+on <a href="#manual">manual colors</a>. See also the section on
+<a href="#info">information elements</a>. Multiple info entries can be defined
+in the configuration file.
+</dd></dl>
+
+<dl><dt><code>EdgeColorVariable (string) (string)</code>
+</dt><dd>The column of color definitions (1st value) in a data file (2nd value).
+Colors are determined by integer codes: use 000000 for black, 505050 for gray,
+999999 for white, 990000 for red, 009900 for green, 000099 for blue, or any
+other between 000000 and 999999. See also the section on
+<a href="#manual">manual colors</a>.
+</dd></dl>
+
+<dl><dt><code>EdgeFile (string)</code>
+</dt><dd>Primary edge data file that contains the graph topology (pairs
+of head and tail vertices).
+</dd></dl>
+
+<dl><dt><code>EdgeHeadVariable (string)</code>
+</dt><dd>The column of head vertices in the primary edge file (and in other
+files containing edge data).
+</dd></dl>
+
+<dl><dt><code>EdgeLabelVariable (string) (string)</code>
+</dt><dd>The column of edge labels (1st value) and the file where to look
+for them (2nd value). By default, the data file is the primary edge file.
+See also the section on <a href="#direct">labeled edges</a>.
+</dd></dl>
+
+<dl><dt><code>EdgeTailVariable (string)</code>
+</dt><dd>The column of tail vertices in the primary edge file (and in other
+files containing edge data).
+</dd></dl>
+
+<dl><dt><code>EdgeWeightFilter (string) (real) (real)</code>
+</dt><dd>To threshold edges by weight before node positioning, three values must
+  be supplied: the type of filter (1st value), the lower limit (2nd value)
+  and the upper limit (3rd value). There are two possible filters: 'abs'
+  thresholds by absolute weight and 'frac' by quantiles. Edges not meeting the
+  criteria will be ignored prior to any analyses or visualization. For
+  instance, to include only the largest 10% edge weight fraction, type
+  <code>EdgeWeightFilter frac 0.9 1.0</code> in the configuration file.
+  See also the section on <a href="#prune">pruning and hiding edges</a>.
+</dd></dl>
+
+<dl><dt><code>EdgeWeightMask (string) (real) (real)</code>
+</dt><dd>Show/hide edges according to given thresholds. Works the same way
+as <code>EdgeWeightMask</code> except that the affected edges are filtered
+only with respect to visualization; all edges are included when computing the
+vertex layout and other graph characteristics.
+</dd></dl>
+
+<dl><dt><code>EdgeWeightTransform (string)</code>
+</dt><dd>Transform edge weights to optimal range for node positioning. There are
+three types of transformations: use 'lin' for linear scaling, 'log' for
+logarithmic scaling, and 'rank' for rank-based normalization.
+By default, 'auto' is used (a combination of the three basic types).
+Set the feature to 'off' if raw weights are preferred. 
+</dd></dl>
+
+<dl><dt><code>EdgeWeightVariable (string) (string)</code>
+</dt><dd>The column that contains numerical edge weights (1st value) in a
+data file (2nd value). Only positive values are accepted. If a weight
+variable is not supplied, each edge is given a uniform weight.
+</dd></dl>
+
+<dl><dt><code>EdgeWidthVariable (string) (string)</code>
+</dt><dd>The column of edge width multipliers (1st value) in a data file (2nd
+value). A non-positive width makes the affected edge invisible. Note that the
+widths in the drawing may be limited to a specific range due to technical
+reasons.
+</dd></dl>
+
+<dl><dt><code>FigureLimit (integer)</code>
+</dt><dd>The maximum allowed number of image output files. Cannot be more than
+9999, default is 10.
+</dd></dl>
+
+<dl><dt><code>FontSize (real)</code>
+</dt><dd>Base font size in standard units (default value is 0.4). This has no effect
+on the info box.
+</dd></dl>
+
+<dl><dt><code>ForegroundColor (integer)</code>
+</dt><dd>Canvas foreground color (symbol outlines and text), defined according to
+the convention presented in the section on <a href="#manual">manual colors</a>.
+</dd></dl>
+
+<dl><dt><code>GraphName (string)</code>
+</dt><dd>Base name for output files. The template for component drawings (ranked
+by size) is <code>[graphname]_[rank].svg</code>, for other files 
+<code>[graphname].[type].svg</code> is used. 
+</dd></dl>
+
+<dl><dt><code>IncrementMode (string)</code>
+</dt><dd>If set to 'on', Himmeli will start the node-positioning algorithm from the
+layout that is supplied in the vertex file(s). The default is 'off'.
+</dd></dl>
+
+<dl><dt><code>LabelMode (string)</code>
+</dt><dd>If set to 'vertex', the drawing is augmented with vertex names or
+user-defined labels. If set to 'edge', edge labels (or weights if no
+data available) are written on the edge lines. If set to 'on', both previous
+options apply. The default is 'vertex' (use 'off' to disable this feature).
+</dd></dl>
+
+<dl><dt><code>TimeLimit (real)</code>
+</dt><dd>The time quota in seconds for computing the node positions. If set to
+zero, no simulation is performed. The default is 10. 
+</dd></dl>
+
+<dl><dt><code>VerboseMode (string)</code>
+</dt><dd>If set to 'on', Himmeli will print all runtime messages. The
+default is 'on' (use 'off' to disable the feature).
+</dd></dl>
+
+<dl><dt><code>VertexColorInfo (string) (string)</code>
+</dt><dd>The label (1st value) of a specific vertex color (2nd value) in the info
+box. Colors are defined according to the convention presented in the section
+on <a href="#manual">manual colors</a>. See also the section on
+<a href="#info">information elements</a>. Multiple info entries can be defined
+in the configuration file.
+</dd></dl>
+
+<dl><dt><code>VertexColorVariable (string) (string)</code>
+</dt><dd>The column of color definitions (1st value) in a data file (2nd value).
+Colors are determined by integer codes: use 000000 for black, 505050 for gray,
+999999 for white, 990000 for red, 009900 for green, 000099 for blue, or any
+other between 000000 and 999999. See also the section on
+<a href="#manual">manual colors</a>.
+</dd></dl>
+
+<dl><dt><code>VertexFile (string)</code>
+</dt><dd> Primary vertex data file. You do not have to supply data for every
+vertex; only those vertices that are present both in the edge and vertex
+files will be recognized.
+</dd></dl>
+
+<dl><dt><code>VertexNameVariable (string)</code>
+</dt><dd>The column in the vertex file that contains vertex names. Note that
+every file with vertex data should have a column with the same name to
+correctly identify vertices in each file.
+</dd></dl>
+
+<dl><dt><code>VertexLabelVariable (string) (string)</code>
+</dt><dd>The column of vertex labels (1st value) and the file where to look
+for them (2nd value). By default, the data file is the primary vertex file.
+If no labels are available, vertex names are used instead. See also
+<code>LabelMode</code>.
+</dd></dl>
+
+<dl><dt><code>VertexPatternInfo (string) (string)</code>
+</dt><dd>The label (1st value) of a specific vertex pattern (2nd value) in the info
+box. Patterns are defined according to the convention presented in the section
+on <a href="#vertex">fill patterns</a>. See also the section on
+<a href="#info">information elements</a>. Multiple info entries can be defined
+simultaneously in the configuration file.
+</dd></dl>
+
+<dl><dt><code>VertexPatternVariable (string) (string)</code>
+</dt><dd>The column of pattern definitions (1st value) in a data file (2nd value).
+Six fill patterns are supported: use 'cheque' for a chequered pattern,
+'parallel' for parallel stripes, 'spot' for a rectangular spot on one corner,
+'hole' for a filled vertex except a corner rectangle, 'half' for a half-fill
+and 'circle' for a filled circle on one corner. In addition, the patterns can
+be rotated to allow more versatility. For instance, to create diagonal
+stripes, use the pattern code 'stripe/45' to rotate the otherwise horizontal
+lines 45 degrees. See also the section on <a href="#vertex">fill patterns</a>.
+</dd></dl>
+
+<dl><dt><code>VertexShapeInfo (string) (string)</code>
+</dt><dd>The label (1st value) of a specific vertex shape (2nd value) in the info
+box. Shapes are defined according to the convention presented in the section
+on <a href="#vertex">vertex shapes</a>. See also the section on
+<a href="#info">information elements</a>. Multiple info entries can be defined
+simultaneously in the configuration file.
+</dd></dl>
+
+<dl><dt><code>VertexShapeVariable (string) (string)</code>
+</dt><dd>The column of shape definitions (1st value) in a data file (2nd value).
+Five basic shapes are supported: 'circle', 'triangle', 'cross', 'star', and
+'square'. Furthermore, the shapes can be rotated to allow more versatility.
+For instance, to create a diamond shape, use the shape code 'square/45' to
+rotate a square 45 degrees. See also the section on
+<a href="#vertex">vertex shapes</a>.
+</dd></dl>
+
+<dl><dt><code>VertexSizeVariable (string) (string)</code>
+</dt><dd>The column of vertex size multipliers (1st value) in a data file (2nd
+value). A non-positive size makes the affected vertex invisible. Note that the
+symbol sizes in the drawing may be limited to a specific range due to
+technical reasons.
+</dd></dl>
+
+<dl><dt><code>VertexXVariable (string) (string)</code>
+</dt><dd>The column of horizontal positions (1st value) in a vertex data file
+(2nd value). The scale of the SVG elements is such that the mimimum distance
+between vertices should be 1 in the user-defined coordinate set. See also
+the section on <a href="#repeat">repeatable layouts</a>.
+</dd></dl>
+
+<dl><dt><code>VertexYVariable (string) (string)</code>
+</dt><dd>The column of vertical positions (1st value) in a vertex data file
+(2nd value). The scale of the SVG elements is such that the mimimum distance
+between vertices should be 1 in the user-defined coordinate set. Note
+that in SVG the canvas is inverted vertically.
+</dd></dl>
+
+<hr style="color: rgb(175, 175, 175); background-color: rgb(175, 175, 175);">
+<small><span id="textunit">Updated</span> 
+2008-07-13 by <a href="http://www.iki.fi/%7Evpmakine/">vpmakine</a>.</small>
+</td></tr></tbody></table>
+</td></tr></tbody></table>
+</div>
+
+</body></html>

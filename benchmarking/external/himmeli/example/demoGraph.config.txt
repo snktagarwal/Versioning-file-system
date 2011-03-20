@@ -1,0 +1,30 @@
+# Created by Himmeli 3.3.8
+# Thu Mar 17 12:46:41 2011
+
+ArrowMode              on              
+DecorationMode         on              
+Delimiter              tab             
+DistanceUnit           0.9             
+EdgeColorVariable      ECOLOR          
+EdgeFile               demoGraph.edges.txt
+EdgeHeadVariable       HEAD            
+EdgeLabelVariable      ELABEL          
+EdgeTailVariable       TAIL            
+EdgeWeightFilter       off             
+EdgeWeightMask         off             
+EdgeWeightTransform    off             
+EdgeWeightVariable     WEIGHT          
+EdgeWidthVariable      WIDTH           
+GraphName              demoGraph       
+IncrementMode          on              
+TimeLimit              0               
+VertexColorVariable    VCOLOR          
+VertexFile             demoGraph.vertices.txt
+VertexLabelVariable    VLABEL          
+VertexNameVariable     NAME            
+VertexPatternVariable  PATTERN         
+VertexShapeVariable    SHAPE           
+VertexSizeVariable     SIZE            
+VertexXVariable        X               
+VertexYVariable        Y               
+

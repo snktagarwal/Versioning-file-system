@@ -1,0 +1,302 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" x="0" y="0"
+width="209" height="90">
+
+<g>
+
+<rect x="0" y="0" width="209" height="90"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #fcfcfc;
+stroke: none;"
+/>
+
+<text x="17.01" y="25.51"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: #fcfcfc;
+stroke-linecap: round;
+stroke-width: 0.00px;
+stroke-opacity: 0.00;"
+>
+Automatic coloring:
+</text>
+
+<polygon points="
+	16.42,43.95
+	27.80,43.95
+	27.80,32.58
+	16.42,32.58"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffec90;
+stroke: none;"
+/>
+
+<polygon points="
+	24.93,43.95
+	36.30,43.95
+	36.30,32.58
+	24.93,32.58"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffea85;
+stroke: none;"
+/>
+
+<polygon points="
+	33.43,43.95
+	44.80,43.95
+	44.80,32.58
+	33.43,32.58"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffe57b;
+stroke: none;"
+/>
+
+<polygon points="
+	41.94,43.95
+	53.31,43.95
+	53.31,32.58
+	41.94,32.58"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffe271;
+stroke: none;"
+/>
+
+<polygon points="
+	50.44,43.95
+	61.81,43.95
+	61.81,32.58
+	50.44,32.58"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffdd69;
+stroke: none;"
+/>
+
+<polygon points="
+	58.94,43.95
+	70.32,43.95
+	70.32,32.58
+	58.94,32.58"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffd55a;
+stroke: none;"
+/>
+
+<polygon points="
+	67.45,43.95
+	78.82,43.95
+	78.82,32.58
+	67.45,32.58"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffce4a;
+stroke: none;"
+/>
+
+<polygon points="
+	75.95,43.95
+	87.32,43.95
+	87.32,32.58
+	75.95,32.58"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffc33b;
+stroke: none;"
+/>
+
+<polygon points="
+	84.46,43.95
+	95.83,43.95
+	95.83,32.58
+	84.46,32.58"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffb92b;
+stroke: none;"
+/>
+
+<polygon points="
+	92.96,43.95
+	104.33,43.95
+	104.33,32.58
+	92.96,32.58"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffaf19;
+stroke: none;"
+/>
+
+<polygon points="
+	101.46,43.95
+	112.84,43.95
+	112.84,32.58
+	101.46,32.58"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa212;
+stroke: none;"
+/>
+
+<polygon points="
+	109.97,43.95
+	121.34,43.95
+	121.34,32.58
+	109.97,32.58"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #fc920c;
+stroke: none;"
+/>
+
+<polygon points="
+	118.47,43.95
+	129.84,43.95
+	129.84,32.58
+	118.47,32.58"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #f98007;
+stroke: none;"
+/>
+
+<polygon points="
+	126.98,43.95
+	138.35,43.95
+	138.35,32.58
+	126.98,32.58"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #f77105;
+stroke: none;"
+/>
+
+<polygon points="
+	135.48,43.95
+	146.85,43.95
+	146.85,32.58
+	135.48,32.58"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #f76100;
+stroke: none;"
+/>
+
+<polygon points="
+	143.98,43.95
+	155.35,43.95
+	155.35,32.58
+	143.98,32.58"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ea4f00;
+stroke: none;"
+/>
+
+<polygon points="
+	152.49,43.95
+	163.86,43.95
+	163.86,32.58
+	152.49,32.58"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #d84000;
+stroke: none;"
+/>
+
+<polygon points="
+	160.99,43.95
+	172.36,43.95
+	172.36,32.58
+	160.99,32.58"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #c62e00;
+stroke: none;"
+/>
+
+<polygon points="
+	169.50,43.95
+	180.87,43.95
+	180.87,32.58
+	169.50,32.58"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #b11c00;
+stroke: none;"
+/>
+
+<polygon points="
+	178.00,43.95
+	189.37,43.95
+	189.37,32.58
+	178.00,32.58"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #9f0c00;
+stroke: none;"
+/>
+
+<text x="17.01" y="54.43"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+text-anchor: start;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: #fcfcfc;
+stroke-linecap: round;
+stroke-width: 0.00px;
+stroke-opacity: 0.00;"
+>
+min
+</text>
+
+<text x="189.30" y="54.43"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+text-anchor: end;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: #fcfcfc;
+stroke-linecap: round;
+stroke-width: 0.00px;
+stroke-opacity: 0.00;"
+>
+max
+</text>
+
+</g>
+</svg>

@@ -8,8 +8,10 @@ int main(int argc, char *argv[])
 {
 	int i=1;
 	if(argc != 3)
-		printf("Usage:  revert <filepath> <version no.>");
-		
+	{
+		printf("Usage:  revert <filepath> <version no.>\n");
+		return -1;
+	}	
 	
 	char *filepath;
 	//char * revert;
@@ -18,12 +20,19 @@ int main(int argc, char *argv[])
 	int ver_no = atoi(argv[2]);
 
 	strcpy(filepath,argv[1]);
+	FILE *f = fopen(filepath,"r");
+	if(f == NULL)
+	{
+		printf("File does not exist\n");
+		return -1;
+	}	
+	fclose(f);
 	//strcpy(revert,argv[3]);
 	strcat(filepath,"&");
 	strcat(filepath,argv[2]);
 	//strcat(filepath,"&");
 	//strcat(filepath,argv[3]);
 
-	FILE *f = fopen(filepath,"r");
+	f = fopen(filepath,"r");
 	fclose(f);
 }

@@ -1,0 +1,16 @@
+Benchmarking
+========
+
+Benchmarks different versioning system.
+
+The script is divided into various sections to populate
+indices of different verioning system.
+
+All take their data from data/ folder which is indexed
+in INDEX which tells how to apply them( Checkout, revert )
+etc.
+
+Present support is valid for:
+
+* Git
+* Rvfs

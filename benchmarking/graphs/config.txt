@@ -1,0 +1,13 @@
+# Configuration file for Himmeli v3.
+# A tutorial is available on the Himmeli web site.
+
+GraphName	rvfsGraph
+EdgeFile	edges.txt	
+#VertexFile	vertices.txt
+EdgeHeadVariable	HEAD	
+EdgeTailVariable	TAIL	
+# EdgeWeightVariable	WEIGHT
+# VertexNameVariable	NAME
+# VertexShapeVariable	SHAPE
+ArrowMode	off
+DecorationMode	on

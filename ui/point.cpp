@@ -5,6 +5,10 @@
 #include "window.h"
 
 Point::Point(QString filepath, QGraphicsScene *scene, qreal x, qreal y, qreal r, QString tagText, QString tooltipText, Point *parent, GraphWindow *window) {	
+	/*QFile *logFile = new QFile("/tmp/log");
+	if(logFile->open(QFile::WriteOnly | QFile::Text))
+		logStream = new QTextStream(logFile);*/
+	
 	if(tagText.length() > TAG_MAX_LENGTH)
 		tagText = tagText.left(TAG_MAX_LENGTH).append("...");
 	tagText.prepend("[").append("]");
@@ -46,6 +50,11 @@ Point::Point(QString filepath, QGraphicsScene *scene, qreal x, qreal y, qreal r,
 		updateTagPosition();
 		scene->addItem(tag);
 	}
+	else {
+		tag = new QGraphicsSimpleTextItem("");
+		updateTagPosition();
+		scene->addItem(tag);
+	}
 	
 	setFlags(ItemIsSelectable);
 	setCacheMode(QGraphicsItem::ItemCoordinateCache);
@@ -82,6 +91,8 @@ int Point::getInvalidCount() const { return invalidCount; }
 bool Point::isValid() const { return valid; }
 bool Point::isHead() const { if(this->children.size() == 0) { return true; } return false; }
 QString Point::getRelativeFilePath() const { return relativeFilePath; }
+QAction *Point::getCheckoutAction() const { return checkoutAction; }
+QAction *Point::getRevertAction() const { return revertAction; }
 
 void Point::setX(qreal x) { this->x = x; }
 void Point::setY(qreal y) { this->y = y; }
@@ -94,13 +105,12 @@ void Point::setOutlineColor(const QColor &color) { outlineColor = color; }
 void Point::setOutlineWidth(qreal width) { outlineWidth = width; }
 void Point::setInvalidCount(int invalidCount) { this->invalidCount = invalidCount; }
 void Point::setValidity(bool valid) { this->valid = valid; }
+void Point::setCheckoutEnabled(bool enabled) { checkoutAction->setEnabled(enabled); }
+void Point::setRevertEnabled(bool enabled) { revertAction->setEnabled(enabled); }
 void Point::setTagText(QString tagText) {
-	tagText = "tag";
-	qDebug() << "here1";
 	this->tagText = tagText;
-	qDebug() << "here2 " << tagText;
 	this->tag->setText(tagText);
-	qDebug() << "here3";
+	updateTagPosition();
 }
 
 void Point::updateTagPosition() {
@@ -109,28 +119,50 @@ void Point::updateTagPosition() {
 		QRectF rect = metrics.boundingRect(tagText);
 		qreal tagTextX = x - (rect.width()/2);
 		qreal tagTextY = y + r + (rect.height()/2) - 5;
+		qDebug() << "tagTextX: " << tagTextX << ", tagTextY: "<< tagTextY;
 		tag->setPos(tagTextX, tagTextY);
 	}
 }
 
 void Point::checkoutVersion() {
-	QString command = "checkout "+relativeFilePath+" "+this->data(POINT_TIMESTAMP_INDEX).toString();
+	QString command = "cd "+window->getMountDirPath()+" && checkout "+relativeFilePath+" "+this->data(POINT_TIMESTAMP_INDEX).toString();
 	qDebug() << "Checkout command: " << command;
 	system(command.toLatin1().data());
 	window->setCurrent(this);
-	updateContextMenu();
+	updateContextMenus();
 }
 void Point::revertToVersion() {
-	QString command = "revert "+relativeFilePath+" "+this->data(POINT_TIMESTAMP_INDEX).toString();
+	QString command = "cd "+window->getMountDirPath()+" && revert "+relativeFilePath+" "+this->data(POINT_TIMESTAMP_INDEX).toString();
 	qDebug() << "Revert command: " << command;
 	system(command.toLatin1().data());
 	Point *oldCurrent = window->getCurrent();
 	window->setCurrent(this);
 	// OPTIONAL TODO: roll in reverted points
-	updateContextMenu();
 	qDebug() << "Offset of oldCurrent: " << oldCurrent->data(POINT_OFFSET_INDEX).toInt();
 	qDebug() << "Offset of newCurrent: " << this->data(POINT_OFFSET_INDEX).toInt();
 	removeInvalidVersions(oldCurrent, this);
+	updateContextMenus();
+}
+void Point::tagVersion() {
+	bool ok;
+	QString tagTextCopy = tagText;
+	QString text = QInputDialog::getText(window, "Edit Tag",
+																				"Tag:", QLineEdit::Normal,
+																				tagTextCopy.mid(1, tagTextCopy.length()-2), &ok);
+	if (ok && !text.isEmpty()) {
+		QString command = "cd "+window->getMountDirPath()+" && tag "+relativeFilePath+" "+this->data(POINT_TIMESTAMP_INDEX).toString()+" "+text;
+		qDebug() << "Tag command: " << command;
+		int status = system(command.toLatin1().data());
+		if(status != -1) {
+			text.prepend("[").append("]");
+			//tagText = text;
+			
+			//tag = new QGraphicsSimpleTextItem(tagText);
+			//updateTagPosition();
+			//window->getScene()->addItem(tag);
+			setTagText(text);
+		}
+	}
 }
 
 void Point::removeInvalidVersions(Point *oldCurrent, Point *newCurrent) {
@@ -156,7 +188,9 @@ void Point::removeInvalidVersions(Point *oldCurrent, Point *newCurrent) {
 	for(int i=0; i<markedPoints->size(); i++) {
 		Point *p = window->getPoints()->at(markedPoints->at(i));
 		p->deleteAllLines();
+		p->getParent()->removeChild(p);
 		window->getPoints()->removeAt(markedPoints->at(i));
+		p->deleteTag();
 		window->getScene()->removeItem(p);
 		//delete p;
 		qDebug() << "Removed point at index " << markedPoints->at(i);
@@ -170,20 +204,28 @@ void Point::deleteAllLines() {
 	foreach(Line *line, lines)
 		delete line;
 }
+void Point::deleteTag() {
+	delete tag;
+}
 
 void Point::addChild(Point *child) { children.insert(child); }
+void Point::removeChild(Point *child) { children.remove(child); }
 void Point::incrementAncestorCount() { ancestorCount++; }
 
 void Point::startTimer(int msec) { timer->start(msec); }
 void Point::startTimeLine() { timeline->start(); }
 
 void Point::updateContextMenu() {
+}
+void Point::updateContextMenus() {
 	bool destinationIsAncestorOfCurrent = this->isAncestorOf(window->getCurrent());
 	//bool isDescendantOfCurrent = window->getCurrent()->isAncestorOf(this);
 	bool destinationIsHead = this->isHead();
 	bool currentIsHead = window->getCurrent()->isHead();
 	qDebug() << "current is head: " << currentIsHead;
-	
+	qDebug() << "destinationIsAncestorOfCurrent: " << destinationIsAncestorOfCurrent;
+	qDebug() << "destinationIsHead: " << destinationIsHead;
+
 	checkoutAction->setEnabled(destinationIsAncestorOfCurrent || destinationIsHead);
 	revertAction->setEnabled(destinationIsAncestorOfCurrent && currentIsHead);
 }
@@ -270,11 +312,15 @@ void Point::contextMenuEvent(QGraphicsSceneContextMenuEvent *event) {
 	
 	checkoutAction = menu.addAction(QIcon::fromTheme("gtk-jump-to-ltr", QIcon()), "Checkout this version");
 	revertAction = menu.addAction(QIcon::fromTheme("gtk-revert-to-saved-ltr", QIcon()), "Revert to this version");
+	tagAction = menu.addAction("Tag this version");
 	
-	updateContextMenu();
+	updateContextMenus();
+	
+	qDebug() << "X: " << x << ", Y: " << y;
 	
 	connect( checkoutAction , SIGNAL(triggered()) , this , SLOT(checkoutVersion()) );
 	connect( revertAction , SIGNAL(triggered()) , this , SLOT(revertToVersion()) );
+	connect( tagAction , SIGNAL(triggered()) , this , SLOT(tagVersion()) );
 	
 	QAction *selectedAction = menu.exec(event->screenPos());
 	

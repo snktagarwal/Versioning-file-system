@@ -35,16 +35,18 @@ void print_full_branch(char * tree_file_path, int off)
 	char * tag = (char *)malloc(255*sizeof(char));
 	
 	char * pr = (char *)malloc(10000*sizeof(char));
-	fscanf(fpt, "%d", &valid);
-	if(valid==0)
-	{
-		log_msg("ERROR: no record of parent head in tree.");
-		return ;
-	}
-	fscanf(fpt, "%d %d %s %s %d %d", &tp, &lp, hash, tag, &diff_ct, &p_off);
+	
 	int flag=0;
 	while(off!=-1)
 	{
+		fscanf(fpt, "%d", &valid);
+		if(valid==0)
+		{
+			log_msg("ERROR: no record of parent head in tree.");
+			return ;
+		}
+		fscanf(fpt, "%d %d %s %s %d %d", &tp, &lp, hash, tag, &diff_ct, &p_off);
+		
 		char * dummy = (char *)malloc(20*sizeof(char));
 		itoa(tp,dummy);
 		if(flag==0)
@@ -64,13 +66,6 @@ void print_full_branch(char * tree_file_path, int off)
 		}
 		off=p_off;
 		fseek(fpt, off, SEEK_SET);
-		fscanf(fpt, "%d", &valid);
-		if(valid==0)
-		{
-			log_msg("ERROR: no record of parent head in tree.");
-			return ;
-		}
-		fscanf(fpt, "%d %d %s %s %d %d", &tp, &lp, hash, tag, &diff_ct, &p_off);
 	}
 	log_msg("%s\n",pr);
 	fprintf(fout,"New Branch starts here\n");

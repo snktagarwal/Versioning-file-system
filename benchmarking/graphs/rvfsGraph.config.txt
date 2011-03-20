@@ -1,0 +1,29 @@
+# Created by Himmeli 3.3.8
+# Sat Mar 19 04:29:50 2011
+
+ArrowMode              off             
+DecorationMode         on              
+Delimiter              tab             
+EdgeColorVariable      ECOLOR          
+EdgeFile               rvfsGraph.edges.txt
+EdgeHeadVariable       HEAD            
+EdgeLabelVariable      ELABEL          
+EdgeTailVariable       TAIL            
+EdgeWeightFilter       off             
+EdgeWeightMask         off             
+EdgeWeightTransform    off             
+EdgeWeightVariable     WEIGHT          
+EdgeWidthVariable      WIDTH           
+GraphName              rvfsGraph       
+IncrementMode          on              
+TimeLimit              0               
+VertexColorVariable    VCOLOR          
+VertexFile             rvfsGraph.vertices.txt
+VertexLabelVariable    VLABEL          
+VertexNameVariable     NAME            
+VertexPatternVariable  PATTERN         
+VertexShapeVariable    SHAPE           
+VertexSizeVariable     SIZE            
+VertexXVariable        X               
+VertexYVariable        Y               
+

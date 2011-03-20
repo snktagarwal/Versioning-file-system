@@ -1,0 +1,3446 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" x="0" y="0"
+width="654" height="549">
+
+<g transform="scale(0.1600)">
+
+<rect x="0" y="0" width="4090" height="3429"
+style="
+font-size: 0.00px;
+font-family: FreeSans;
+fill: #fcfcfc;
+stroke: none;"
+/>
+
+<g>
+<path d="
+M	3537.07	1628.40
+L	3618.35	1620.79"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	3455.92	1636.20
+L	3537.07	1628.40"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1400.70	410.84
+L	1404.33	339.95"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	3374.30	1642.91
+L	3455.92	1636.20"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1395.87	485.21
+L	1400.70	410.84"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	3291.61	1651.33
+L	3374.30	1642.91"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	506.99	1959.44
+L	436.56	1981.25"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1562.11	1540.59
+L	1546.40	1447.61"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	3208.29	1659.52
+L	3291.61	1651.33"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2344.11	3147.96
+L	2359.50	3213.33"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	584.98	1934.91
+L	506.99	1959.44"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	660.94	1910.83
+L	584.98	1934.91"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	3125.18	1669.56
+L	3208.29	1659.52"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2328.77	3086.38
+L	2344.11	3147.96"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	741.40	1885.97
+L	660.94	1910.83"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2310.78	3019.78
+L	2328.77	3086.38"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1396.96	550.62
+L	1395.87	485.21"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2293.39	2952.39
+L	2310.78	3019.78"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1575.94	1631.34
+L	1562.11	1540.59"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	3042.26	1676.96
+L	3125.18	1669.56"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2954.28	1685.45
+L	3042.26	1676.96"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2277.27	2883.30
+L	2293.39	2952.39"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2425.51	1448.87
+L	2426.68	1384.25"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2257.28	2810.92
+L	2277.27	2883.30"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2239.25	2746.98
+L	2257.28	2810.92"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	3912.67	1595.47
+L	3970.63	1590.68"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	3842.07	1601.67
+L	3912.67	1595.47"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2389.88	3332.99
+L	2403.21	3386.62"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1421.93	99.72
+L	1418.96	42.52"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1424.80	144.30
+L	1421.93	99.72"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2422.74	1319.20
+L	2423.37	1263.47"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1417.76	212.19
+L	1424.80	144.30"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	95.43	2083.74
+L	42.52	2098.83"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	3769.56	1607.17
+L	3842.07	1601.67"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	154.48	2066.23
+L	95.43	2083.74"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1546.40	1447.61
+L	1533.88	1364.27"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2375.72	3277.94
+L	2389.88	3332.99"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	222.15	2044.95
+L	154.48	2066.23"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	292.33	2024.98
+L	222.15	2044.95"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1409.21	281.66
+L	1417.76	212.19"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	3694.39	1613.42
+L	3769.56	1607.17"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	3618.35	1620.79
+L	3694.39	1613.42"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1404.33	339.95
+L	1409.21	281.66"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2359.50	3213.33
+L	2375.72	3277.94"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1488.74	629.13
+L	1542.67	616.53"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2426.68	1384.25
+L	2422.74	1319.20"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1575.94	1631.34
+L	1491.50	1661.77"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	360.64	2003.87
+L	292.33	2024.98"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	436.56	1981.25
+L	360.64	2003.87"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1420.05	630.96
+L	1488.74	629.13"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2137.20	2369.27
+L	2156.82	2443.76"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1851.78	1770.86
+L	1758.35	1725.21"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2114.73	2285.81
+L	2137.20	2369.27"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2412.07	1721.91
+L	2415.53	1651.34"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2094.95	2206.65
+L	2114.73	2285.81"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2077.65	2125.34
+L	2094.95	2206.65"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1501.94	1194.99
+L	1484.57	1110.54"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1059.75	1790.16
+L	978.33	1815.76"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2321.02	1759.06
+L	2412.07	1721.91"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1144.05	1766.08
+L	1059.75	1790.16"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2225.94	1792.32
+L	2321.02	1759.06"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1229.60	1741.68
+L	1144.05	1766.08"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1946.46	1815.93
+L	1851.78	1770.86"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1317.71	1714.86
+L	1229.60	1741.68"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1400.52	1689.76
+L	1317.71	1714.86"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2135.08	1825.30
+L	2225.94	1792.32"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1515.62	1277.29
+L	1501.94	1194.99"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2038.99	1860.41
+L	2135.08	1825.30"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2063.04	2038.60
+L	2077.65	2125.34"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1491.50	1661.77
+L	1400.52	1689.76"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2048.97	1947.64
+L	2063.04	2038.60"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1533.88	1364.27
+L	1515.62	1277.29"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	3970.63	1590.68
+L	4025.96	1584.73"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2038.99	1860.41
+L	2048.97	1947.64"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2038.99	1860.41
+L	1946.46	1815.93"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2422.16	1511.22
+L	2425.51	1448.87"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2867.44	1694.65
+L	2954.28	1685.45"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	816.65	1863.93
+L	741.40	1885.97"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1420.05	630.96
+L	1396.96	550.62"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1667.15	1679.91
+L	1575.94	1631.34"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2218.64	2670.68
+L	2239.25	2746.98"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1418.35	709.94
+L	1420.05	630.96"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1429.90	788.36
+L	1418.35	709.94"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2777.07	1703.92
+L	2867.44	1694.65"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2419.59	1580.79
+L	2422.16	1511.22"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1441.32	871.90
+L	1429.90	788.36"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2687.80	1714.37
+L	2777.07	1703.92"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	892.84	1840.60
+L	816.65	1863.93"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	978.33	1815.76
+L	892.84	1840.60"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2196.67	2595.68
+L	2218.64	2670.68"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1758.35	1725.21
+L	1667.15	1679.91"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1453.53	949.26
+L	1441.32	871.90"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2177.80	2522.59
+L	2196.67	2595.68"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2596.49	1720.67
+L	2687.80	1714.37"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2503.06	1725.14
+L	2596.49	1720.67"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2156.82	2443.76
+L	2177.80	2522.59"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2412.07	1721.91
+L	2503.06	1725.14"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1469.15	1033.25
+L	1453.53	949.26"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	1484.57	1110.54
+L	1469.15	1033.25"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	2415.53	1651.34
+L	2419.59	1580.79"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+</g>
+<g>
+<circle cx="2038.99" cy="1860.41" r="7.005"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #950200;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.66px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1946.46" cy="1815.93" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2048.97" cy="1947.64" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="4025.96" cy="1584.73" r="5.890"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffef95;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.64px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1515.62" cy="1277.29" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2063.04" cy="2038.60" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1400.52" cy="1689.76" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2077.65" cy="2125.34" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2135.08" cy="1825.30" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1501.94" cy="1194.99" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2225.94" cy="1792.32" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1317.71" cy="1714.86" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1229.60" cy="1741.68" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1851.78" cy="1770.86" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1144.05" cy="1766.08" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2321.02" cy="1759.06" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1059.75" cy="1790.16" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2412.07" cy="1721.91" r="7.005"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #950200;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.66px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="978.33" cy="1815.76" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1484.57" cy="1110.54" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2094.95" cy="2206.65" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2114.73" cy="2285.81" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2415.53" cy="1651.34" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2137.20" cy="2369.27" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1758.35" cy="1725.21" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2156.82" cy="2443.76" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2419.59" cy="1580.79" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1469.15" cy="1033.25" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1453.53" cy="949.26" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2503.06" cy="1725.14" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2177.80" cy="2522.59" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2596.49" cy="1720.67" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2687.80" cy="1714.37" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2196.67" cy="2595.68" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1441.32" cy="871.90" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1667.15" cy="1679.91" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2218.64" cy="2670.68" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="892.84" cy="1840.60" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="816.65" cy="1863.93" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2777.07" cy="1703.92" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1429.90" cy="788.36" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2422.16" cy="1511.22" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2867.44" cy="1694.65" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1418.35" cy="709.94" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1420.05" cy="630.96" r="7.005"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #950200;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.66px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2239.25" cy="2746.98" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1575.94" cy="1631.34" r="7.005"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #950200;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.66px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1396.96" cy="550.62" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="741.40" cy="1885.97" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2954.28" cy="1685.45" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2425.51" cy="1448.87" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2257.28" cy="2810.92" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2277.27" cy="2883.30" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2426.68" cy="1384.25" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2293.39" cy="2952.39" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="3042.26" cy="1676.96" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="3125.18" cy="1669.56" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1562.11" cy="1540.59" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2310.78" cy="3019.78" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1395.87" cy="485.21" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2328.77" cy="3086.38" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="660.94" cy="1910.83" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2344.11" cy="3147.96" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="3208.29" cy="1659.52" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="584.98" cy="1934.91" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="506.99" cy="1959.44" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2359.50" cy="3213.33" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="3291.61" cy="1651.33" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1546.40" cy="1447.61" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="436.56" cy="1981.25" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="3374.30" cy="1642.91" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1400.70" cy="410.84" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="3455.92" cy="1636.20" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1404.33" cy="339.95" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="3537.07" cy="1628.40" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="3618.35" cy="1620.79" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1488.74" cy="629.13" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="360.64" cy="2003.87" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="292.33" cy="2024.98" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1491.50" cy="1661.77" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2422.74" cy="1319.20" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1542.67" cy="616.53" r="5.890"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffef95;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.64px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2375.72" cy="3277.94" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1409.21" cy="281.66" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="3694.39" cy="1613.42" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="3769.56" cy="1607.17" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1417.76" cy="212.19" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="222.15" cy="2044.95" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="154.48" cy="2066.23" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2389.88" cy="3332.99" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1533.88" cy="1364.27" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="95.43" cy="2083.74" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="3842.07" cy="1601.67" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="42.52" cy="2098.83" r="5.890"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffef95;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.64px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1424.80" cy="144.30" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2423.37" cy="1263.47" r="5.890"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffef95;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.64px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1421.93" cy="99.72" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="1418.96" cy="42.52" r="5.890"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffef95;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.64px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="2403.21" cy="3386.62" r="5.890"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffef95;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.64px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="3912.67" cy="1595.47" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="3970.63" cy="1590.68" r="6.518"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffa912;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.65px;
+stroke-opacity: 0.50;"
+/>
+
+</g>
+<g>
+<text x="2048.68" y="1862.68"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a0
+</text>
+
+<text x="1955.55" y="1818.20"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a1
+</text>
+
+<text x="2058.07" y="1949.91"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a10
+</text>
+
+<text x="4034.29" y="1587.00"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a100
+</text>
+
+<text x="1524.71" y="1279.56"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a11
+</text>
+
+<text x="2072.13" y="2040.86"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a12
+</text>
+
+<text x="1409.62" y="1692.03"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a13
+</text>
+
+<text x="2086.74" y="2127.61"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a14
+</text>
+
+<text x="2144.17" y="1827.57"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a15
+</text>
+
+<text x="1511.03" y="1197.26"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a16
+</text>
+
+<text x="2235.03" y="1794.59"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a17
+</text>
+
+<text x="1326.81" y="1717.13"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a18
+</text>
+
+<text x="1238.70" y="1743.94"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a19
+</text>
+
+<text x="1860.88" y="1773.13"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a2
+</text>
+
+<text x="1153.14" y="1768.34"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a20
+</text>
+
+<text x="2330.12" y="1761.33"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a21
+</text>
+
+<text x="1068.84" y="1792.43"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a22
+</text>
+
+<text x="2421.76" y="1724.18"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a23
+</text>
+
+<text x="987.42" y="1818.02"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a24
+</text>
+
+<text x="1493.67" y="1112.81"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a25
+</text>
+
+<text x="2104.04" y="2208.92"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a26
+</text>
+
+<text x="2123.82" y="2288.08"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a27
+</text>
+
+<text x="2424.63" y="1653.61"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a28
+</text>
+
+<text x="2146.29" y="2371.54"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a29
+</text>
+
+<text x="1767.44" y="1727.48"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a3
+</text>
+
+<text x="2165.92" y="2446.03"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a30
+</text>
+
+<text x="2428.69" y="1583.06"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a31
+</text>
+
+<text x="1478.24" y="1035.52"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a32
+</text>
+
+<text x="1462.62" y="951.53"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a33
+</text>
+
+<text x="2512.15" y="1727.40"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a34
+</text>
+
+<text x="2186.89" y="2524.86"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a35
+</text>
+
+<text x="2605.59" y="1722.94"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a36
+</text>
+
+<text x="2696.89" y="1716.64"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a37
+</text>
+
+<text x="2205.76" y="2597.95"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a38
+</text>
+
+<text x="1450.41" y="874.17"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a39
+</text>
+
+<text x="1676.25" y="1682.18"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a4
+</text>
+
+<text x="2227.73" y="2672.95"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a40
+</text>
+
+<text x="901.93" y="1842.87"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a41
+</text>
+
+<text x="825.74" y="1866.20"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a42
+</text>
+
+<text x="2786.16" y="1706.19"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a43
+</text>
+
+<text x="1438.99" y="790.63"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a44
+</text>
+
+<text x="2431.26" y="1513.49"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a45
+</text>
+
+<text x="2876.54" y="1696.92"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a46
+</text>
+
+<text x="1427.44" y="712.21"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a47
+</text>
+
+<text x="1429.73" y="633.23"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a48
+</text>
+
+<text x="2248.34" y="2749.25"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a49
+</text>
+
+<text x="1585.62" y="1633.61"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a5
+</text>
+
+<text x="1406.05" y="552.89"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a50
+</text>
+
+<text x="750.49" y="1888.24"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a51
+</text>
+
+<text x="2963.37" y="1687.72"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a52
+</text>
+
+<text x="2434.60" y="1451.14"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a53
+</text>
+
+<text x="2266.38" y="2813.19"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a54
+</text>
+
+<text x="2286.36" y="2885.57"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a55
+</text>
+
+<text x="2435.77" y="1386.52"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a56
+</text>
+
+<text x="2302.48" y="2954.66"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a57
+</text>
+
+<text x="3051.35" y="1679.23"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a58
+</text>
+
+<text x="3134.27" y="1671.83"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a59
+</text>
+
+<text x="1571.21" y="1542.86"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a6
+</text>
+
+<text x="2319.88" y="3022.04"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a60
+</text>
+
+<text x="1404.96" y="487.48"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a61
+</text>
+
+<text x="2337.87" y="3088.64"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a62
+</text>
+
+<text x="670.04" y="1913.10"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a63
+</text>
+
+<text x="2353.20" y="3150.23"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a64
+</text>
+
+<text x="3217.38" y="1661.78"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a65
+</text>
+
+<text x="594.08" y="1937.18"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a66
+</text>
+
+<text x="516.09" y="1961.71"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a67
+</text>
+
+<text x="2368.60" y="3215.60"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a68
+</text>
+
+<text x="3300.70" y="1653.60"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a69
+</text>
+
+<text x="1555.50" y="1449.88"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a7
+</text>
+
+<text x="445.65" y="1983.52"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a70
+</text>
+
+<text x="3383.39" y="1645.18"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a71
+</text>
+
+<text x="1409.79" y="413.11"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a72
+</text>
+
+<text x="3465.01" y="1638.47"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a73
+</text>
+
+<text x="1413.43" y="342.22"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a74
+</text>
+
+<text x="3546.17" y="1630.67"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a75
+</text>
+
+<text x="3627.44" y="1623.06"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a76
+</text>
+
+<text x="1497.84" y="631.40"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a77
+</text>
+
+<text x="369.73" y="2006.13"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a78
+</text>
+
+<text x="301.43" y="2027.25"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a79
+</text>
+
+<text x="1500.60" y="1664.03"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a8
+</text>
+
+<text x="2431.83" y="1321.47"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a80
+</text>
+
+<text x="1551.00" y="618.79"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a81
+</text>
+
+<text x="2384.81" y="3280.21"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a82
+</text>
+
+<text x="1418.31" y="283.93"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a83
+</text>
+
+<text x="3703.48" y="1615.69"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a84
+</text>
+
+<text x="3778.65" y="1609.44"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a85
+</text>
+
+<text x="1426.86" y="214.45"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a86
+</text>
+
+<text x="231.25" y="2047.22"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a87
+</text>
+
+<text x="163.57" y="2068.50"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a88
+</text>
+
+<text x="2398.97" y="3335.25"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a89
+</text>
+
+<text x="1542.97" y="1366.54"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a9
+</text>
+
+<text x="104.53" y="2086.01"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a90
+</text>
+
+<text x="3851.16" y="1603.94"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a91
+</text>
+
+<text x="50.85" y="2101.09"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a92
+</text>
+
+<text x="1433.89" y="146.57"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a93
+</text>
+
+<text x="2431.70" y="1265.73"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a94
+</text>
+
+<text x="1431.02" y="101.99"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a95
+</text>
+
+<text x="1427.28" y="44.79"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a96
+</text>
+
+<text x="2411.54" y="3388.88"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a97
+</text>
+
+<text x="3921.76" y="1597.74"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a98
+</text>
+
+<text x="3979.72" y="1592.95"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+a99
+</text>
+
+</g>
+</g>
+</svg>

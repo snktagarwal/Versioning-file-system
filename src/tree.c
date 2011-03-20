@@ -63,7 +63,7 @@ int isJunction(file_data *file,int offset) //prevent this data structure from be
  * 1. Creation of new version: Appends the version metadata
  */
 
-void update_tree_data(file_data *file,TreeMd *ver,int is_creating_branch,int is_first_version) 
+/*void update_tree_data(file_data *file,TreeMd *ver,int is_creating_branch,int is_first_version) 
 {
 	//*************Add spaces to TreeMd fields
 	
@@ -98,6 +98,83 @@ void update_tree_data(file_data *file,TreeMd *ver,int is_creating_branch,int is_
 			fscanf(f,"%d",&a);
 			printf("First scanned : %d\n",a);
 			fprintf(f," 1");
+			fclose(f);
+		}
+		
+	}
+	FILE * file_tree = fopen(file->tree_file_path,"a");
+	fprintf(file_tree,"%d %d %d %s %s %s %s\n",ver->valid,ver->timestamp,ver->file_type,ver->obj_hash,ver->tag,diff_lc,parent);
+//	fprintf(file_tree,"%d %d %d %s %s %d %d\n",ver->valid,ver->timestamp,ver->file_type,ver->obj_hash,ver->tag,ver->diff_count,ver->parent);
+	fclose(file_tree);
+}
+*/
+
+int get_file_size(char *fpath)
+{
+	int size;
+	struct stat st;
+	stat(fpath, &st);
+	size = st.st_size;
+	
+	//log_msg("\nfile size of %s = %d\n",fpath,size);
+	return size;
+
+}
+
+void update_tree_data(file_data *file,TreeMd *ver,int is_creating_branch,int is_first_version) 
+{
+	//*************Add spaces to TreeMd fields
+	
+	char * diff_lc = (char * )malloc(15 * sizeof(char));
+	char * parent = (char * )malloc(10 * sizeof(char));
+	printf("Adding Spaces\n");
+//	addspaces(ver->obj_hash,41);
+//	printf("obj_hash : %s\n",ver->obj_hash);
+	sprintf(diff_lc,"%d",ver->diff_count);
+	addspaces(diff_lc,10);
+//	ver->obj_hash = addspaces(ver->obj_hash,40);
+	addspaces(ver->tag,MAX_TAG);
+	itoa(ver->parent,parent);
+//	sprintf(parent,"%d",ver->parent);
+	addspaces(parent,10);
+	printf("Tag : %s\n",ver->tag);
+	printf("Parent : %s\n",parent);
+	printf("Diif Line Count : %s\n",diff_lc);
+	printf("obj_hash : %s\n",ver->obj_hash);
+	
+	//******************************************
+	if(!is_creating_branch)
+	{
+	//	if(!is_first_version)
+		{	
+			int a,size;
+			char * diff_size = (char *)malloc(20 * sizeof(char));
+			char * tmp_str = (char *)malloc(300 * sizeof(char));
+			char * diff_path = (char *)malloc(PATH_MAX * sizeof(char));
+			printf(" Making lo tp po\n");
+			FILE * f = fopen(file->tree_file_path,"r+");
+			fseek(f,ver->parent,SEEK_SET);
+			fscanf(f,"%d",&a);
+			printf("First scanned : %d\n",a);
+			fscanf(f,"%d",&a);
+			printf("Second scanned : %d\n",a);
+			fprintf(f," 1");
+			fscanf(f,"%s",tmp_str);
+			printf("fourth scanned : %s\n",tmp_str);
+			sprintf(diff_path,"%s%s",file->objects_dir_path,tmp_str);
+			fscanf(f,"%s",tmp_str);
+		//	if(strlen(tmp_str) < MAX_TAG)
+		//	addspaces(tmp_str,MAX_TAG);
+		//	fprintf(f,"%s
+			fseek(f,MAX_TAG - strlen(tmp_str),SEEK_CUR);
+			printf("fifth scanned : %s\n",tmp_str);
+			
+			//**********Get diff file size*********************************//
+			printf("Getting diff file size\n");
+			size = get_file_size(diff_path);
+			sprintf(diff_size,"%d",size);
+			addspaces(diff_size,10);
+			fprintf(f," %s",diff_size);
 			fclose(f);
 		}
 		

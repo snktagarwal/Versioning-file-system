@@ -63,7 +63,14 @@ int remove_from_everything(file_data * file, char * hash)
 		else
 	 	strcat(new_str, hash1);
 		strcat(new_str, " ");
-		strcat(new_str, temp);
+		if(flag==0)
+			strcat(new_str, temp);
+		else
+		{
+			char * tmper = (char *)malloc(5*sizeof(char));
+			itoa(ref, tmper);
+			strcat(new_str, tmper);
+		}
 		strcat(new_str, "\n");
 		flag++;
 		if(fscanf(fp, "%s %d", hash1, &ref)==EOF)
@@ -177,7 +184,9 @@ int search_tp_tree(file_data * file, int off, int req_tp)
 	char *tag = (char*)malloc(255*sizeof(char));
 	
 	// create new file with filepath temp_object and copy 
+	decompress(curr_object);	
 	copy(curr_object, temp_object);	
+	compress(curr_object);
 	printf("\ncheck1 %d %d===================\n", ctp, req_tp);	
 	while(ctp!=req_tp)
 	{
@@ -200,27 +209,32 @@ int search_tp_tree(file_data * file, int off, int req_tp)
 		curr_object[i+1] = '\0';
 		strcat(curr_object, hash);
 			
-		
+		decompress(curr_object);
 		// check if the node is a loose object or not. if loose then dont take diff and store this object as the current ver and if not patch this po to previous object........................................
 		if(lp==0)
 		{
 			// make this loose object the current object
-			copy(curr_object, temp_object);	
+			
+			copy(curr_object, temp_object);
+			
 		}
 		else
 		{
 			// patch this pach object with current object and  uodate to current object
+			
 			patch(temp_object, curr_object);
+			
 		}
-		
+		compress(curr_object);
 		printf("\t\t%d", ctp);
 	}
 	fclose(fp);
 	printf("\n========================================\ncopy %s ----- to-----%s\n========================================", temp_object, file->path);
 	copy(temp_object, file->path);
+	decompress(curr_object);
 	copy(temp_object, curr_object);
 	delete(temp_object);
-	
+	compress(curr_object);
 	fp = fopen(file->tree_file_path, "r+");
 	fseek(fp, p_off, SEEK_SET);
 	int garbage;
@@ -305,11 +319,11 @@ void update_sizemd_file(file_data *file, int timestamp)
 {
 	int md_size = calc_md_size(file);
 	int file_size = calc_file_size(file->path);
-	float ratio = file_size/(float)md_size;
-	log_msg("file size: %d ----- metadata size: %d \n",file_size,md_size);
+	float ratio = file_size/(float)(md_size+file_size);
+	log_msg("file size: %d ----- metadata size: %d totalsize = %d\n",file_size,md_size,md_size+file_size);
 	FILE *fp;
-	fp = fopen(file->md_data_file_path,"w");
-	fprintf(fp,"%d %d %d %f",timestamp,file_size,md_size,ratio);
+	fp = fopen(file->md_data_file_path,"a");
+	fprintf(fp,"%d %d %d %f\n",timestamp,file_size,md_size,ratio);
 	fclose(fp);
 }
 
@@ -317,6 +331,53 @@ void update_sizemd_file(file_data *file, int timestamp)
 /* Creates a version on report file release
  * It calls to update the TREE, HEADS and OBJ_MD
  */
+void compress(char *obj_file){
+
+	
+	///* Assuming that the file is available */
+
+	char mv_obj[255], command[400];;
+	char * filename = (char *)malloc(PATH_MAX * sizeof(char));
+	char * dirpath = (char *)malloc(PATH_MAX * sizeof(char));
+	split_file_path(obj_file,filename,dirpath);
+	strcpy(mv_obj, filename);
+	strcat(mv_obj, ".tmp");
+
+	/* Now compress */
+
+	sprintf(command, "cd %s ; mv %s %s; tar -czvf %s %s; rm %s",dirpath,filename, mv_obj,filename, mv_obj, mv_obj);
+	log_msg("Compressing: %s\n", command);
+	system(command);
+
+	/* Log that you compressed the file */
+
+	log_msg("Compressed the Obj File: %s\n", obj_file);
+
+}
+
+/* De-Compresses a given filename using the gzipped format */
+void decompress(char *obj_file){
+	
+	/* Assuming that the file is available */
+
+	char mv_obj[255], command[400];;
+	char * filename = (char *)malloc(PATH_MAX * sizeof(char));
+	char * dirpath = (char *)malloc(PATH_MAX * sizeof(char));
+	split_file_path(obj_file,filename,dirpath);
+
+	strcpy(mv_obj, filename);
+	strcat(mv_obj, ".tmp");
+
+	/* Now compress */
+
+	sprintf(command, "cd %s; tar -xzvf %s; rm %s; mv %s %s;", dirpath, filename, filename,  mv_obj, filename);
+	log_msg("DeCompressing: %s\n", command);
+	system(command);
+
+	/* Log that you compressed the file */
+
+	log_msg("De-Compressed the Obj File: %s\n", obj_file);
+}
 void create_version(file_data * file,TreeMd * ver,int is_first_version) 
 {
 	int off;
@@ -363,7 +424,10 @@ void create_version(file_data * file,TreeMd * ver,int is_first_version)
 	}*/
 	if((is_first_version)||(is_creating_branch))
 	{
-		copy(file->path,new_current_ver);	
+		
+		copy(file->path,new_current_ver);
+		printf("Compressing %s\n",new_current_ver);	
+		compress(new_current_ver);
 			
 	}
 	else
@@ -387,7 +451,8 @@ void create_version(file_data * file,TreeMd * ver,int is_first_version)
 			printf("\tnew_current_ver: %s\n",new_current_ver);
 		#endif
 
-	
+			printf("DeCompressing %s\n",diff_path);	
+			decompress(diff_path);
 		//	move(old_current_ver_source,old_current_ver_dest);
 			move(diff_path,old_current_ver_dest);
 		
@@ -412,7 +477,11 @@ void create_version(file_data * file,TreeMd * ver,int is_first_version)
 		
 			diff(new_current_ver,old_current_ver_dest,diff_path);
 			rem(old_current_ver_dest);
-	/*	
+			printf("Compressing %s\n",diff_path);	
+			compress(diff_path);
+			printf("Compressing %s\n",new_current_ver);
+			compress(new_current_ver);	
+	/*		
 			char ver_list_path[PATH_MAX];
 			strcpy(ver_list_path,file->ver_dir_path);
 			strcat(ver_list_path,"list");
@@ -515,10 +584,6 @@ file_data * construct_file_data(const char * filepath) {
 /* Called from FUSE over writing */
 
 int report_release(const char * filepath) {
-	
-	char * last_epoch = (char *)malloc(20 * sizeof(char));
-	int last_offset;
-	int prev_epoch;
 	#ifdef DEBUG
 		printf ("\n[versioning] received 'report_release for %s'\n", filepath);
 	#endif
@@ -538,27 +603,12 @@ int report_release(const char * filepath) {
 	{
 		printf("Checking if first version\n");
 		is_first_version = 1;
-		prev_epoch = 0 ;
 		#ifdef DEBUG
 		printf("First Version Created\n");
 		#endif
 	}
 	
 	fclose(f);
-	if(!is_first_version)
-	{
-	//**************Create version only if difference of timestamp is greater than DELAY_TIME****************************//
-		int a;
-		FILE * f1 = fopen(file->heads_file_path,"r");
-		fscanf(f1,"%s%d",last_epoch,&last_offset);
-		fclose(f1);
-		f1 = fopen(file->tree_file_path,"r");
-		fseek(f1,last_offset,SEEK_SET);
-		fscanf(f1,"%d%d",&a,&prev_epoch);
-		fclose(f1);
-	//***********************************************************************************************************
-	
-	}
 	// construct latest version structure
 	#ifdef DEBUG
 		printf ("\n[versioning] constructing latest version data for %s...\n", filepath);
@@ -572,9 +622,7 @@ int report_release(const char * filepath) {
 	#ifdef DEBUG
 	printf ("\n[versioning] creating new version for %s...\n", filepath);
 	#endif
-	printf("Latest EPoch : %d\n",latest_version->timestamp);
-	printf("Prev EPoch : %d\n",prev_epoch);
-	if((latest_version->timestamp - prev_epoch) > DELAY_TIME)
+	
 	create_version(file,latest_version,is_first_version);
 	
 	#ifdef DEBUG
@@ -623,7 +671,9 @@ int report_checkout(char * filepath, int req_tp)
 		strcpy(target_file_path, file->objects_dir_path);
 		strcat(target_file_path, hash_target);
 		//copy the target_file_type to filepath.
+		decompress(target_file_path);
 		copy(target_file_path, file->path);
+		compress(target_file_path);
 		
 		return 1;
 	}
@@ -723,11 +773,27 @@ int revert_to_version(char * filepath, int req_tp)                     // return
 	char * curr_object = (char *)malloc(PATH_MAX*sizeof(char));
 	strcpy(curr_object, file->objects_dir_path);
 	
-	FILE * fpt = fopen(file->tree_file_path, "r+");
-	fseek(fpt, off, SEEK_SET);
 	int valid, tp, lp, diff_ct, p_off;
 	char * hash = (char *)malloc(50*sizeof(char));
 	char * tag = (char *)malloc(255*sizeof(char));
+	
+	FILE * fpt = fopen(file->tree_file_path, "r+");
+	char * root_bname = (char *)malloc(15*sizeof(char));
+	strcpy(root_bname, "B_");
+	fscanf(fpt, "%d", &valid);
+	if(valid==0)
+	{
+		printf("ERROR: no record of latest head in tree.");
+		return 0;
+	}
+	
+	fscanf(fpt, "%d %d %s %s %d %d", &tp, &lp, hash, tag, &diff_ct, &p_off);
+	char * tmper = (char *)malloc(15*sizeof(char));
+	itoa(tp, tmper);
+	strcat(root_bname, tmper);
+	log_msg("==================%s=========\n", root_bname);
+	fseek(fpt, off, SEEK_SET);
+	
 	fscanf(fpt, "%d", &valid);
 	if(valid==0)
 	{
@@ -744,8 +810,9 @@ int revert_to_version(char * filepath, int req_tp)                     // return
 	
 	strcat(curr_object, hash);
 	strcat(temp_object, "copy");
+	decompress(curr_object);
 	copy(curr_object, temp_object);
-			
+	compress(curr_object);
 	while(tp!=req_tp)
 	{
 		fseek(fpt, off, SEEK_SET);
@@ -778,21 +845,35 @@ int revert_to_version(char * filepath, int req_tp)                     // return
 			i--;
 		curr_object[i+1] = '\0';
 		strcat(curr_object, hash);
+		decompress(curr_object);
 		if(lp==0)
+		{
+			
 			copy(curr_object, temp_object);
+			
+
+		}
 		else
+		{
+			
 			patch(temp_object, curr_object);
+			
+		}
 	}
-	
+	compress(curr_object);
 	copy(temp_object, filepath);
+	decompress(curr_object);
 	copy(temp_object, curr_object);
 	delete(temp_object);
+	compress(curr_object);
 	fclose(fpt);
 	fph = fopen(file->heads_file_path, "w");
 	char * offs = (char *)malloc(15*sizeof(char));
 	itoa(off, offs);
+	log_msg("-----------%s----%s-----", root_bname, curr_bname);
 	fprintf(fph, "%s %s\n", curr_bname, addspaces(offs, 10));
-	fprintf(fph, "%s %s\n", curr_bname, offs);
+	if(strcmp(curr_bname, root_bname)!=0)
+		fprintf(fph, "%s %s\n", curr_bname, offs);
 	fprintf(fph, "%s", write);
 	fclose(fph);
 	return 1;

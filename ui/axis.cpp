@@ -80,7 +80,7 @@ void Axis::drawTicks(QGraphicsScene *scene, qreal rootX, float scalingFactor) {
 		QString labelText;
 		//if( int((x-p1->x())/tickSeparation)%2 == 0)
 		//qDebug() << qint64(x) << "," << qint64(LEFT_MARGIN) << "," << qint64(rootX) << "," << SCALING_FACTOR;
-		labelText = QDateTime::fromMSecsSinceEpoch(1000*(qint64(x) - qint64(LEFT_MARGIN) + qint64(rootX))/scalingFactor).toString("   h:m AP\nd MMM, yyyy");
+		labelText = QDateTime::fromMSecsSinceEpoch(1000*quint64( (quint64(x) - quint64(LEFT_MARGIN) + quint64(rootX)) ) / quint64(scalingFactor) ).toString("hh:mm:ss AP\nd MMM, yyyy");
 		//else
 //			labelText = "";
 		/*#if defined(__arm__)

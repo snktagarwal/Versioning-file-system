@@ -1,0 +1,146 @@
+A
+ {color: #0080F5;
+  text-decoration: none;
+  font-style: normal;
+  font-weight: 600;}  
+A:hover
+ {color: white;
+  background-color: #0080F5;
+  text-decoration: none;}   
+A:visited:hover
+ {color: #FFFAF0;
+  background-color: #A0A0A0;
+  text-decoration: none;}
+A.img:hover
+ {background-color: transparent;
+  text-decoration: none;}
+BODY 
+ {color: black;
+  background-color: white;
+  background-image: url(bg.png);
+  background-attachment: fixed;
+  font-style: normal;
+  font-weight: 400;
+  font-family: sans-serif;
+  text-align: left;
+  margin-top: 0.6em;
+  margin-bottom: 0.6em;
+  margin-left: 0.6em;
+  margin-right: 0.6em;
+  border-style: none;}
+DL
+ {margin-top: 0.2em;
+  margin-bottom: 0.3em;
+  margin-left: 0.0em;
+  margin-right: 0.0em;}
+DD
+ {color: #505050;
+  margin-top: 0.0em;
+  margin-bottom: 0.0em;
+  margin-left: 1.5em;
+  margin-right: 0.0em;
+  font-size: 0.9em;}
+H1
+ {background-color: transparent;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 1.8em;
+  margin-top: 1.1em;
+  margin-bottom: 0em;
+  margin-left: 0em;
+  margin-right: 0em;}
+H2
+ {color: #555555;
+  margin-top: 1.6em;
+  margin-bottom: 0.6em;
+  background-color: transparent;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 1.4em;
+  text-decoration: none;}
+H3
+ {color: #666666;
+  background-color: transparent;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 1.2em;
+  text-decoration: none;
+  margin-top: 0.4em;
+  margin-bottom: 0.2em;}
+H4
+ {color: #777777;
+  margin-left: 0em;
+  margin-top: 0em;
+  margin-bottom: 0.3em;
+  background-color: transparent;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 1.0em;
+  text-decoration: none;}
+HR
+ {border-color: white;
+  border-style: solid;
+  border-width: 0.01em;
+  height: 0.25em;}
+IMG
+ {background-image: none;
+  background-color: #FFFFFF;
+  border-width: 0.15em;
+  border-style: solid;
+  border-color: #FFFFFF;} 
+A:hover IMG.link
+ {background-color: #0088FF;
+  border-color: #0088FF;}
+INPUT
+ {margin-top: 0.1em;
+  margin-bottom: 0.3em;}
+PRE
+ {font-size: 0.75em;}
+SPAN.sup
+ {font-size: 0.75em;
+  position: relative;
+  top: -0.5em;}
+TABLE
+ {color: black;
+  background-image: none;
+  background-color: #FFFFFF;
+  margin-top: 0.1em;
+  margin-bottom: 0.3em;
+  margin-left: 0.0em;
+  margin-right: 0.0em;
+  border-style: none;
+  padding: 0px 0px 0px 0px;}
+TABLE.border
+ {margin-top: 1em;
+  margin-bottom: 1em;
+  margin-left: 1em;
+  margin-right: 1em;
+  border: solid #C0C0C0;
+  border-width: 0.2em;}
+TABLE.canvas
+ {margin-top: 1em;
+  margin-bottom: 1em;
+  margin-left: 1em;
+  margin-right: 1em;
+  border-style: none;}
+TD
+ {font-style: normal;
+  font-weight: 400;
+  font-size: 1.0em;
+  font-family: "Trebuchet MS", sans-serif;
+  padding-left: 0.2em;
+  padding-right: 0.4em;
+  border-style: none;}
+TD.p
+  {text-align: justify;
+   vertical-align: top;
+   padding-right: 7px;}
+TD.thumb
+  {vertical-align: top;
+   padding-right: 0px;}
+TH
+ {font-style: normal;
+  font-weight: 600;
+  font-size: 1.0em;
+  font-family: "Trebuchet MS", sans-serif;
+  border-style: none;}

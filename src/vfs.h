@@ -127,6 +127,9 @@ typedef struct node_mergedata_ {
 */ 
  
 
+typedef struct node_head_list{
+		int offset;
+		} node_head_list;
 
 /* Deprecate them */
 typedef struct version
@@ -223,10 +226,24 @@ GSList *move_to_lo_iterator(int,FILE *, GSList *,GSList *);
 gint compare_node_mergedata(gconstpointer item1, gconstpointer item2);
 GSList* generate_ll(file_data*,GSList*);
 GSList* generate_ll_old(file_data*,GSList*);
-void cleanFile(char *filepath);
+void cleanFile(char *filepath, double ratio);
+void cleanupfile(file_data *file,float reqdratio);
 
 /* Functions for formatted output of versions*/
 void add_normal_time(int tp, char * pr);
 void print_full_branch(char * tree_file_path, int off);
 void print_all_versions(char *heads_file_path, char *tree_file_path);
 
+/* Functions used in merging/deleting versions */
+
+int getFileHashPath(int offset, char *full_hash_path, file_data *f1,int return_mode);
+
+GSList *merge_diff(node_mergedata *node,file_data *f,GSList *node_list);
+
+GSList *delete_diff(node_mergedata *node,file_data *file,GSList *node_list);
+
+int create_file_fromlo_cleanup(char * file_tree_path, int d_off, int lo_off, char * obj_dir_path, int mode);       // returns -1 for no success and offset of child for success
+
+/* Functions for compression / de-compression */
+void compress(char *obj_file);
+void decompress(char *obj_file);

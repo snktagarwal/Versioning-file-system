@@ -18,6 +18,7 @@ class GraphWindow : public QMainWindow {
 		Point *getCurrent() const;
 		QList<Point *> *getPoints() const;
 		QGraphicsScene *getScene() const;
+		QString getMountDirPath() const;
 		
 		void setRoot(Point *p);
 		void setCurrent(Point *current);
@@ -46,7 +47,7 @@ class GraphWindow : public QMainWindow {
 		QLabel *doubleEditorRightLabel;
 		QTextEdit *doubleEditorLeft;
 		QTextEdit *doubleEditorRight;
-		QScrollBar *doubleEditorScrollBar;
+		QScrollBar *doubleEditorVerticalScrollBar;
 		//QSplitter *doubleEditorSplitter;
 		
 		QSplitter *splitter;
@@ -63,6 +64,7 @@ class GraphWindow : public QMainWindow {
 		
 		QString filepath;
 		QString filename;
+		QString mountdir_path;
 		
 		void loadFileData(QString filepath);
 		void setupModel();

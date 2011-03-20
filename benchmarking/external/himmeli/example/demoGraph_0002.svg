@@ -1,0 +1,300 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" x="0" y="0"
+width="248" height="197">
+
+<g>
+
+<rect x="0" y="0" width="248" height="197"
+style="
+font-size: 0.00px;
+font-family: FreeSans;
+fill: #fcfcfc;
+stroke: none;"
+/>
+
+<g>
+<path d="
+M	78.08	50.16
+L	49.27	103.84
+L	47.96	103.12
+L	47.34	107.44
+L	50.59	104.53
+L	49.27	103.84"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.55px;"
+/>
+
+<path d="
+M	135.32	97.53
+L	89.75	59.82
+L	90.74	58.66
+L	86.53	57.16
+L	88.80	61.01
+L	89.75	59.82"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.61px;"
+/>
+
+<path d="
+M	183.97	121.09
+L	128.96	147.68
+L	128.30	146.26
+L	125.12	149.53
+L	129.66	149.07
+L	128.96	147.68"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.67px;"
+/>
+
+<path d="
+M	151.73	42.52
+L	178.17	106.96
+L	176.72	107.53
+L	179.79	110.91
+L	179.61	106.35
+L	178.17	106.96"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.67px;"
+/>
+
+<path d="
+M	115.10	154.38
+L	55.58	123.25
+L	56.33	121.85
+L	51.72	121.23
+L	54.86	124.66
+L	55.58	123.25"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.72px;"
+/>
+
+<path d="
+M	183.97	121.09
+L	149.96	104.62
+L	150.68	103.21
+L	146.03	102.72
+L	149.29	106.07
+L	149.96	104.62"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.72px;"
+/>
+
+<path d="
+M	135.32	97.53
+L	120.40	139.48
+L	118.86	138.90
+L	118.88	143.74
+L	121.96	140.00
+L	120.40	139.48"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.82px;"
+/>
+
+<path d="
+M	151.73	42.52
+L	93.96	48.51
+L	93.81	46.82
+L	89.33	48.99
+L	94.16	50.20
+L	93.96	48.51"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 2.91px;"
+/>
+
+<path d="
+M	151.73	42.52
+L	140.24	81.05
+L	138.53	80.50
+L	138.83	85.76
+L	141.97	81.53
+L	140.24	81.05"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: none;
+stroke: #950200;
+stroke-linecap: round;
+stroke-width: 3.07px;"
+/>
+
+</g>
+<g>
+<circle cx="42.52" cy="116.42" r="6.045"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffe06c;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.64px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="115.10" cy="154.38" r="6.707"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffbe33;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.66px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="78.08" cy="50.16" r="6.639"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffbe33;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.66px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="135.32" cy="97.53" r="7.296"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #fc880a;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.67px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="183.97" cy="121.09" r="6.604"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffbe33;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.66px;
+stroke-opacity: 0.50;"
+/>
+
+<circle cx="151.73" cy="42.52" r="7.020"
+style="
+font-size: 11.34px;
+font-family: FreeSans;
+fill: #ffbe33;
+stroke: #000000;
+stroke-linecap: round;
+stroke-width: 0.66px;
+stroke-opacity: 0.50;"
+/>
+
+</g>
+<g>
+<text x="51.03" y="118.68"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+g0
+</text>
+
+<text x="124.42" y="156.64"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+g1
+</text>
+
+<text x="87.31" y="52.42"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+g2
+</text>
+
+<text x="145.36" y="99.80"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+g3
+</text>
+
+<text x="193.16" y="123.36"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+g5
+</text>
+
+<text x="161.44" y="44.79"
+style="
+font-size: 9.07px;
+font-family: FreeSans;
+fill: #000000;
+fill-opacity: 0.70;
+stroke: none;"
+>
+g6
+</text>
+
+</g>
+</g>
+</svg>

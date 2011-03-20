@@ -98,7 +98,7 @@ int find_present_file_offset(char * filepath)
 
 
 /* Finds the hash of a given file for a given file path */
-void find_SHA(const char * filepath, char c[41])
+/*void find_SHA(const char * filepath, char c[41])
 { 
     guchar  data[MAX_SIZE]; 
     gsize   size = 0; 
@@ -111,6 +111,33 @@ void find_SHA(const char * filepath, char c[41])
 
     sum = g_compute_checksum_for_data( G_CHECKSUM_MD5, data, size ); 
     strcpy(c,sum);
+} */
+
+void find_SHA(const char * filepath, char c[41]) 
+{ 
+    GChecksum   *cs;
+    guchar       data[MAX_SIZE];
+    gsize        size = 0;
+    FILE        *input;
+    const gchar *sum;
+    
+    cs = g_checksum_new( G_CHECKSUM_MD5 );    
+    
+    input = fopen( filepath, "rb" );
+    do
+    {
+        size = fread((void *)data, sizeof(guchar), MAX_SIZE, input );
+        g_checksum_update( cs, data, size );
+  
+    }
+    while( size == MAX_SIZE );
+    fclose( input );
+
+    sum = g_checksum_get_string( cs );    
+    strcpy(c,sum);
+
+    g_checksum_free( cs ); 
+ 
 } 
 
 /* Returns the dirpath and file name from a file path
