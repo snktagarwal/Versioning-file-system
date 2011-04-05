@@ -110,18 +110,24 @@ void Point::updateTagPosition() {
 
 void Point::checkoutVersion() {
 	QString command = "cd "+window->getMountDirPath()+" && checkout "+relativeFilePath+" "+this->data(POINT_TIMESTAMP_INDEX).toString();
-	system(command.toLatin1().data());
-	window->setCurrent(this);
-	updateContextMenus();
+	int status = system(command.toLatin1().data());
+	
+	if(status == 0) {
+		window->setCurrent(this);
+		updateContextMenus();
+	}
 }
 void Point::revertToVersion() {
 	QString command = "cd "+window->getMountDirPath()+" && revert "+relativeFilePath+" "+this->data(POINT_TIMESTAMP_INDEX).toString();
-	system(command.toLatin1().data());
-	Point *oldCurrent = window->getCurrent();
-	window->setCurrent(this);
-	// OPTIONAL TODO: roll in reverted points
-	removeInvalidVersions(oldCurrent, this);
-	updateContextMenus();
+	int status = system(command.toLatin1().data());
+	
+	if(status == 0) {
+		Point *oldCurrent = window->getCurrent();
+		window->setCurrent(this);
+		// OPTIONAL TODO: roll in reverted points
+		removeInvalidVersions(oldCurrent, this);
+		updateContextMenus();
+	}
 }
 void Point::tagVersion() {
 	bool ok;
@@ -275,8 +281,6 @@ void Point::contextMenuEvent(QGraphicsSceneContextMenuEvent *event) {
 	connect( checkoutAction , SIGNAL(triggered()) , this , SLOT(checkoutVersion()) );
 	connect( revertAction , SIGNAL(triggered()) , this , SLOT(revertToVersion()) );
 	connect( tagAction , SIGNAL(triggered()) , this , SLOT(tagVersion()) );
-	
-	QAction *selectedAction = menu.exec(event->screenPos());
 	
 	event->accept();
 }

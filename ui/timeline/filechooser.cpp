@@ -14,10 +14,11 @@ int flag=0;
 FileChooser::FileChooser(char *filepath) {
 	this->filepath = filepath;
 	QString command = "__guimd "+this->filepath;
-	system(command.toLatin1().data());
+	int status = system(command.toLatin1().data());
 
 	//The layouts in which widgets are placed
-	showGraph();
+	if(status == 0)
+		showGraph();
 } 
 
 void FileChooser::showGraph() {
@@ -66,7 +67,6 @@ void FileChooser::paintEvent(QPaintEvent *) {
     int rightMargin = leftMargin;
     int graphWidth = tabWidth-leftMargin-rightMargin;
     int graphHeight = tabHeight-topMargin-bottomMargin;
-    int graphOutlineWidth = 2;
     
 		// filling the background
 		color = new QColor(153,102,0);

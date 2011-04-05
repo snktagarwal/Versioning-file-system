@@ -80,8 +80,9 @@ void GraphWindow::setCurrent(Point *current) {
 
 void GraphWindow::loadFileData(QString filepath) {
 	QString command = "cd "+mountdir_path+" && __guidata "+filepath;
-	system(command.toLatin1().data());
-	sleep(1);
+	int status = system(command.toLatin1().data());
+	if(status == 0)
+		sleep(1);
 }
 
 void GraphWindow::setAncestorCount() {
@@ -242,7 +243,10 @@ void GraphWindow::showDocument() {
 	QFile *file2 = new QFile(TEMP_PREFIX+TEMP_FILE_NAME_2);
 	
 	command = "rm "+ TEMP_PREFIX+TEMP_FILE_NAME_1 +" "+ TEMP_PREFIX+TEMP_FILE_NAME_2;
-	system(command.toLatin1().data());
+	int status = system(command.toLatin1().data());
+	
+	if(status != 0)
+		return;
 	
 	QList<QGraphicsItem *> selectedPoints = scene->selectedItems();
 	
@@ -293,8 +297,7 @@ void GraphWindow::showDocument() {
 		Point *p1 = dynamic_cast<Point *>(selectedPoints.at(0));
 		
 		command = "cd "+mountdir_path+" && __guiswitch "+p1->getRelativeFilePath()+" "+p1->data(POINT_OFFSET_INDEX).toString()+" "+p1->data(POINT_LOPO_INDEX).toString();
-		
-		system(command.toLatin1().data());
+		int status1 = system(command.toLatin1().data());
 		
 		sleep(0.5);
 		
@@ -302,7 +305,10 @@ void GraphWindow::showDocument() {
 		Point *p2 = dynamic_cast<Point *>(selectedPoints.at(1));
 		
 		command = "cd "+mountdir_path+" && __guiswitch "+p2->getRelativeFilePath()+" "+p2->data(POINT_OFFSET_INDEX).toString()+" "+p2->data(POINT_LOPO_INDEX).toString();
-		system(command.toLatin1().data());
+		int status2 = system(command.toLatin1().data());
+		
+		if(status1 != 0 || status2 != 0)
+			return;
 		
 		view->setInteractive(true);
 		sleep(0.5);
