@@ -15,9 +15,7 @@ Axis::Axis(QPointF *p1, QPointF *p2, qreal width, qreal tickSeparation) {
 	this->tickSeparation = tickSeparation;
 	
 	setZValue(AXIS_DEFAULT_Z_VALUE);
-	//setColor(AXIS_DEFAULT_COLOR);
 	setCacheMode(QGraphicsItem::ItemCoordinateCache);
-	//setLine(QLineF(p1->x(), p1->y(), p2->x(), p2->y()));
 }
 
 Axis::~Axis() {
@@ -68,26 +66,18 @@ void Axis::paint(QPainter *painter, const QStyleOptionGraphicsItem * /* option *
 	
 	painter->drawRect(boundingRect());
 	
-	//painter->setPen(textColor);
-	//painter->drawText();
 	update();
 }
 
 void Axis::drawTicks(QGraphicsScene *scene, qreal rootX, float scalingFactor) {
+	
 	foreach(Tick *tick, ticks)
 		delete tick;
+	
 	for( qreal x=p1->x(); x<=p2->x(); x+=tickSeparation ) {
 		QString labelText;
-		//if( int((x-p1->x())/tickSeparation)%2 == 0)
-		//qDebug() << qint64(x) << "," << qint64(LEFT_MARGIN) << "," << qint64(rootX) << "," << SCALING_FACTOR;
+		
 		labelText = QDateTime::fromMSecsSinceEpoch(1000*quint64( (quint64(x) - quint64(LEFT_MARGIN) + quint64(rootX)) ) / quint64(scalingFactor) ).toString("hh:mm:ss AP\nd MMM, yyyy");
-		//else
-//			labelText = "";
-		/*#if defined(__arm__)
-			labelText = QString::number( (qint64(x) - qint64(LEFT_MARGIN) + qint64(rootX)) / qint64(SCALING_FACTOR) );
-		#else
-			labelText = QString::number( (qint64(x) - qint64(LEFT_MARGIN) + qint64(rootX)) / qint64(SCALING_FACTOR) );
-		#endif*/
 		
 		Tick *tick = new Tick( new QPointF(x,p1->y()), labelText );
 		ticks.insert(tick);
@@ -95,4 +85,5 @@ void Axis::drawTicks(QGraphicsScene *scene, qreal rootX, float scalingFactor) {
 		tick->drawLabel(scene);
 		scene->addItem(tick);
 	}
+	
 }

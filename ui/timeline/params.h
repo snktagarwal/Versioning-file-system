@@ -5,9 +5,6 @@
 #define LO 0
 #define PO 1
 
-// Scaling factor
-//#define SCALING_FACTOR ( ((float)100) / (3600) )
-
 // Size and position
 #define TIMELINE_DEFAULT_HEIGHT (20)
 #define TIMELINE_DEFAULT_WIDTH (QApplication::desktop()->screenGeometry().width() - 10)
@@ -17,7 +14,7 @@
 #define MAXIMIZED 1
 
 #define BRANCH_SEPARATION (60.0)
-//#define MARGIN (20.0)
+
 #define TOP_MARGIN (50.0)
 #define LEFT_MARGIN (50.0)
 #define BOTTOM_MARGIN (20.0)
@@ -26,9 +23,6 @@
 
 // Text
 #define TEXT_COLOR (Qt::red)
-//#define EDITOR_LEFT_EXCLUSIVE_HIGHLIGHT_COLOR (QColor(Qt::yellow).lighter(160))
-//#define EDITOR_RIGHT_EXCLUSIVE_HIGHLIGHT_COLOR (QColor(Qt::red).lighter(200))
-//#define EDITOR_COMMON_HIGHLIGHT_COLOR (QColor(Qt::blue).lighter(150))
 #define EDITOR_COMMON_HIGHLIGHT_COLOR (QColor(Qt::yellow).lighter(160))
 #define EDITOR_EXCLUSIVE_HIGHLIGHT_COLOR (QColor(Qt::red).lighter(180))
 

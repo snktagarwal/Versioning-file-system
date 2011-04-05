@@ -6,7 +6,6 @@
 #include "line.h"
 #include "point.h"
 #include "axis.h"
-//#include "label.h"
 
 class GraphWindow : public QMainWindow {
 	Q_OBJECT
@@ -25,16 +24,9 @@ class GraphWindow : public QMainWindow {
 	
 	private slots:
 		void showDocument();
-		void startTimeLine(Point *p);
 		void updateRange(int min, int max);
-		//void loadFile();
-		//void setScale(int scale);
 			
 	private:
-		//QLineEdit *fileLineEdit;
-		//QPushButton *fileButton;
-		//QSlider *zoomSlider;
-		
 		QGraphicsScene *scene;
 		QGraphicsView *view;
 		
@@ -48,10 +40,8 @@ class GraphWindow : public QMainWindow {
 		QTextEdit *doubleEditorLeft;
 		QTextEdit *doubleEditorRight;
 		QScrollBar *doubleEditorVerticalScrollBar;
-		//QSplitter *doubleEditorSplitter;
 		
 		QSplitter *splitter;
-		//QWidget *mainWidget;
 		
 		Axis *axis;
 		QList<Point *> *points;
@@ -60,7 +50,6 @@ class GraphWindow : public QMainWindow {
 		qreal maxX;
 		Point *current;
 		float scalingFactor;
-		//int maxAncestorCount;
 		
 		QString filepath;
 		QString filename;
@@ -70,7 +59,6 @@ class GraphWindow : public QMainWindow {
 		void setupModel();
 		void setupViews();
 		void readFromFile(const QString &path);
-		void animateTree();
 		void setAncestorCount();
 		void highlightDifferences();
 };

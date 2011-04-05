@@ -14,8 +14,6 @@ class Point : public QObject, public QGraphicsItem {
 	Q_OBJECT
 	
 	public:
-		//static QTextStream *logStream;
-		
 		Point(QString filepath, QGraphicsScene *scene, qreal x, qreal y, qreal r = POINT_DEFAULT_RADIUS, QString tagText = "", QString tooltipText = "", Point *parent = 0, GraphWindow *window = 0);
 		~Point();
 
@@ -27,8 +25,6 @@ class Point : public QObject, public QGraphicsItem {
 		QSet<Point *> getChildren() const;
 		int childCount() const;
 		int getAncestorCount() const;
-		QGraphicsItemAnimation *getAnimation() const;
-		QTimeLine *getTimeLine() const;
 		qreal getOutlineWidth() const;
 		QColor getBackgroundColor() const;
 		QGraphicsSimpleTextItem *getTag() const;
@@ -43,8 +39,6 @@ class Point : public QObject, public QGraphicsItem {
 		void setY(qreal y);
 		void setRadius(qreal r);
 		void setCurrent(bool isCurrent);
-		void setAnimation(QGraphicsItemAnimation *animation);
-		void setTimeLine(QTimeLine *timeline);
 		void setInvalidCount(int invalidCount);
 		void setValidity(bool valid);
 		void setCheckoutEnabled(bool enabled);
@@ -66,8 +60,6 @@ class Point : public QObject, public QGraphicsItem {
 		void removeChild(Point *child);
 		void incrementAncestorCount();
 
-		void startTimer(int msec);
-
 		QRectF boundingRect() const;
 		QPainterPath shape() const;
 		void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -78,15 +70,8 @@ class Point : public QObject, public QGraphicsItem {
   
 	protected:
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
-		//void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-		//void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
-		//bool sceneEventFilter(QGraphicsItem *watched, QEvent *event);
 		void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
-	
-	public slots:
-		void startTimeLine();
-		//void animationEnded();
 	
 	private slots:
 		void checkoutVersion();
@@ -120,9 +105,6 @@ class Point : public QObject, public QGraphicsItem {
 		Point *parent;
 		int ancestorCount;
 		int invalidCount;
-		QGraphicsItemAnimation *animation;
-		QTimeLine *timeline;
-		QTimer *timer;
 		GraphWindow *window;
 };
 
