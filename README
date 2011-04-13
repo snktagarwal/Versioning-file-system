@@ -1,0 +1,55 @@
+====
+RVFS
+====
+
+A versioning file system (with branching) in the userspace developed by RK Hall for OpenSoft 2011, IIT Kharagpur.
+
+------------------------------------
+Installation, Usage & Unistallation:
+------------------------------------
+
+To build and install, execute (from the project root directory):
+	make
+	sudo make install
+
+Prior to use, run:
+	nautilus -q
+
+To use, execute:
+	vfs </path/to/rootdir/> </path/to/mountdir/>
+
+To uninstall:
+	sudo make uninstall
+
+To clean out all object files / derived files:
+	make clean
+
+-------------------
+Available commands:
+-------------------
+
+NOTE: Always try to give absolute paths to the commands below.
+
+1. vfs </path/to/rootdir/> </path/to/mountdir/>
+	To mount the directory 'rootdir' at the mountpoint 'mountdir' for use. (Note: the source directory and mountpoint must be named 'rootdir' and 'mountdir' respectively).
+
+2. fusermount -u </path/to/mountdir/>
+	To unmount the VFS (if it is running).
+
+3. lsver </path/to/file>
+	To list all versions of a particular text file in the VFS.
+
+4. checkout </path/to/file> <timestamp>
+	To checkout a version of the file as it was at the time denoted by <timestamp>
+
+5. revert </path/to/file> <timestamp>
+	To revert to a version of the file as it was at the time denoted by <timestamp>
+
+6. tag </path/to/file> <timestamp> <tag>
+	To tag the version created at time <timestamp> with <tag>
+
+7. timeline </path/to/file>
+	To view a GUI showing a visual, navigable version tree of the file. (Note: A better way to do this would be to simply right-click any file in the VFS, and select the menu item RVFS -> Versions)
+
+8. piechart </path/to/mountdir/>
+	To view a pie chart showing disk usage in the VFS.

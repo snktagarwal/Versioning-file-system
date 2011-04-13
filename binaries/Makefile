@@ -1,12 +1,12 @@
 # Makefile to build the binaries( install manually for now )
 
-all: checkout clean lsver revert tag __guidata __guiswitch __guimd
+all: checkout cleanup lsver revert tag __guidata __guiswitch __guimd
 
 checkout: checkout.c
 	gcc -g checkout.c -o checkout
 
-clean: clean.c
-	gcc -g clean.c -o clean
+cleanup: cleanup.c
+	gcc -g cleanup.c -o cleanup
 
 __guidata: __guidata.c
 	gcc -g __guidata.c -o __guidata
@@ -26,8 +26,11 @@ __guiswitch: __guiswitch.c
 __guimd: __guimd.c
 	gcc -g __guimd.c -o __guimd
 
-cleanup:
-	rm checkout clean lsver revert tag __guidata __guiswitch __guimd
+clean:
+	rm checkout cleanup lsver revert tag __guidata __guiswitch __guimd
 
 install:
-	sudo cp checkout clean lsver revert tag __guidata __guiswitch __guimd /usr/bin
+	sudo cp checkout cleanup lsver revert tag __guidata __guiswitch __guimd /usr/bin/
+
+uninstall:
+	cd /usr/bin/; rm checkout cleanup lsver revert tag __guidata __guiswitch __guimd
