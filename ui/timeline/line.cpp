@@ -19,8 +19,6 @@ Line::Line(Point *parent, Point *child, qreal width = LINE_DEFAULT_WIDTH) {
 }
 
 Line::~Line() {
-	qDebug() << "deleting line using destructor...";
-	qDebug() << "Line: " << this;
 	parent->removeLine(this);
 	child->removeLine(this);
 }
@@ -42,8 +40,5 @@ void Line::setColor(const QColor &color) {
 }
 
 void Line::trackPoints() {
-	//std::cout << "here too: " << parent->getX() << "," << parent->getY() << " ; " << child->getX() << "," << child->getY() << std::endl;
 	setLine(QLineF(parent->scenePos(), child->scenePos()));
-	//setLine( QLineF(mapFromItem(parent,0,0), mapFromItem(child,0,0)) );
-	//setLine( QLineF(mapToScene(parent->getX(),parent->getY()), mapToScene(child->getX(),child->getY())) );
 }

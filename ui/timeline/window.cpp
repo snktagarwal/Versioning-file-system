@@ -21,7 +21,6 @@ GraphWindow::GraphWindow(char *filepath) {
 		if(piece.compare("mountdir")==0)
 			break;
 	}
-	qDebug() << "RVFS Mount Point:" << mountdir_path;
 	
 	loadFileData(this->filepath);
 	
@@ -31,11 +30,9 @@ GraphWindow::GraphWindow(char *filepath) {
 	
 	setupModel();
 	setupViews();
-	//animateTree();
 	
 	QScrollBar *horizontalScrollBar = view->horizontalScrollBar();
 	horizontalScrollBar->setValue(horizontalScrollBar->maximum());
-	//horizontalScrollBar->setValue(horizontalScrollBar->minimum());
 	
 	QList<int> sizes;
 	sizes.append(scene->height());
@@ -49,7 +46,6 @@ GraphWindow::GraphWindow(char *filepath) {
 	if(MAXIMIZED)
 		showMaximized();
 	setWindowTitle("Timeline");
-	//setAnimated(true);
 	setMaximumSize(QApplication::desktop()->screenGeometry().width(), QApplication::desktop()->screenGeometry().height());
 	
 	FileChooser *fileChooser = new FileChooser(filepath);
@@ -57,7 +53,6 @@ GraphWindow::GraphWindow(char *filepath) {
 	QTabWidget *tabWidget = new QTabWidget;
 	tabWidget->addTab(this, "Timeline");
 	tabWidget->addTab(fileChooser, "Space Analysis");
-	//tabWidget->setWindowTitle("RVFS: "+QString(argv[1]));
 	tabWidget->showMaximized();
 	tabWidget->show();
 }
@@ -71,69 +66,23 @@ QString GraphWindow::getMountDirPath() const { return mountdir_path; }
 void GraphWindow::setRoot(Point *p) { root = p; }
 void GraphWindow::setCurrent(Point *current) {
 	if(this->current != NULL) {
-		qDebug() << "Number 1";
 		this->current->setCurrent(false);
 		QStyleOptionGraphicsItem *option = new QStyleOptionGraphicsItem;
 		option->state = QStyle::State_None;
 		this->current->paint(new QPainter, option, NULL);
 	}
 	this->current = current;
-	qDebug() << "Number 2";
 	current->setCurrent(true);
 	QStyleOptionGraphicsItem *option = new QStyleOptionGraphicsItem;
 	option->state = QStyle::State_None;
 	this->current->paint(new QPainter, option, NULL);
 }
 
-void GraphWindow::animateTree() {
-	QList<Point *> *pointsCopy = new QList<Point *>;
-	
-	/*for(int i=0; i<points->size(); i++) {
-		Point *p = points->at(i);
-		pointsCopy->insert(i, new Point(p->getX(), p->getY()));
-	}*/
-	
-	for(int i=0; i<points->size(); i++) {
-		Point *p = points->at(i);
-		if(p->getParent() == 0)
-			pointsCopy->insert(i, new Point(filepath, scene, 0, 0));
-		else
-			pointsCopy->insert(i, new Point(filepath, scene, p->getX()-p->getParent()->getX(), p->getY()-p->getParent()->getY()));
-	}
-	
-	//maxAncestorCount = points->at(0)->getAncestorCount();
-	for(int i=0; i<points->size(); i++) {
-		Point *p = points->at(i);
-		Point *q = pointsCopy->at(i);
-		
-		p->setX(root->getX());
-		p->setY(root->getY());
-		
-		QTimeLine *timeline = new QTimeLine(ANIMATION_TIME);
-		p->setTimeLine( timeline );
-		timeline->setFrameRange(0, 100);
-		timeline->setCurveShape(ANIMATION_EASING_CURVE);
-		
-		QGraphicsItemAnimation *animation = new QGraphicsItemAnimation;
-		p->setAnimation(animation);
-		animation->setItem(p);
-		animation->setTimeLine(timeline);
-		
-		for(int j=0; j<=ANIMATION_TIME; j++) {
-			qreal ratio = ((float)j)/ANIMATION_TIME;
-			animation->setPosAt( ratio, QPointF( ratio*(q->getX()), ratio*(q->getY()) ) );
-		}
-		
-		p->startTimer((p->getAncestorCount()+1)*ANIMATION_TIME + 300);
-	}
-}
-
-void GraphWindow::startTimeLine(Point *p) { p->startTimeLine(); }
-
 void GraphWindow::loadFileData(QString filepath) {
 	QString command = "cd "+mountdir_path+" && __guidata "+filepath;
-	system(command.toLatin1().data());
-	sleep(1);
+	int status = system(command.toLatin1().data());
+	if(status == 0)
+		sleep(1);
 }
 
 void GraphWindow::setAncestorCount() {
@@ -244,7 +193,6 @@ void GraphWindow::setupViews() {
 	// Double Editor Widget
 	QHBoxLayout *doubleEditorLayout = new QHBoxLayout;
 	doubleEditorLayout->addLayout(doubleEditorLeftLayout);
-	//doubleEditorLayout->addLayout(doubleEditorScrollBarLayout);
 	doubleEditorLayout->addLayout(doubleEditorRightLayout);
 	
 	doubleEditorWidget = new QWidget;
@@ -256,9 +204,6 @@ void GraphWindow::setupViews() {
 	splitter->addWidget(singleEditorWidget);
 	splitter->addWidget(doubleEditorWidget);
 	
-	//QVBoxLayout *mainLayout = new QVBoxLayout;
-	//mainLayout->addWidget(splitter);
-	//setLayout(mainLayout);
 	setCentralWidget(splitter);
 }
 
@@ -287,29 +232,6 @@ void GraphWindow::setupModel() {
 	}
 }
 
-/*void GraphWindow::setScale(int scale) {
-	scalingFactor = 100.0/(scale*60);
-	
-	for(int i=0; i<points->size(); i++) {
-		Point *p = points->at(i);
-		qreal unscaledX = p->getX() - LEFT_MARGIN;
-		p->setX(unscaledX*scalingFactor + LEFT_MARGIN);
-	}
-	rootX *= scalingFactor;
-	maxX = (maxX - LEFT_MARGIN)*scalingFactor + LEFT_MARGIN;
-	
-	// set the size of the scene based on the right end of the axis
-	qreal length = maxX - LEFT_MARGIN;
-	int segmentCount = ((int)(length/AXIS_DEFAULT_TICK_SEPARATION)) + 1;
-	qreal axisMaxX = LEFT_MARGIN + segmentCount * AXIS_DEFAULT_TICK_SEPARATION;
-	scene->setSceneRect( 0, 0, axisMaxX + RIGHT_MARGIN, scene->height() );
-	
-	// scale the axis
-	axis->setP2X(maxX);
-	//axis->deleteAllTicks();
-	axis->drawTicks(scene, rootX, scalingFactor);
-}*/
-
 void GraphWindow::showDocument() {
 	QString TEMP_PREFIX = "/tmp/rvfs/";
 	QString TEMP_FILE_NAME_1 = "switch1";
@@ -320,27 +242,13 @@ void GraphWindow::showDocument() {
 	QFile *file1 = new QFile(TEMP_PREFIX+TEMP_FILE_NAME_1);
 	QFile *file2 = new QFile(TEMP_PREFIX+TEMP_FILE_NAME_2);
 	
-	/*if( FILE_EXISTS(TEMP_PREFIX+TEMP_FILE_NAME_1) ) {
-		if( FILE_EXISTS(TEMP_PREFIX+TEMP_FILE_NAME_2) )
-			command = "rm "+ TEMP_PREFIX+TEMP_FILE_NAME_1 +" "+ TEMP_PREFIX+TEMP_FILE_NAME_2;
-		else
-			command = "rm "+ TEMP_PREFIX+TEMP_FILE_NAME_1;
-		qDebug() << "Removing temp files... using " << command;
-		system(command.toLatin1().data());
-		
-		while(
-			FILE_EXISTS(TEMP_PREFIX+TEMP_FILE_NAME_1) ||
-			FILE_EXISTS(TEMP_PREFIX+TEMP_FILE_NAME_2)
-		) {
-			view->setInteractive(false);
-		}
-		view->setInteractive(true);
-	}*/
 	command = "rm "+ TEMP_PREFIX+TEMP_FILE_NAME_1 +" "+ TEMP_PREFIX+TEMP_FILE_NAME_2;
-	system(command.toLatin1().data());
+	int status = system(command.toLatin1().data());
+	
+	if(status != 0)
+		return;
 	
 	QList<QGraphicsItem *> selectedPoints = scene->selectedItems();
-	std::cout << "No. of selections: " << selectedPoints.size() << std::endl;
 	
 	QFile diff(TEMP_PREFIX+DIFF_FILE_NAME);
 	if(diff.exists())
@@ -356,27 +264,18 @@ void GraphWindow::showDocument() {
 		
 		Point *p = dynamic_cast<Point *>(selectedPoints.at(0));
 		
-		qDebug() << "[TIMESTAMP] " << p->data(POINT_TIMESTAMP_INDEX).toInt();
 		QString versionTime = QDateTime::fromMSecsSinceEpoch(1000*( qint64(p->data(POINT_TIMESTAMP_INDEX).toUInt()) )).toString("hh:mm:ss AP, d MMM, yyyy");
 		singleEditorLabel->setText(filename+" (created on "+versionTime+")");
 		
 		command = "cd "+mountdir_path+" && __guiswitch "+p->getRelativeFilePath()+" "+p->data(POINT_OFFSET_INDEX).toString()+" "+p->data(POINT_LOPO_INDEX).toString();
-		qDebug() << "Switch command: " << command;
 		int status = system(command.toLatin1().data());
 		
 		QFile logFile("/tmp/log1");
 		if(logFile.open(QFile::Append | QFile::Text)) {
-			qDebug() << "Log opened.";
 			QTextStream logStream(&logFile);
 			logStream << command << "\t" << status << "\n";
-			//logStream->write(command.toLatin1().data());
 			logFile.close();
 		}
-		
-		/*while( !file1->exists() ) {
-			view->setInteractive(false);
-		}
-		view->setInteractive(true);*/
 		
 		sleep(0.5);
 		
@@ -398,27 +297,19 @@ void GraphWindow::showDocument() {
 		Point *p1 = dynamic_cast<Point *>(selectedPoints.at(0));
 		
 		command = "cd "+mountdir_path+" && __guiswitch "+p1->getRelativeFilePath()+" "+p1->data(POINT_OFFSET_INDEX).toString()+" "+p1->data(POINT_LOPO_INDEX).toString();
+		int status1 = system(command.toLatin1().data());
 		
-		system(command.toLatin1().data());
-		
-		/*while( !file1->exists() ) {
-			qDebug() << "here1";
-			view->setInteractive(false);
-		}
-		view->setInteractive(true);*/
 		sleep(0.5);
 		
 		// Point #2
 		Point *p2 = dynamic_cast<Point *>(selectedPoints.at(1));
 		
 		command = "cd "+mountdir_path+" && __guiswitch "+p2->getRelativeFilePath()+" "+p2->data(POINT_OFFSET_INDEX).toString()+" "+p2->data(POINT_LOPO_INDEX).toString();
-		qDebug() << "Switch command: " << command;
-		system(command.toLatin1().data());
+		int status2 = system(command.toLatin1().data());
 		
-		/*while( !file2->exists() ) {
-			qDebug() << "here2";
-			view->setInteractive(false);
-		}*/
+		if(status1 != 0 || status2 != 0)
+			return;
+		
 		view->setInteractive(true);
 		sleep(0.5);
 		
@@ -473,14 +364,12 @@ void GraphWindow::highlightDifferences() {
 			thunkHead = stream.readLine();
 		
 			while(!thunkHead.isNull()) {
-				qDebug() << "Thunk Head: " << thunkHead;
 				if(thunkHead.contains('c')) {
 					line = stream.readLine();
 				
 					QStringList changePieces = thunkHead.split("c", QString::SkipEmptyParts);
 					QString file1Changes = changePieces.value(0);
 					QString file2Changes = changePieces.value(1);
-					qDebug() << file1Changes << "|" << file2Changes;
 				
 					if(!file1Changes.contains(",")) {
 						QTextEdit::ExtraSelection selection1;
@@ -488,7 +377,6 @@ void GraphWindow::highlightDifferences() {
 						selection1.format.setBackground(EDITOR_COMMON_HIGHLIGHT_COLOR);
 					
 						int file1LineChanged = file1Changes.toInt();
-						std::cout << "File 1 Changed: " << file1LineChanged << std::endl;
 					
 						selection1.cursor.movePosition(QTextCursor::Start);
 						selection1.cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, file1LineChanged-1);
@@ -500,7 +388,6 @@ void GraphWindow::highlightDifferences() {
 						QStringList file1LinesChanged = file1Changes.split(",");
 						int file1LinesChangedFrom = file1LinesChanged.value(0).toInt();
 						int file1LinesChangedTo = file1LinesChanged.value(1).toInt();
-						std::cout << "File 1 Changed [R]: From Line #" << file1LinesChangedFrom << " to Line #" << file1LinesChangedTo << std::endl; 
 					
 						for(int i=(file1LinesChangedFrom-1) ; i<=(file1LinesChangedTo-1) ; i++) {
 							QTextEdit::ExtraSelection selection1;
@@ -521,7 +408,6 @@ void GraphWindow::highlightDifferences() {
 						selection2.format.setBackground(EDITOR_COMMON_HIGHLIGHT_COLOR);
 					
 						int file2LineChanged = file2Changes.toInt();
-						std::cout << "File 2 Changed: " << file2LineChanged << std::endl;
 					
 						selection2.cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
 						selection2.cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, file2LineChanged-1);
@@ -533,7 +419,6 @@ void GraphWindow::highlightDifferences() {
 						QStringList file2LinesChanged = file2Changes.split(",");
 						int file2LinesChangedFrom = file2LinesChanged.value(0).toInt();
 						int file2LinesChangedTo = file2LinesChanged.value(1).toInt();
-						std::cout << "File 2 Changed [R]: From Line #" << file2LinesChangedFrom << " to Line #" << file2LinesChangedTo << std::endl; 
 					
 						for(int i=(file2LinesChangedFrom-1) ; i<=(file2LinesChangedTo-1) ; i++) {
 							QTextEdit::ExtraSelection selection2;
@@ -560,16 +445,13 @@ void GraphWindow::highlightDifferences() {
 					QString file1Changes = changePieces.value(0);
 					QString file2Changes = changePieces.value(1);
 				
-					qDebug() << file1Changes << "|" << file2Changes;
-				
 					if(!file2Changes.contains(",")) {
 						QTextEdit::ExtraSelection selection2;
 						selection2.cursor = doubleEditorRight->textCursor();
 						selection2.format.setBackground(EDITOR_EXCLUSIVE_HIGHLIGHT_COLOR);
 					
 						int file2LineChanged = file2Changes.toInt();
-						std::cout << "File 2 Exclusive: " << file2LineChanged << std::endl;
-					
+						
 						selection2.cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
 						selection2.cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, file2LineChanged-1);
 						selection2.format.setProperty(QTextFormat::FullWidthSelection, true);
@@ -580,7 +462,6 @@ void GraphWindow::highlightDifferences() {
 						QStringList file2LinesChanged = file2Changes.split(",");
 						int file2LinesChangedFrom = file2LinesChanged.value(0).toInt();
 						int file2LinesChangedTo = file2LinesChanged.value(1).toInt();
-						std::cout << "File 2 Exclusive [R]: From Line #" << file2LinesChangedFrom << " to Line #" << file2LinesChangedTo << std::endl; 
 					
 						for(int i=(file2LinesChangedFrom-1) ; i<=(file2LinesChangedTo-1) ; i++) {
 							QTextEdit::ExtraSelection *selection2 = new QTextEdit::ExtraSelection;
@@ -606,8 +487,7 @@ void GraphWindow::highlightDifferences() {
 				
 					QString file1Changes = changePieces.value(0);
 					QString file2Changes = changePieces.value(1);
-				sleep(0.5);
-					qDebug() << file1Changes << "|" << file2Changes;
+					sleep(0.5);
 				
 					if(!file1Changes.contains(",")) {
 						QTextEdit::ExtraSelection selection1;
@@ -615,7 +495,6 @@ void GraphWindow::highlightDifferences() {
 						selection1.format.setBackground(EDITOR_EXCLUSIVE_HIGHLIGHT_COLOR);
 					
 						int file1LineChanged = file1Changes.toInt();
-						std::cout << "File 1 Exclusive: " << file1LineChanged << std::endl;
 					
 						selection1.cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
 						selection1.cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, file1LineChanged-1);
@@ -627,8 +506,7 @@ void GraphWindow::highlightDifferences() {
 						QStringList file1LinesChanged = file1Changes.split(",");
 						int file1LinesChangedFrom = file1LinesChanged.value(0).toInt();
 						int file1LinesChangedTo = file1LinesChanged.value(1).toInt();
-						std::cout << "File 1 Exclusive [R]: From Line #" << file1LinesChangedFrom << " to Line #" << file1LinesChangedTo << std::endl; 
-					
+						
 						for(int i=(file1LinesChangedFrom-1) ; i<=(file1LinesChangedTo-1) ; i++) {
 							QTextEdit::ExtraSelection *selection1 = new QTextEdit::ExtraSelection;
 							selection1->cursor = doubleEditorLeft->textCursor();
@@ -661,22 +539,17 @@ void GraphWindow::updateRange(int, int) {
 	QScrollBar *rightScrollBar = doubleEditorRight->verticalScrollBar();
 	int leftScrollBarRange = leftScrollBar->maximum() - leftScrollBar->minimum();
 	int rightScrollBarRange = rightScrollBar->maximum() - rightScrollBar->minimum();
-	/* std::cout << "Left: " << leftScrollBar->minimum() << "," << leftScrollBar->maximum() << std::endl;
-	std::cout << "Right: " << rightScrollBar->minimum() << "," << rightScrollBar->maximum() << std::endl;
-	std::cout << "Received: " << min << "," << max << std::endl; */
-	int scrollBarRangeMin, scrollBarRangeMax; //singleStep;
+	
+	int scrollBarRangeMin, scrollBarRangeMax;
 	if(leftScrollBarRange > rightScrollBarRange) {
 		scrollBarRangeMax = leftScrollBar->maximum();
 		scrollBarRangeMin = leftScrollBar->minimum();
-		//singleStep = leftScrollBar->singleStep();
 	}
 	else {
 		scrollBarRangeMax = rightScrollBar->maximum();
 		scrollBarRangeMin = rightScrollBar->minimum();
-		//singleStep = rightScrollBar->singleStep();
 	}
 	doubleEditorVerticalScrollBar->setRange( scrollBarRangeMin , scrollBarRangeMax );
-	//doubleEditorScrollBar->setSingleStep(singleStep);
 }
 
 void GraphWindow::readFromFile(const QString &path) {
@@ -685,32 +558,16 @@ void GraphWindow::readFromFile(const QString &path) {
 	maxX = 0;
 	int branchCount = 1;
 	const float scalingFactors[] = {
-/*		100.0/(24*60*60),
-		100.0/(18*60*60),
-		100.0/(12*60*60),
-		100.0/(6*60*60),
-		100.0/(3*60*60),
-		100.0/(2*60*60),
-		100.0/(60*60),
-		100.0/(45*60),
-		100.0/(30*60),
-		100.0/(15*60),
-		100.0/(10*60),
-		100.0/(5*60),
-		100.0/(3*60),*/
-		//100.0/(2*60),
 		100.0/(10),
 	};
 	
 	if(!path.isNull()) {
-		// QFile file(path);
 		QString treePath = path;
 		QString headPath = path;
 		QFile treeFile( treePath.append(".tree") );
 		QFile headFile( headPath.append(".head") );
 		
 		if( treeFile.open(QFile::ReadOnly | QFile::Text) && headFile.open(QFile::ReadOnly | QFile::Text) ) {
-			// QTextStream stream(&file);
 			QTextStream treeStream(&treeFile);
 			QTextStream headStream(&headFile);
 			QString line;
@@ -725,25 +582,13 @@ void GraphWindow::readFromFile(const QString &path) {
 				line = treeStream.readLine();
 				
 				if(!line.isEmpty()) {
-					/*QStringList pieces = line.split(",", QString::KeepEmptyParts);
-					
-					qreal x = pieces.value(0).toDouble() * SCALING_FACTOR;
-					qreal y;
-					qreal radius = pieces.value(1).toDouble();
-					//QString tooltipText = pieces.value(2);
-					QString parentString = pieces.value(2);
-					int parentIndex = parentString.toInt();
-					QString filename = pieces.value(3);
-					QString tagText = pieces.value(4);
-					QString tooltipText = tagText; */
-					
 					QStringList pieces = line.split(" ", QString::SkipEmptyParts);
 					
 					bool valid = (pieces.value(0).toInt())?(true):(false);
 					qreal x = pieces.value(1).toDouble();
 					int timestamp = pieces.value(1).toInt();
 					qreal y;
-					qreal radius = POINT_DEFAULT_RADIUS; // + 10 * (1 - exp( -1*(pieces.value(5).toDouble()-130)/500 ));
+					qreal radius = POINT_DEFAULT_RADIUS;
 					QString parentString = pieces.value(6);
 					int parentOffset = parentString.toInt();
 					int parentIndex = parentOffset/326;
@@ -757,8 +602,6 @@ void GraphWindow::readFromFile(const QString &path) {
 						}
 					}
 					
-					//qDebug() << counter << " " << x << " " << timestamp << " " << radius << " " << parentString << " " << parentIndex << " " << tagText << " " << tooltipText << " " << lopo;
-					
 					if(!valid) {
 						invalidCount++;
 						counter++;
@@ -771,8 +614,6 @@ void GraphWindow::readFromFile(const QString &path) {
 						y = TOP_MARGIN + BOTTOM_MARGIN + AXIS_BOTTOM_MARGIN + radius;
 						
 						// resize the height of the scene as required
-						/* if(x > (scene->width() - rootX - RIGHT_MARGIN))
-							scene->setSceneRect(0, 0, x+RIGHT_MARGIN, scene->height()); */
 						if(y > (scene->height() - BOTTOM_MARGIN))
 							scene->setSceneRect(0, 0, scene->width(), y+BOTTOM_MARGIN);
 						
@@ -783,9 +624,7 @@ void GraphWindow::readFromFile(const QString &path) {
 						if(LEFT_MARGIN+x > maxX)
 							maxX = LEFT_MARGIN+x;
 						
-						//p->setData(0, filename);
 						p->setData(POINT_OFFSET_INDEX, 326*counter);
-						//p->setTagText(QString( p->data(POINT_OFFSET_INDEX).toString() ));
 						p->setInvalidCount(invalidCount);
 						p->setValidity(valid);
 						
@@ -818,8 +657,6 @@ void GraphWindow::readFromFile(const QString &path) {
 						}
 						
 						// resize the height of the scene as required
-						/* if(x > (scene->width() - rootX - RIGHT_MARGIN))
-							scene->setSceneRect(0, 0, x+RIGHT_MARGIN, scene->height()); */
 						if(y > (scene->height() - BOTTOM_MARGIN))
 							scene->setSceneRect(0, 0, scene->width(), y+BOTTOM_MARGIN);
 						
@@ -828,9 +665,7 @@ void GraphWindow::readFromFile(const QString &path) {
 						
 						points->append(child);
 						
-						//child->setData(0, filename);
 						child->setData(POINT_OFFSET_INDEX, 326*counter);
-						//child->setTagText(QString( child->data(POINT_OFFSET_INDEX).toString() ));
 						child->setInvalidCount(invalidCount);
 						child->setValidity(valid);
 						
@@ -840,11 +675,8 @@ void GraphWindow::readFromFile(const QString &path) {
 						
 						if(lopo == LO) {
 							Point *q = child;
-							qDebug() << child->data(POINT_OFFSET_INDEX).toInt();
 							do {
 								q->setData(POINT_LOPO_INDEX, child->data(POINT_OFFSET_INDEX).toInt());
-								//qDebug() << "[] x: " << q->getX() << ", nearest lo: " << (q->data(1).toInt())/326;
-								qDebug() << " point: " << q->data(POINT_OFFSET_INDEX).toString() << ", nearest lo: " << child->data(POINT_OFFSET_INDEX).toInt() << "," << q->data(POINT_LOPO_INDEX).toInt();
 								q = q->getParent();
 							} while( q!=NULL && q->data(POINT_LOPO_INDEX).toString().isEmpty() );
 						}
@@ -856,21 +688,11 @@ void GraphWindow::readFromFile(const QString &path) {
 				counter++;
 			} while(!line.isEmpty());
 			
-			/* for(int i=0; i<points->size(); i++) {
-				Point *p = points->at(i);
-				qDebug() << "x: " << p->getX() << ", nearest lo: " << (p->data(1).toInt())/326;
-			} */
-			
-			/*for(int i=0; i<points->size(); i++) {
-				if
-			}*/
-			
 			bool collisionExists;
 			
 			// Calculate optimum scaling factor
 			for(unsigned int i=0; i<(sizeof(scalingFactors)/sizeof(float)); i++) {
 				scalingFactor = scalingFactors[i];
-				//qDebug() << "scale: " << scalingFactor;
 				collisionExists = false;
 				
 				for(int j=0; j<points->size(); j++) {
@@ -879,13 +701,11 @@ void GraphWindow::readFromFile(const QString &path) {
 						Point *q = points->at(j)->getParent();
 						if( (p->getXAtScale(scalingFactor) - q->getXAtScale(scalingFactor)) < (p->getRadius()+q->getRadius()+2*POINT_HEAD_OUTLINE_WIDTH+POINT_MINIMUM_DISTANCE) ) {
 							collisionExists = true;
-							//qDebug() << "here";
 							break;
 						}
 					}
 				}
 				
-				//qDebug() << collisionExists;
 				if(collisionExists)
 					continue;
 				else

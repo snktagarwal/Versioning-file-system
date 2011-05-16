@@ -21,7 +21,7 @@ void Tick::drawLabel(QGraphicsScene *scene) {
 	QFontMetricsF metrics = qApp->font();
 	QRectF rect = metrics.boundingRect(labelText);
 	qreal labelTextX = center->x() - (rect.width()/2) + 30;
-	qreal labelTextY = 5;//center->y() - height - (rect.height()/2) - 15;
+	qreal labelTextY = 5;
 	label->setPos(labelTextX, labelTextY);
 	scene->addItem(label);
 }

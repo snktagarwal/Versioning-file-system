@@ -31,3 +31,9 @@ format.o: format.c vfs.h
 	gcc -g -Wall `pkg-config fuse glib-2.0 --cflags` -c format.c	
 clean:
 	rm -f vfs *.o
+
+install:
+	cp vfs /usr/bin/
+
+uninstall:
+	rm /usr/bin/vfs

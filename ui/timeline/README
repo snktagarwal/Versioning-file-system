@@ -1,0 +1,12 @@
+Installation instructions:
+--------------------------
+
+1. Ensure you have the qmake-qt4 binary installed.
+
+2. Run the following command as it is:
+		qmake-qt4 -project && qmake-qt4 timeline.pro && make && sudo mv timeline /usr/bin; make clean; rm timeline.pro Makefile
+
+3. The timeline UI binary will be installed if the above command produces no errors.
+
+4. Run it as follows:
+		timeline </path/to/text/file/in/mountdir>
