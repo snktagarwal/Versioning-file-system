@@ -1,8 +1,8 @@
 /*
- * A Versioning File System built ovet the top of an
+ * A Versioning File System built over the top of an
  * existing ext3, fat32 or any other linux complaint
  * file system.
- * Function Format: vfs_<function_name>
+ * Function Format: rvfs_<function_name>
 */
 
 #include "params.h"
@@ -62,8 +62,6 @@ static void vfs_fullpath(char fpath[PATH_MAX], const char *path)
 	    BB_DATA->rootdir, path, fpath);
 }
 
-///////////////////////////////////////////////////////////
- //Edit 
  char *get_actual_path(char* filepath)
  {
      	int len,len1=0;
@@ -91,7 +89,8 @@ static void vfs_fullpath(char fpath[PATH_MAX], const char *path)
 	strcat(filepath,act_filename);
 	return filepath;
 }
-/*Creates the file from the PO and nearest LO */
+
+/*Creates the file from the Packed Object( PO ) and nearest Loose Object( LO ) */
 
 int create_file_fromlo(char * file_tree_path, int d_off, int lo_off, char * obj_dir_path)         // returns 1 for success and 0 for no success
 {
